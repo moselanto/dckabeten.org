@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.20.0' );
+	define( 'DCK_ELITE_VERSION', '4.21.0' );
 }
 
 /**
@@ -891,6 +891,21 @@ if ( file_exists( get_template_directory() . '/inc/events.php' ) ) {
 	require_once get_template_directory() . '/inc/events.php';
 }
 
+if ( file_exists( get_template_directory() . '/inc/church-tools.php' ) ) {
+	require_once get_template_directory() . '/inc/church-tools.php';
+}
+if ( file_exists( get_template_directory() . '/inc/giving-records.php' ) ) {
+	require_once get_template_directory() . '/inc/giving-records.php';
+}
+if ( file_exists( get_template_directory() . '/inc/visitors.php' ) ) {
+	require_once get_template_directory() . '/inc/visitors.php';
+}
+if ( file_exists( get_template_directory() . '/inc/event-rsvp.php' ) ) {
+	require_once get_template_directory() . '/inc/event-rsvp.php';
+}
+if ( file_exists( get_template_directory() . '/inc/pwa.php' ) ) {
+	require_once get_template_directory() . '/inc/pwa.php';
+}
 if ( file_exists( get_template_directory() . '/inc/mobile-nav.php' ) ) {
 	require_once get_template_directory() . '/inc/mobile-nav.php';
 }

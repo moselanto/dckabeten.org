@@ -71,3 +71,11 @@ Server side (needed for consistent 1-3 s):
 4. Images uploaded in wp-admin: keep them under ~300 KB (export at 1600 px wide, WebP or JPEG quality 75).
 5. If the server is Apache without Cloudflare, add long cache headers for /wp-content/themes/dck-elite-pro/assets/ in .htaccess (mod_expires: images, fonts, css, js = 1 year; versioned with ?ver=).
 6. Test at https://pagespeed.web.dev after purging caches.
+
+## Church tools (v4.21.0)
+Settings: DCK Church > Church Tools (finance email, welcome team email, message templates, app name).
+- **Giving records** (wp-admin > Giving Records): members confirm M-Pesa (Equity Paybill) or bank gifts on the Give page. Finance verifies against the Equity statement, clicks "Mark verified" (sends the thank-you email if they gave one) and taps WhatsApp to send the thank-you. Download CSV for the books. No Daraja needed.
+- **New visitors** (wp-admin > New Visitors): the I'm New page (/new-here/) and its QR code (New Visitors > QR code). Welcome team gets an email per visitor, sends a one-tap WhatsApp welcome and moves each person New > Contacted > Visited again > Joined.
+- **Event registration**: on an event, tick "Open registration" (and an optional limit). The form appears on the event page with a Register button on the Events list. Events > Registrations: check-in at the door, WhatsApp reminders, CSV. Email reminders go out automatically the day before; for WhatsApp, copy the number list from the event into a WhatsApp Business broadcast list.
+- **Installable app**: visitors see "Get the DCK app" in the mobile menu (Android/Chrome install; iPhone shows Share > Add to Home Screen). Recently viewed pages work offline. Requires HTTPS. If Cloudflare caches query strings, exclude /?dck_sw=1 and /?dck_manifest=1 from cache.
+- Emails rely on WordPress being able to send mail: install an SMTP plugin (e.g. WP Mail SMTP) with the church email account so notifications don't land in spam.

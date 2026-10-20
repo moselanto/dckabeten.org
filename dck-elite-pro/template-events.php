@@ -188,6 +188,7 @@ dck_photo_hero(
 							</ul>
 						</div>
 						<div class="dck-erow__act">
+							<?php if ( function_exists( 'dck_rsvp_button' ) ) { dck_rsvp_button( get_the_ID() ); } ?>
 							<?php if ( $gcal ) : ?><a class="dck-tool" href="<?php echo esc_url( $gcal ); ?>" target="_blank" rel="noopener"><?php esc_html_e( '+ Calendar', 'dck-elite' ); ?></a><?php endif; ?>
 							<a class="dck-tool" target="_blank" rel="noopener" href="https://api.whatsapp.com/send?text=<?php echo rawurlencode( get_the_title() . ' - ' . get_permalink() ); ?>"><?php esc_html_e( 'Share', 'dck-elite' ); ?></a>
 							<a class="dck-erow__go" href="<?php the_permalink(); ?>" aria-label="<?php echo esc_attr( get_the_title() ); ?>">&rarr;</a>

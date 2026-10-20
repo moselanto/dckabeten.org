@@ -4,6 +4,7 @@
  "assets/js/backfill-admin.js": 1445,
  "assets/js/bible-reader.js": 28073,
  "assets/js/bible.js": 6079,
+ "assets/js/church-forms.js": 2761,
  "assets/js/contact.js": 2646,
  "assets/js/content-admin.js": 2042,
  "assets/js/gallery.js": 9377,
@@ -15,6 +16,7 @@
  "assets/js/pages.js": 3019,
  "assets/js/pastors.js": 2136,
  "assets/js/prayer.js": 2324,
+ "assets/js/pwa.js": 1677,
  "assets/js/read-aloud.js": 3013,
  "assets/js/sermon-print.js": 405,
  "assets/js/sermon-search.js": 2821,
@@ -25,7 +27,7 @@
  "assets/js/translate.js": 1142,
  "assets/js/voice.js": 4463,
  "assets/js/week.js": 1569,
- "style.css": 184473,
+ "style.css": 188537,
  "assets/css/login.css": 7089,
  "assets/css/admin.css": 426
 }

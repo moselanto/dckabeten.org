@@ -38,6 +38,10 @@ if ( ! function_exists( 'dck_mobile_menu_extras' ) ) {
 			array( dck_elite_page_url( 'services' ), 'clock', __( 'Service Times', 'dck-elite' ) ),
 		);
 		echo '<div class="dck-nav__extras">';
+		if ( function_exists( 'dck_pwa_install_button' ) ) {
+			dck_pwa_install_button();
+		}
+		echo '<a class="dck-nav__new" href="' . esc_url( dck_elite_page_url( 'new-here' ) ) . '"><strong>' . esc_html__( 'New here?', 'dck-elite' ) . '</strong> ' . esc_html__( 'Tell us you visited - we would love to welcome you.', 'dck-elite' ) . '</a>';
 		echo '<p class="dck-nav__label">' . esc_html__( 'Quick actions', 'dck-elite' ) . '</p><div class="dck-nav__quick">';
 		foreach ( $items as $it ) {
 			echo '<a href="' . esc_url( $it[0] ) . '">' . dck_mnav_icon( $it[1] ) . '<span>' . esc_html( $it[2] ) . '</span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput -- static SVG.

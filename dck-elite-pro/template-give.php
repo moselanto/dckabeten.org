@@ -158,6 +158,7 @@ if ( ! function_exists( 'dck_give_row' ) ) {
 	</div>
 </section>
 <?php endif; ?>
+<?php if ( function_exists( 'dck_gift_form' ) ) { dck_gift_form(); } ?>
 
 <?php if ( $dck_purposes ) : ?>
 <section class="dck-section dck-give-purpose">
