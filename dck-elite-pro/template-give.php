@@ -2,15 +2,19 @@
 /**
  * Template Name: DCK Give Online
  *
- * Secure giving page with M-Pesa Paybill/Till and bank details.
+ * Giving page: M-Pesa Paybill / Till, bank transfer and giving from abroad.
+ * Every number and line of text is editable in DCK Church > Giving.
  *
  * @package DCK_Elite
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+wp_enqueue_script( 'dck-give', get_template_directory_uri() . '/assets/js/give.js', array(), DCK_ELITE_VERSION, true );
+wp_localize_script( 'dck-give', 'DCK_GIVE', array( 'copied' => __( 'Copied', 'dck-elite' ), 'copyAll' => __( 'Details copied', 'dck-elite' ) ) );
 get_header();
-$dck_wa = function_exists( 'dck_prayer_whatsapp' ) ? dck_prayer_whatsapp() : '254110304521';
+
+$dck_wa = function_exists( 'dck_prayer_whatsapp' ) ? dck_prayer_whatsapp() : '';
 $g_pb   = dck_give_val( 'dck_give_paybill' );
 $g_acc  = dck_give_val( 'dck_give_paybill_account' );
 $g_till = dck_give_val( 'dck_give_till' );
@@ -19,111 +23,207 @@ $g_name = dck_give_val( 'dck_give_bank_account_name' );
 $g_num  = dck_give_val( 'dck_give_bank_account' );
 $g_sw   = dck_give_val( 'dck_give_bank_swift' );
 $g_br   = dck_give_val( 'dck_give_bank_branch' );
+
+$dck_purposes = array();
+foreach ( explode( "\n", (string) dck_home_val( 'dck_give_purposes', "Tithes|Honour God with the first tenth of your increase, as taught in Malachi 3:10.\nOfferings|Freewill gifts of thanksgiving and worship every Sunday.\nChurch Building|Help us keep building our sanctuary in Uthiru, a house of prayer for many.\nMissions and Evangelism|Carry the Gospel to new places through outreach and soul winning.\nWelfare and Care|Support members and neighbours in need with compassion and practical help." ) ) as $line ) {
+	$parts = array_map( 'trim', explode( '|', $line, 2 ) );
+	if ( '' !== $parts[0] ) {
+		$dck_purposes[] = array( 't' => $parts[0], 'd' => isset( $parts[1] ) ? $parts[1] : '' );
+	}
+}
+
+/* Tabs: only channels that have details. */
+$dck_tabs = array();
+if ( $g_pb ) {
+	$dck_tabs['paybill'] = __( 'M-Pesa Paybill', 'dck-elite' );
+}
+if ( $g_till ) {
+	$dck_tabs['till'] = __( 'M-Pesa Till', 'dck-elite' );
+}
+if ( $g_num ) {
+	$dck_tabs['bank'] = __( 'Bank Transfer', 'dck-elite' );
+	$dck_tabs['abroad'] = __( 'From Abroad', 'dck-elite' );
+}
+$dck_first = key( $dck_tabs );
+
+if ( ! function_exists( 'dck_give_row' ) ) {
+	function dck_give_row( $label, $value, $big = false ) {
+		if ( '' === (string) $value ) {
+			return;
+		}
+		echo '<div class="dck-gv-row' . ( $big ? ' dck-gv-row--big' : '' ) . '"><span class="dck-gv-row__k">' . esc_html( $label ) . '</span><span class="dck-gv-row__v">' . esc_html( $value ) . '</span><button type="button" class="dck-copy" data-copy="' . esc_attr( $value ) . '" aria-label="' . esc_attr( sprintf( __( 'Copy %s', 'dck-elite' ), $label ) ) . '">' . esc_html__( 'Copy', 'dck-elite' ) . '</button></div>';
+	}
+}
 ?>
 
-<section class="dck-page-hero">
+<section class="dck-page-hero dck-give-hero">
 	<div class="dck-container">
-		<p class="dck-eyebrow" style="color:var(--dck-gold-300)"><?php esc_html_e( 'Partner With Us', 'dck-elite' ); ?></p>
-		<h1><?php esc_html_e( 'Give Online', 'dck-elite' ); ?></h1>
-		<p class="dck-lead dck-center" style="color:#e7ecff"><?php esc_html_e( 'Your generosity advances the Gospel, cares for people, and builds the house of God.', 'dck-elite' ); ?></p>
-	</div>
-</section>
-
-<section class="dck-section">
-	<div class="dck-container">
-		<div class="dck-give-ways">
-			<a class="dck-way dck-reveal" href="#dck-mpesa">
-				<span class="dck-way__ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10 18h4"/></svg></span>
-				<span class="dck-way__t"><?php esc_html_e( 'M-Pesa Paybill', 'dck-elite' ); ?></span>
-				<span class="dck-way__d"><?php esc_html_e( 'Tithes &amp; Offerings', 'dck-elite' ); ?></span>
-			</a>
-			<a class="dck-way dck-reveal" href="#dck-mpesa">
-				<span class="dck-way__ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 10h18M7 15h4M6 5h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></span>
-				<span class="dck-way__t"><?php esc_html_e( 'M-Pesa Till', 'dck-elite' ); ?></span>
-				<span class="dck-way__d"><?php esc_html_e( 'Give To A Project', 'dck-elite' ); ?></span>
-			</a>
-			<a class="dck-way dck-reveal" href="#dck-bank">
-				<span class="dck-way__ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 10l9-6 9 6M5 10v9h14v-9M9 19v-5h6v5"/></svg></span>
-				<span class="dck-way__t"><?php esc_html_e( 'Bank Transfer', 'dck-elite' ); ?></span>
-				<span class="dck-way__d"><?php esc_html_e( 'Deposits &amp; Cheques', 'dck-elite' ); ?></span>
-			</a>
+		<p class="dck-eyebrow dck-eyebrow--light"><?php echo esc_html( dck_home_val( 'dck_give_eyebrow', __( 'Partner With Us', 'dck-elite' ) ) ); ?></p>
+		<h1><?php echo esc_html( dck_home_val( 'dck_give_title', __( 'Give Online', 'dck-elite' ) ) ); ?></h1>
+		<p class="dck-lead dck-center dck-lead--light"><?php echo esc_html( dck_home_val( 'dck_give_lead', __( 'Your generosity advances the Gospel, cares for people, and builds the house of God. Give simply and securely, from Kenya or anywhere in the world.', 'dck-elite' ) ) ); ?></p>
+		<div class="dck-legal-hero__meta">
+			<span class="dck-pill"><?php esc_html_e( 'Official church accounts only', 'dck-elite' ); ?></span>
+			<span class="dck-pill"><?php esc_html_e( 'M-Pesa and bank', 'dck-elite' ); ?></span>
+			<span class="dck-pill"><?php esc_html_e( 'Give from anywhere', 'dck-elite' ); ?></span>
 		</div>
 	</div>
 </section>
 
-<section class="dck-section" style="padding-top:8px">
+<?php if ( $dck_tabs ) : ?>
+<section class="dck-section dck-give-now" id="give-now">
+	<div class="dck-container">
+		<div class="dck-gv">
+			<div class="dck-gv__tabs" role="tablist" aria-label="<?php esc_attr_e( 'Ways to give', 'dck-elite' ); ?>">
+				<?php foreach ( $dck_tabs as $k => $label ) : ?>
+					<button type="button" role="tab" class="dck-gv__tab<?php echo $k === $dck_first ? ' is-active' : ''; ?>" id="tab-<?php echo esc_attr( $k ); ?>" aria-controls="panel-<?php echo esc_attr( $k ); ?>" aria-selected="<?php echo $k === $dck_first ? 'true' : 'false'; ?>" tabindex="<?php echo $k === $dck_first ? '0' : '-1'; ?>" data-tab="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $label ); ?></button>
+				<?php endforeach; ?>
+			</div>
+
+			<?php if ( $g_pb ) : ?>
+			<div class="dck-gv__panel" role="tabpanel" id="panel-paybill" aria-labelledby="tab-paybill"<?php echo 'paybill' === $dck_first ? '' : ' hidden'; ?>>
+				<div class="dck-gv__details">
+					<span class="dck-card__tag"><?php esc_html_e( 'Tithes and Offerings', 'dck-elite' ); ?></span>
+					<h2><?php esc_html_e( 'Lipa na M-Pesa Paybill', 'dck-elite' ); ?></h2>
+					<?php dck_give_row( __( 'Business number', 'dck-elite' ), $g_pb, true ); ?>
+					<?php dck_give_row( __( 'Account number', 'dck-elite' ), $g_acc, true ); ?>
+				</div>
+				<ol class="dck-gv__steps">
+					<li><?php esc_html_e( 'Open M-Pesa and select Lipa na M-Pesa, then Pay Bill.', 'dck-elite' ); ?></li>
+					<li><?php echo esc_html( sprintf( __( 'Enter Business Number %s.', 'dck-elite' ), $g_pb ) ); ?></li>
+					<?php if ( $g_acc ) : ?><li><?php echo esc_html( sprintf( __( 'Enter Account Number %s.', 'dck-elite' ), $g_acc ) ); ?></li><?php endif; ?>
+					<li><?php esc_html_e( 'Enter the amount and your PIN, check the recipient name, then confirm.', 'dck-elite' ); ?></li>
+					<li><?php esc_html_e( 'Keep the M-Pesa confirmation SMS as your record.', 'dck-elite' ); ?></li>
+				</ol>
+			</div>
+			<?php endif; ?>
+
+			<?php if ( $g_till ) : ?>
+			<div class="dck-gv__panel" role="tabpanel" id="panel-till" aria-labelledby="tab-till"<?php echo 'till' === $dck_first ? '' : ' hidden'; ?>>
+				<div class="dck-gv__details">
+					<span class="dck-card__tag"><?php esc_html_e( 'Give To A Project', 'dck-elite' ); ?></span>
+					<h2><?php esc_html_e( 'M-Pesa Buy Goods (Till)', 'dck-elite' ); ?></h2>
+					<?php dck_give_row( __( 'Till number', 'dck-elite' ), $g_till, true ); ?>
+				</div>
+				<ol class="dck-gv__steps">
+					<li><?php esc_html_e( 'Open M-Pesa and select Lipa na M-Pesa, then Buy Goods and Services.', 'dck-elite' ); ?></li>
+					<li><?php echo esc_html( sprintf( __( 'Enter Till Number %s.', 'dck-elite' ), $g_till ) ); ?></li>
+					<li><?php esc_html_e( 'Enter the amount and your PIN, check the recipient name, then confirm.', 'dck-elite' ); ?></li>
+					<li><?php esc_html_e( 'Keep the M-Pesa confirmation SMS as your record.', 'dck-elite' ); ?></li>
+				</ol>
+			</div>
+			<?php endif; ?>
+
+			<?php if ( $g_num ) : ?>
+			<div class="dck-gv__panel" role="tabpanel" id="panel-bank" aria-labelledby="tab-bank"<?php echo 'bank' === $dck_first ? '' : ' hidden'; ?>>
+				<div class="dck-gv__details">
+					<span class="dck-card__tag"><?php esc_html_e( 'Deposits, Transfers and Cheques', 'dck-elite' ); ?></span>
+					<h2><?php esc_html_e( 'Bank Transfer', 'dck-elite' ); ?></h2>
+					<?php
+					dck_give_row( __( 'Bank', 'dck-elite' ), $g_bank );
+					dck_give_row( __( 'Account name', 'dck-elite' ), $g_name );
+					dck_give_row( __( 'Account number', 'dck-elite' ), $g_num, true );
+					dck_give_row( __( 'Branch', 'dck-elite' ), $g_br );
+					?>
+					<button type="button" class="dck-btn dck-btn--outline dck-copy-all" data-copy="<?php echo esc_attr( trim( implode( "\n", array_filter( array( $g_bank ? 'Bank: ' . $g_bank : '', $g_name ? 'Account name: ' . $g_name : '', 'Account number: ' . $g_num, $g_br ? 'Branch: ' . $g_br : '', $g_sw ? 'SWIFT: ' . $g_sw : '' ) ) ) ) ); ?>"><?php esc_html_e( 'Copy all bank details', 'dck-elite' ); ?></button>
+				</div>
+				<ol class="dck-gv__steps">
+					<li><?php esc_html_e( 'Use your banking app, internet banking or any branch.', 'dck-elite' ); ?></li>
+					<li><?php esc_html_e( 'Pay to the account name and number shown.', 'dck-elite' ); ?></li>
+					<?php if ( $g_name ) : ?><li><?php echo esc_html( sprintf( __( 'Make cheques payable to: %s.', 'dck-elite' ), $g_name ) ); ?></li><?php endif; ?>
+					<li><?php esc_html_e( 'Add your name as the reference so we can thank you.', 'dck-elite' ); ?></li>
+				</ol>
+			</div>
+
+			<div class="dck-gv__panel" role="tabpanel" id="panel-abroad" aria-labelledby="tab-abroad"<?php echo 'abroad' === $dck_first ? '' : ' hidden'; ?>>
+				<div class="dck-gv__details">
+					<span class="dck-card__tag"><?php esc_html_e( 'International Giving', 'dck-elite' ); ?></span>
+					<h2><?php esc_html_e( 'Giving From Outside Kenya', 'dck-elite' ); ?></h2>
+					<?php
+					dck_give_row( __( 'Beneficiary bank', 'dck-elite' ), $g_bank );
+					dck_give_row( __( 'SWIFT / BIC', 'dck-elite' ), $g_sw, true );
+					dck_give_row( __( 'Account name', 'dck-elite' ), $g_name );
+					dck_give_row( __( 'Account number', 'dck-elite' ), $g_num, true );
+					dck_give_row( __( 'Country', 'dck-elite' ), 'Kenya' );
+					?>
+				</div>
+				<ol class="dck-gv__steps">
+					<li><?php esc_html_e( 'Send an international bank (SWIFT) transfer using the details shown.', 'dck-elite' ); ?></li>
+					<li><?php esc_html_e( 'Some international money transfer services can also pay to M-Pesa numbers in Kenya. Check with your provider.', 'dck-elite' ); ?></li>
+					<li><?php esc_html_e( 'Your bank may charge transfer and currency fees.', 'dck-elite' ); ?></li>
+					<li><?php esc_html_e( 'Let us know on WhatsApp or email once you have sent it, so we can confirm receipt and thank you.', 'dck-elite' ); ?></li>
+				</ol>
+			</div>
+			<?php endif; ?>
+		</div>
+	</div>
+</section>
+<?php endif; ?>
+
+<?php if ( $dck_purposes ) : ?>
+<section class="dck-section dck-give-purpose">
+	<div class="dck-container">
+		<div class="dck-center">
+			<p class="dck-eyebrow"><?php esc_html_e( 'Where Your Gift Goes', 'dck-elite' ); ?></p>
+			<h2><?php esc_html_e( 'Every Gift Makes A Difference', 'dck-elite' ); ?></h2>
+		</div>
+		<div class="dck-gp">
+			<?php foreach ( $dck_purposes as $i => $p ) : ?>
+				<div class="dck-gp__item dck-reveal">
+					<span class="dck-gp__n"><?php echo esc_html( str_pad( (string) ( $i + 1 ), 2, '0', STR_PAD_LEFT ) ); ?></span>
+					<h3><?php echo esc_html( $p['t'] ); ?></h3>
+					<p><?php echo esc_html( $p['d'] ); ?></p>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+</section>
+<?php endif; ?>
+
+<section class="dck-section dck-give-why">
 	<div class="dck-container dck-grid-2">
 		<div class="dck-reveal">
 			<p class="dck-eyebrow"><?php esc_html_e( 'A Heart of Worship', 'dck-elite' ); ?></p>
-			<h2><?php esc_html_e( 'Tithes, Offerings &amp; Donations', 'dck-elite' ); ?></h2>
+			<h2><?php echo esc_html( dck_home_val( 'dck_give_why_heading', __( 'Tithes, Offerings and Donations', 'dck-elite' ) ) ); ?></h2>
 			<p class="dck-lead"><?php esc_html_e( 'Tithes, offerings and donations are biblical acts of worship and obedience to God.', 'dck-elite' ); ?></p>
-			<p><?php esc_html_e( 'The tithe, first mentioned in Genesis 14:20 and commanded in Malachi 3:10, is giving one-tenth of our income to support the work of God through the church. Offerings and donations, seen throughout Scripture (Exodus 35 and Acts 4), are voluntary gifts that reflect gratitude, love, and a willingness to advance the kingdom of God.', 'dck-elite' ); ?></p>
+			<p><?php echo esc_html( dck_home_val( 'dck_give_why_text', __( 'The tithe, first mentioned in Genesis 14:20 and commanded in Malachi 3:10, is giving one-tenth of our income to support the work of God through the church. Offerings and donations, seen throughout Scripture (Exodus 35 and Acts 4), are voluntary gifts that reflect gratitude, love, and a willingness to advance the kingdom of God.', 'dck-elite' ) ) ); ?></p>
 		</div>
 		<div class="dck-reveal">
-			<div class="dck-card" style="border-top:5px solid var(--dck-gold)">
-				<span class="dck-card__tag"><?php esc_html_e( 'Malachi 3:10', 'dck-elite' ); ?></span>
-				<p style="font-family:var(--dck-font-display);font-size:1.25rem;color:var(--dck-blue-900);line-height:1.5;margin:0">
-					<?php esc_html_e( '"Bring the whole tithe into the storehouse... and see if I will not throw open the floodgates of heaven and pour out so much blessing that there will not be room enough to store it."', 'dck-elite' ); ?>
-				</p>
-			</div>
+			<figure class="dck-verse">
+				<blockquote><?php echo esc_html( dck_home_val( 'dck_give_verse', __( 'Bring the whole tithe into the storehouse... and see if I will not throw open the floodgates of heaven and pour out so much blessing that there will not be room enough to store it.', 'dck-elite' ) ) ); ?></blockquote>
+				<figcaption><?php echo esc_html( dck_home_val( 'dck_give_verse_ref', 'Malachi 3:10' ) ); ?></figcaption>
+			</figure>
 		</div>
 	</div>
 </section>
 
-<section id="dck-mpesa" class="dck-section" style="background:var(--dck-blue-100)">
+<section class="dck-section dck-give-safe">
 	<div class="dck-container">
-		<div class="dck-center">
-			<p class="dck-eyebrow"><?php esc_html_e( 'Give Via M-Pesa', 'dck-elite' ); ?></p>
-			<h2><?php esc_html_e( 'Fast, Secure Mobile Giving', 'dck-elite' ); ?></h2>
-		</div>
-		<div class="dck-grid-2" style="margin-top:40px;align-items:stretch">
-
-			<div class="dck-card dck-reveal">
-				<span class="dck-card__tag"><?php esc_html_e( 'Tithes &amp; Offerings', 'dck-elite' ); ?></span>
-				<h3><?php esc_html_e( 'M-Pesa Paybill', 'dck-elite' ); ?></h3>
-				<p class="dck-give-lbl"><?php esc_html_e( 'Paybill Number', 'dck-elite' ); ?></p>
-				<div class="dck-give-row"><span class="dck-give-num"><?php echo esc_html( $g_pb ); ?></span><button type="button" class="dck-copy" data-copy="<?php echo esc_attr( $g_pb ); ?>"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></div>
-				<p class="dck-give-lbl"><?php esc_html_e( 'Account Number', 'dck-elite' ); ?></p>
-				<div class="dck-give-row"><span class="dck-give-num"><?php echo esc_html( $g_acc ); ?></span><button type="button" class="dck-copy" data-copy="<?php echo esc_attr( $g_acc ); ?>"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></div>
-				<ol class="dck-give-steps">
-					<li><?php esc_html_e( 'Go to M-Pesa, then Lipa na M-Pesa, then Pay Bill.', 'dck-elite' ); ?></li>
-					<li><?php echo esc_html( sprintf( __( 'Enter Business Number %s.', 'dck-elite' ), $g_pb ) ); ?></li>
-					<li><?php echo esc_html( sprintf( __( 'Enter Account Number %s.', 'dck-elite' ), $g_acc ) ); ?></li>
-					<li><?php esc_html_e( 'Enter amount, your PIN, and confirm.', 'dck-elite' ); ?></li>
-				</ol>
+		<div class="dck-gsafe">
+			<div class="dck-gsafe__head">
+				<p class="dck-eyebrow"><?php esc_html_e( 'Give With Confidence', 'dck-elite' ); ?></p>
+				<h2><?php esc_html_e( 'Your Gift Is Safe', 'dck-elite' ); ?></h2>
 			</div>
-
-			<div class="dck-card dck-reveal">
-				<span class="dck-card__tag"><?php esc_html_e( 'Give To A Project', 'dck-elite' ); ?></span>
-				<h3><?php esc_html_e( 'M-Pesa Buy Goods (Till)', 'dck-elite' ); ?></h3>
-				<p class="dck-give-lbl"><?php esc_html_e( 'Till Number', 'dck-elite' ); ?></p>
-				<div class="dck-give-row"><span class="dck-give-num"><?php echo esc_html( $g_till ); ?></span><button type="button" class="dck-copy" data-copy="<?php echo esc_attr( $g_till ); ?>"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></div>
-				<ol class="dck-give-steps">
-					<li><?php esc_html_e( 'Go to M-Pesa, then Lipa na M-Pesa, then Buy Goods and Services.', 'dck-elite' ); ?></li>
-					<li><?php echo esc_html( sprintf( __( 'Enter Till Number %s.', 'dck-elite' ), $g_till ) ); ?></li>
-					<li><?php esc_html_e( 'Enter amount, your PIN, and confirm.', 'dck-elite' ); ?></li>
-				</ol>
-			</div>
-
+			<ul class="dck-gsafe__list">
+				<li><strong><?php esc_html_e( 'Only these accounts.', 'dck-elite' ); ?></strong> <?php esc_html_e( 'The details on this page are the church\'s only official giving channels.', 'dck-elite' ); ?></li>
+				<li><strong><?php esc_html_e( 'Never share your PIN.', 'dck-elite' ); ?></strong> <?php esc_html_e( 'We will never ask for your M-Pesa PIN, bank password or card details by phone, SMS or social media.', 'dck-elite' ); ?></li>
+				<li><strong><?php esc_html_e( 'Check before you confirm.', 'dck-elite' ); ?></strong> <?php esc_html_e( 'Make sure the recipient name shown on your phone or banking app is correct before you approve.', 'dck-elite' ); ?></li>
+				<li><strong><?php esc_html_e( 'Report anything unusual.', 'dck-elite' ); ?></strong> <?php echo esc_html( sprintf( __( 'If someone asks you to give to a different number, call us on %s first.', 'dck-elite' ), dck_phone_display() ) ); ?></li>
+			</ul>
 		</div>
 	</div>
 </section>
 
-<section id="dck-bank" class="dck-section">
-	<div class="dck-container">
+<section class="dck-section dck-give-faq">
+	<div class="dck-container" style="max-width:820px">
 		<div class="dck-center">
-			<p class="dck-eyebrow"><?php esc_html_e( 'Bank Transfer', 'dck-elite' ); ?></p>
-			<h2><?php esc_html_e( 'Bank Deposit / Cheques', 'dck-elite' ); ?></h2>
+			<p class="dck-eyebrow"><?php esc_html_e( 'Questions', 'dck-elite' ); ?></p>
+			<h2><?php esc_html_e( 'Giving FAQ', 'dck-elite' ); ?></h2>
 		</div>
-		<div class="dck-card dck-reveal" style="max-width:640px;margin:36px auto 0">
-			<table class="dck-bank">
-				<tr><th><?php esc_html_e( 'Bank', 'dck-elite' ); ?></th><td><?php echo esc_html( $g_bank ); ?></td></tr>
-				<tr><th><?php esc_html_e( 'Account Name', 'dck-elite' ); ?></th><td><?php echo esc_html( $g_name ); ?></td></tr>
-				<tr><th><?php esc_html_e( 'Account Number', 'dck-elite' ); ?></th><td><span class="dck-give-row" style="justify-content:flex-start"><span><?php echo esc_html( $g_num ); ?></span><button type="button" class="dck-copy" data-copy="<?php echo esc_attr( $g_num ); ?>"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></span></td></tr>
-				<tr><th><?php esc_html_e( 'SWIFT Code', 'dck-elite' ); ?></th><td><?php echo esc_html( $g_sw ); ?></td></tr>
-				<tr><th><?php esc_html_e( 'Branch', 'dck-elite' ); ?></th><td><?php echo esc_html( $g_br ); ?></td></tr>
-			</table>
-			<p style="margin-top:18px;color:var(--dck-gray)"><?php echo esc_html( sprintf( __( 'Make cheques payable to: %s.', 'dck-elite' ), $g_name ) ); ?></p>
+		<div class="dck-faq-list">
+			<details class="dck-faq-item"><summary><?php esc_html_e( 'Which option should I use?', 'dck-elite' ); ?></summary><div class="dck-faq-answer"><p><?php esc_html_e( 'Use the M-Pesa Paybill for tithes and offerings, the Till for project giving, and bank transfer for larger gifts, cheques or giving from outside Kenya.', 'dck-elite' ); ?></p></div></details>
+			<details class="dck-faq-item"><summary><?php esc_html_e( 'How do I know my gift was received?', 'dck-elite' ); ?></summary><div class="dck-faq-answer"><p><?php esc_html_e( 'M-Pesa sends you a confirmation SMS immediately. For bank transfers, keep your transfer receipt. You are always welcome to contact us to confirm.', 'dck-elite' ); ?></p></div></details>
+			<details class="dck-faq-item"><summary><?php esc_html_e( 'I sent money to the wrong number. What should I do?', 'dck-elite' ); ?></summary><div class="dck-faq-answer"><p><?php echo esc_html( sprintf( __( 'Contact Safaricom (or your bank) straight away to request a reversal, then let us know on %s so we can help.', 'dck-elite' ), dck_phone_display() ) ); ?></p></div></details>
+			<details class="dck-faq-item"><summary><?php esc_html_e( 'Can I give from outside Kenya?', 'dck-elite' ); ?></summary><div class="dck-faq-answer"><p><?php esc_html_e( 'Yes. Choose the From Abroad tab above for international bank transfer details, and message us once you have sent your gift.', 'dck-elite' ); ?></p></div></details>
 		</div>
 	</div>
 </section>
@@ -131,25 +231,15 @@ $g_br   = dck_give_val( 'dck_give_bank_branch' );
 <section class="dck-section dck-cta">
 	<div class="dck-container dck-center">
 		<h2><?php esc_html_e( 'Questions About Giving?', 'dck-elite' ); ?></h2>
-		<p class="dck-lead dck-center" style="color:#d7deff"><?php esc_html_e( 'Our team is glad to help. Reach us anytime.', 'dck-elite' ); ?></p>
+		<p class="dck-lead dck-center dck-lead--light"><?php esc_html_e( 'Our team is glad to help. Reach us anytime.', 'dck-elite' ); ?></p>
 		<div class="dck-hero__cta" style="margin-top:24px">
-			<a class="dck-btn dck-btn--gold" href="https://wa.me/<?php echo esc_attr( $dck_wa ); ?>?text=<?php echo rawurlencode( 'Hello, I have a question about giving at DCK.' ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Chat on WhatsApp', 'dck-elite' ); ?></a>
+			<?php if ( $dck_wa ) : ?>
+				<a class="dck-btn dck-btn--gold" href="https://wa.me/<?php echo esc_attr( $dck_wa ); ?>?text=<?php echo rawurlencode( __( 'Hello, I have a question about giving at DCK.', 'dck-elite' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Chat on WhatsApp', 'dck-elite' ); ?></a>
+			<?php endif; ?>
 			<a class="dck-btn dck-btn--ghost" href="tel:<?php echo esc_attr( dck_home_tel() ); ?>"><?php echo esc_html( sprintf( __( 'Call %s', 'dck-elite' ), dck_phone_display() ) ); ?></a>
 		</div>
 	</div>
 </section>
-
-<script>
-(function(){
-	document.addEventListener('click',function(e){
-		var b=e.target.closest('.dck-copy');
-		if(!b){return;}
-		var v=b.getAttribute('data-copy')||'';
-		var done=function(){var o=b.textContent;b.textContent='Copied';b.classList.add('is-copied');setTimeout(function(){b.textContent=o;b.classList.remove('is-copied');},1400);};
-		if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(v).then(done).catch(done);}else{done();}
-	});
-})();
-</script>
 
 <?php
 get_footer();

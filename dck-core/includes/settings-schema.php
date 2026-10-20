@@ -262,6 +262,19 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 			'intro'    => __( 'Payment details on the Give page, FAQ and AI assistant. Leave a channel blank to hide it. Please double-check numbers before saving.', 'dck-core' ),
 			'sections' => array(
 				array(
+					'title'  => __( 'Give page text', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_give_eyebrow', __( 'Small label', 'dck-core' ), 'text', 'Partner With Us' ),
+						$f( 'dck_give_title', __( 'Page title', 'dck-core' ), 'text', 'Give Online' ),
+						$f( 'dck_give_lead', __( 'Intro text', 'dck-core' ), 'textarea' ),
+						$f( 'dck_give_purposes', __( 'Where your gift goes (one per line: Title|Description)', 'dck-core' ), 'textarea', "Tithes|Honour God with the first tenth of your increase, as taught in Malachi 3:10.\nOfferings|Freewill gifts of thanksgiving and worship every Sunday.\nChurch Building|Help us keep building our sanctuary in Uthiru, a house of prayer for many.\nMissions and Evangelism|Carry the Gospel to new places through outreach and soul winning.\nWelfare and Care|Support members and neighbours in need with compassion and practical help." ),
+						$f( 'dck_give_why_heading', __( 'Why we give: heading', 'dck-core' ), 'text', 'Tithes, Offerings and Donations' ),
+						$f( 'dck_give_why_text', __( 'Why we give: text', 'dck-core' ), 'textarea' ),
+						$f( 'dck_give_verse', __( 'Scripture quote', 'dck-core' ), 'textarea' ),
+						$f( 'dck_give_verse_ref', __( 'Scripture reference', 'dck-core' ), 'text', 'Malachi 3:10' ),
+					),
+				),
+				array(
 					'title'  => __( 'M-Pesa', 'dck-core' ),
 					'fields' => array(
 						$f( 'dck_give_paybill', __( 'Paybill number', 'dck-core' ), 'text', $gd( 'dck_give_paybill' ) ),

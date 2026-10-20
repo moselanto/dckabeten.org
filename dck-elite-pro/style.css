@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.3.1
+Version: 4.3.2
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -1457,3 +1457,51 @@ body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-o
 .dck-sermons-cta__btns{display:flex;flex-wrap:wrap;gap:10px}
 @media (max-width:900px){.dck-sfeature{grid-template-columns:1fr}.dck-sfeature__media{min-height:0;aspect-ratio:16/9}}
 @media (max-width:600px){.dck-sfinder{margin-top:-28px}.dck-sermons-cta{padding:22px}}
+
+
+/* ---------- Give page (v4.3.2) ---------- */
+.dck-give-now{padding-top:0}
+.dck-gv{background:#fff;border:1px solid var(--dck-line);border-radius:calc(var(--dck-radius) + 4px);box-shadow:var(--dck-shadow);margin-top:-56px;position:relative;z-index:2;overflow:hidden}
+.dck-gv__tabs{display:flex;gap:4px;padding:8px;background:var(--dck-warm);border-bottom:1px solid var(--dck-line);overflow-x:auto;scrollbar-width:none}
+.dck-gv__tabs::-webkit-scrollbar{display:none}
+.dck-gv__tab{flex:1 0 auto;font:inherit;font-weight:600;font-size:.95rem;padding:12px 18px;border:0;border-radius:12px;background:transparent;color:var(--dck-gray);cursor:pointer;white-space:nowrap;transition:background .2s,color .2s}
+.dck-gv__tab:hover{color:var(--dck-blue)}
+.dck-gv__tab.is-active{background:#fff;color:var(--dck-blue-900);box-shadow:0 4px 14px -6px rgba(14,28,77,.35)}
+.dck-gv__panel{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(20px,4vw,48px);padding:clamp(22px,4vw,40px)}
+.dck-gv__panel[hidden]{display:none}
+.dck-gv__details h2{margin:6px 0 18px;font-size:clamp(1.4rem,2.6vw,1.8rem)}
+.dck-gv-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--dck-line);border-radius:12px;margin-bottom:10px;background:#fff}
+.dck-gv-row__k{flex:0 0 140px;font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--dck-gray)}
+.dck-gv-row__v{flex:1;font-weight:600;color:var(--dck-blue-900);overflow-wrap:anywhere}
+.dck-gv-row--big{background:var(--dck-blue-100);border-color:rgba(36,64,154,.15)}
+.dck-gv-row--big .dck-gv-row__v{font-size:clamp(1.3rem,2.6vw,1.65rem);font-weight:700;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.dck-gv .dck-copy{flex:0 0 auto;font:inherit;font-size:.8rem;font-weight:700;padding:7px 14px;border-radius:999px;border:1px solid var(--dck-blue);background:#fff;color:var(--dck-blue);cursor:pointer;transition:all .2s}
+.dck-gv .dck-copy:hover,.dck-gv .dck-copy.is-copied{background:var(--dck-blue);color:#fff}
+.dck-copy-all{margin-top:6px}
+.dck-copy-all.is-copied{background:var(--dck-blue);color:#fff}
+.dck-gv__steps{list-style:none;counter-reset:st;margin:0;padding:22px 24px;background:var(--dck-warm);border-radius:var(--dck-radius);align-self:start}
+.dck-gv__steps li{counter-increment:st;position:relative;padding:0 0 16px 44px;line-height:1.55;color:var(--dck-ink)}
+.dck-gv__steps li:last-child{padding-bottom:0}
+.dck-gv__steps li::before{content:counter(st);position:absolute;left:0;top:-2px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--dck-blue);color:#fff;font-weight:700;font-size:.85rem}
+.dck-gv__steps li:not(:last-child)::after{content:"";position:absolute;left:14px;top:30px;bottom:2px;width:2px;background:var(--dck-blue-100)}
+.dck-gp{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:36px}
+.dck-gp__item{background:#fff;border:1px solid var(--dck-line);border-radius:var(--dck-radius);padding:24px;transition:transform .25s var(--dck-ease),border-color .25s}
+.dck-gp__item:hover{transform:translateY(-4px);border-color:var(--dck-gold)}
+.dck-gp__n{font-weight:700;color:var(--dck-gold);font-size:.85rem;letter-spacing:.06em}
+.dck-gp__item h3{margin:8px 0 6px;font-size:1.1rem;color:var(--dck-blue-900)}
+.dck-gp__item p{margin:0;color:var(--dck-gray);font-size:.93rem;line-height:1.6}
+.dck-give-purpose{background:var(--dck-warm)}
+.dck-verse{margin:0;padding:clamp(26px,4vw,40px);border-radius:var(--dck-radius);background:linear-gradient(135deg,var(--dck-blue-900),var(--dck-blue-700));color:#fff;position:relative;overflow:hidden}
+.dck-verse::before{content:"\201C";position:absolute;top:-30px;left:14px;font-family:var(--dck-font-display);font-size:9rem;color:rgba(231,200,106,.18);line-height:1}
+.dck-verse blockquote{margin:0;font-family:var(--dck-font-display);font-size:clamp(1.15rem,2vw,1.4rem);line-height:1.55;position:relative}
+.dck-verse figcaption{margin-top:16px;color:var(--dck-gold-300);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.82rem}
+.dck-give-safe{padding-top:0}
+.dck-gsafe{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:clamp(20px,4vw,48px);align-items:start;background:#fff;border:1px solid var(--dck-line);border-left:5px solid var(--dck-gold);border-radius:var(--dck-radius);padding:clamp(22px,4vw,36px)}
+.dck-gsafe__head h2{margin:0}
+.dck-gsafe__list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:16px 24px}
+.dck-gsafe__list li{position:relative;padding-left:30px;color:var(--dck-gray);font-size:.94rem;line-height:1.6}
+.dck-gsafe__list li strong{display:block;color:var(--dck-blue-900)}
+.dck-gsafe__list li::before{content:"";position:absolute;left:0;top:3px;width:18px;height:18px;border-radius:50%;background:var(--dck-blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpath d='M6 12l4 4 8-8'/%3E%3C/svg%3E") center/12px no-repeat}
+.dck-give-faq .dck-faq-list{margin-top:28px}
+@media (max-width:900px){.dck-gv__panel{grid-template-columns:1fr}.dck-gsafe{grid-template-columns:1fr}}
+@media (max-width:600px){.dck-gv{margin-top:-32px}.dck-gv-row{flex-wrap:wrap}.dck-gv-row__k{flex-basis:100%}.dck-gsafe__list{grid-template-columns:1fr}.dck-gv__tab{flex:0 0 auto;padding:10px 14px;font-size:.88rem}}
