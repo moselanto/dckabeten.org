@@ -12,7 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <html <?php language_attributes(); ?>>
 <head>
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<meta name="theme-color" content="#0E1C4D">
 	<?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
@@ -72,12 +73,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 					'depth'          => 2,
 				)
 			);
+			if ( function_exists( 'dck_mobile_menu_extras' ) ) {
+				dck_mobile_menu_extras();
+			}
 			?>
 		</nav>
 
 		<div class="dck-header__cta">
 			<a class="dck-btn dck-btn--primary" href="<?php echo esc_url( dck_elite_page_url( 'prayer-requests' ) ); ?>"><?php esc_html_e( 'Prayer Request', 'dck-elite' ); ?></a>
-			<button class="dck-burger" aria-label="<?php esc_attr_e( 'Menu', 'dck-elite' ); ?>" aria-expanded="false" aria-controls="dck-nav">&#9776;</button>
+			<button class="dck-burger" type="button" aria-label="<?php esc_attr_e( 'Open menu', 'dck-elite' ); ?>" aria-expanded="false" aria-controls="dck-nav"><span class="dck-burger__bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
 		</div>
 	</div>
 </header>

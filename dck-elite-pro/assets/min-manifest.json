@@ -11,7 +11,7 @@
  "assets/js/home.js": 1610,
  "assets/js/i18n.js": 5394,
  "assets/js/live.js": 5012,
- "assets/js/main.js": 5203,
+ "assets/js/main.js": 7348,
  "assets/js/pages.js": 3019,
  "assets/js/pastors.js": 2136,
  "assets/js/prayer.js": 2324,
@@ -25,7 +25,7 @@
  "assets/js/translate.js": 1142,
  "assets/js/voice.js": 4463,
  "assets/js/week.js": 1569,
- "style.css": 172072,
+ "style.css": 180093,
  "assets/css/login.css": 7089,
  "assets/css/admin.css": 426
 }
