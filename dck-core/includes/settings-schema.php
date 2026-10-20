@@ -251,6 +251,91 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 			),
 		);
 
+		/* ---------- About & Pastors ---------- */
+		$ad    = function_exists( 'dck_about_defaults' ) ? dck_about_defaults() : array( 'values' => '', 'timeline' => '' );
+		$about = array(
+			array(
+				'title'  => __( 'About page', 'dck-core' ),
+				'fields' => array(
+					$f( 'dck_about_title', __( 'Page title', 'dck-core' ), 'text', 'About Our Church' ),
+					$f( 'dck_about_lead', __( 'Intro text', 'dck-core' ), 'textarea' ),
+					$f( 'dck_about_image', __( 'Story photo', 'dck-core' ), 'image' ),
+					$f( 'dck_about_story_heading', __( 'Story heading', 'dck-core' ), 'text', 'Founded in Faith, Growing in Grace' ),
+					$f( 'dck_about_story', __( 'Our story (blank line between paragraphs)', 'dck-core' ), 'textarea' ),
+					$f( 'dck_about_mission', __( 'Mission statement', 'dck-core' ), 'textarea', 'Reaching out and leading generations into a growing relationship with Christ through the Word of God.' ),
+					$f( 'dck_about_motto', __( 'Motto', 'dck-core' ), 'text', 'Small enough to know you, big enough to accommodate you.' ),
+					$f( 'dck_about_values', __( 'Core values (one per line: Title|Description)', 'dck-core' ), 'textarea', $ad['values'] ),
+					$f( 'dck_about_timeline', __( 'Milestones (one per line: Date|Title|Description)', 'dck-core' ), 'textarea', $ad['timeline'] ),
+				),
+			),
+			array(
+				'title'  => __( 'Pastors page', 'dck-core' ),
+				'fields' => array(
+					$f( 'dck_pastors_title', __( 'Page title', 'dck-core' ), 'text', 'Our Pastors' ),
+					$f( 'dck_pastors_lead', __( 'Intro text', 'dck-core' ), 'textarea' ),
+				),
+			),
+		);
+		if ( function_exists( 'dck_pastor_defs' ) ) {
+			foreach ( dck_pastor_defs() as $p ) {
+				$k       = $p['k'];
+				$about[] = array(
+					'title'  => $p['name'],
+					'fields' => array(
+						$f( 'dck_pastor_' . $k . '_name', __( 'Name', 'dck-core' ), 'text', $p['name'] ),
+						$f( 'dck_pastor_' . $k . '_role', __( 'Role badge', 'dck-core' ), 'text', $p['role'] ),
+						$f( 'dck_pastor_' . $k . '_title', __( 'Title line', 'dck-core' ), 'text', $p['title'] ),
+						$f( 'dck_pastor_' . $k . '_lead', __( 'Short introduction', 'dck-core' ), 'textarea', $p['lead'] ),
+						$f( 'dck_pastor_' . $k . '_bio', __( 'Full biography (leave blank to keep the current one)', 'dck-core' ), 'html' ),
+						$f( 'dck_pastor_' . $k . '_img', __( 'Photo', 'dck-core' ), 'image' ),
+						$f( 'dck_pastor_' . $k . '_hide', __( 'Hide this pastor (type yes)', 'dck-core' ), 'text' ),
+					),
+				);
+			}
+		}
+		$tabs['about'] = array(
+			'title'    => __( 'About & Pastors', 'dck-core' ),
+			'icon'     => 'dashicons-id',
+			'intro'    => __( 'Your story, values, milestones and pastor profiles.', 'dck-core' ),
+			'sections' => $about,
+		);
+
+		/* ---------- Services, Ministries, FAQ page text ---------- */
+		$sd = function_exists( 'dck_services_defaults' ) ? dck_services_defaults() : array( 'sunday_desc' => '', 'week' => '', 'expect' => '' );
+		$tabs['services2'] = array(
+			'title'    => __( 'Services & More', 'dck-core' ),
+			'icon'     => 'dashicons-calendar-alt',
+			'intro'    => __( 'Services page details, plus Ministries and FAQ page headings. Sunday times themselves are under Service Times.', 'dck-core' ),
+			'sections' => array(
+				array(
+					'title'  => __( 'Services page', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_services_title', __( 'Page title', 'dck-core' ), 'text', 'Our Services' ),
+						$f( 'dck_services_lead', __( 'Intro text', 'dck-core' ), 'textarea' ),
+						$f( 'dck_services_sunday_desc', __( 'Sunday descriptions (one per line, same order as Service Times)', 'dck-core' ), 'textarea', $sd['sunday_desc'] ),
+						$f( 'dck_services_week', __( 'Weekly schedule (one per line: Day|Time|Activity)', 'dck-core' ), 'textarea', $sd['week'] ),
+						$f( 'dck_services_week_lead', __( 'Weekly schedule intro', 'dck-core' ), 'textarea' ),
+						$f( 'dck_services_image', __( 'Weekly schedule photo', 'dck-core' ), 'image' ),
+						$f( 'dck_services_expect', __( 'What to expect (one per line: Title|Description)', 'dck-core' ), 'textarea', $sd['expect'] ),
+					),
+				),
+				array(
+					'title'  => __( 'Ministries page', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_ministries_title', __( 'Page title', 'dck-core' ), 'text', 'Our Ministries' ),
+						$f( 'dck_ministries_lead', __( 'Intro text', 'dck-core' ), 'textarea' ),
+					),
+				),
+				array(
+					'title'  => __( 'FAQ page', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_faq_title', __( 'Page title', 'dck-core' ), 'text', 'How can we help you?' ),
+						$f( 'dck_faq_lead', __( 'Intro text', 'dck-core' ), 'textarea' ),
+					),
+				),
+			),
+		);
+
 		/* ---------- Giving ---------- */
 		$g = function_exists( 'dck_give_defaults' ) ? dck_give_defaults() : array();
 		$gd = function ( $k ) use ( $g ) {
