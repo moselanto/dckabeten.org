@@ -41,16 +41,22 @@ dck_photo_hero(
 				<label class="dck-cform__field"><span><?php esc_html_e( 'Where do you live?', 'dck-elite' ); ?></span><input type="text" name="area" placeholder="<?php esc_attr_e( 'e.g. Uthiru, Kabete, Kangemi', 'dck-elite' ); ?>"></label>
 			</div>
 			<div class="dck-cform__row">
-				<label class="dck-cform__field"><span><?php esc_html_e( 'How did you hear about us?', 'dck-elite' ); ?></span>
-					<select name="heard">
-						<option value=""><?php esc_html_e( 'Choose one', 'dck-elite' ); ?></option>
-						<?php foreach ( array( 'Friend or family', 'Walked past the church', 'Facebook', 'YouTube', 'TikTok / Instagram', 'Google search', 'Event or outreach', 'Other' ) as $o ) : ?>
-							<option><?php echo esc_html( $o ); ?></option>
-						<?php endforeach; ?>
-					</select>
-				</label>
 				<label class="dck-cform__field"><span><?php esc_html_e( 'Date of your visit', 'dck-elite' ); ?></span><input type="date" name="visit_date" value="<?php echo esc_attr( current_time( 'Y-m-d' ) ); ?>"></label>
 			</div>
+			<fieldset class="dck-cform__field dck-heard">
+				<legend><?php esc_html_e( 'How did you hear about us?', 'dck-elite' ); ?> <small class="dck-opt"><?php esc_html_e( 'Optional - helps us reach more people', 'dck-elite' ); ?></small></legend>
+				<div class="dck-heard__grid" role="radiogroup">
+					<?php foreach ( dck_heard_options() as $hk => $hl ) : ?>
+						<label class="dck-heard__opt"><input type="radio" name="heard" value="<?php echo esc_attr( $hk ); ?>"><span><?php echo esc_html( $hl ); ?></span></label>
+					<?php endforeach; ?>
+				</div>
+				<input type="text" name="heard_detail" class="dck-heard__detail" maxlength="80" hidden aria-label="<?php esc_attr_e( 'More detail', 'dck-elite' ); ?>">
+			</fieldset>
+			<script>
+			document.addEventListener('change',function(e){var t=e.target;if(!t||t.name!=='heard'){return;}var d=document.querySelector('.dck-heard__detail');if(!d){return;}
+			var ph={invited:<?php echo wp_json_encode( __( 'Who invited you? (optional)', 'dck-elite' ) ); ?>,other:<?php echo wp_json_encode( __( 'Please tell us how', 'dck-elite' ) ); ?>,social:<?php echo wp_json_encode( __( 'Which one? e.g. Facebook, Instagram, TikTok', 'dck-elite' ) ); ?>};
+			if(ph[t.value]){d.hidden=false;d.placeholder=ph[t.value];d.value='';d.focus();}else{d.hidden=true;d.value='';}});
+			</script>
 			<div class="dck-cform__field">
 				<span><?php esc_html_e( "I'd like...", 'dck-elite' ); ?></span>
 				<div class="dck-checks">

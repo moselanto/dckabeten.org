@@ -108,29 +108,35 @@ if ( ! function_exists( 'dck_serve_targets' ) ) {
 	}
 }
 
-dck_rec_register(
-	'dck_volunteer',
-	array(
-		'label'          => __( 'Volunteers', 'dck-elite' ),
-		'single'         => __( 'Volunteer / member sign-up', 'dck-elite' ),
-		'icon'           => 'dashicons-groups',
-		'position'       => 28,
-		'csv'            => 'volunteers',
-		'statuses'       => array(
-			'new'       => array( __( 'New', 'dck-elite' ), 'amber' ),
-			'contacted' => array( __( 'Contacted', 'dck-elite' ), 'blue' ),
-			'active'    => array( __( 'Serving / joined', 'dck-elite' ), 'green' ),
-			'closed'    => array( __( 'Not now', 'dck-elite' ), 'gray' ),
-		),
-		'columns'        => array( 'target' => __( 'Wants to', 'dck-elite' ), 'phone' => __( 'Phone', 'dck-elite' ), 'avail' => __( 'Available', 'dck-elite' ) ),
-		'fields'         => array( 'target' => 'Ministry / fellowship', 'name' => 'Name', 'phone' => 'Phone', 'email' => 'Email', 'area' => 'Area', 'avail' => 'Available', 'note' => 'Note' ),
-		'filter'         => 'target',
-		'filter_label'   => __( 'All ministries & groups', 'dck-elite' ),
-		'filter_options' => 'dck_serve_targets',
-		'wa'             => function ( $id ) {
-			return array( get_post_meta( $id, '_dck_phone', true ), sprintf( 'Hello %s, thank you for signing up for %s at Deliverance Church Kabete N! We are excited to have you. Here are the next steps: ', get_post_meta( $id, '_dck_name', true ), get_post_meta( $id, '_dck_target', true ) ), __( 'Welcome', 'dck-elite' ) );
-		},
-	)
+add_action(
+	'init',
+	function () {
+	dck_rec_register(
+		'dck_volunteer',
+		array(
+			'label'          => __( 'Volunteers', 'dck-elite' ),
+			'single'         => __( 'Volunteer / member sign-up', 'dck-elite' ),
+			'icon'           => 'dashicons-groups',
+			'position'       => 28,
+			'csv'            => 'volunteers',
+			'statuses'       => array(
+				'new'       => array( __( 'New', 'dck-elite' ), 'amber' ),
+				'contacted' => array( __( 'Contacted', 'dck-elite' ), 'blue' ),
+				'active'    => array( __( 'Serving / joined', 'dck-elite' ), 'green' ),
+				'closed'    => array( __( 'Not now', 'dck-elite' ), 'gray' ),
+			),
+			'columns'        => array( 'target' => __( 'Wants to', 'dck-elite' ), 'phone' => __( 'Phone', 'dck-elite' ), 'avail' => __( 'Available', 'dck-elite' ) ),
+			'fields'         => array( 'target' => 'Ministry / fellowship', 'name' => 'Name', 'phone' => 'Phone', 'email' => 'Email', 'area' => 'Area', 'avail' => 'Available', 'note' => 'Note' ),
+			'filter'         => 'target',
+			'filter_label'   => __( 'All ministries & groups', 'dck-elite' ),
+			'filter_options' => 'dck_serve_targets',
+			'wa'             => function ( $id ) {
+				return array( get_post_meta( $id, '_dck_phone', true ), sprintf( 'Hello %s, thank you for signing up for %s at Deliverance Church Kabete N! We are excited to have you. Here are the next steps: ', get_post_meta( $id, '_dck_name', true ), get_post_meta( $id, '_dck_target', true ) ), __( 'Welcome', 'dck-elite' ) );
+			},
+		)
+	);
+	},
+	1
 );
 
 add_action(

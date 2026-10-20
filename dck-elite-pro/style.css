@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.28.0
+Version: 4.29.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -2613,3 +2613,19 @@ html.dck-focus .dck-tabbar{display:none!important}
 .dck-pay__tick{width:72px;height:72px;border-radius:50%;background:#16a34a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpath d='M6 12l4 4 8-8'/%3E%3C/svg%3E") center/36px no-repeat;animation:dckwUp .4s ease}
 .dck-pay__ref strong{font-family:ui-monospace,Menlo,monospace}
 @media (max-width:820px){.dck-pay__card{grid-template-columns:1fr}.dck-pay__steps{display:none}}
+
+/* v4.29 "How did you hear about us?" chooser */
+.dck-heard{border:0;padding:0;margin:0 0 6px;min-width:0}
+.dck-heard legend{font-weight:600;color:var(--dck-blue-900);margin-bottom:10px;padding:0}
+.dck-heard__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.dck-heard__opt{cursor:pointer;display:block}
+.dck-heard__opt input{position:absolute;opacity:0;pointer-events:none}
+.dck-heard__opt span{display:flex;align-items:center;gap:10px;height:100%;padding:11px 12px 11px 38px;border:1.5px solid var(--dck-line);border-radius:12px;background:#fff;font-size:.92rem;line-height:1.35;color:var(--dck-blue-900);position:relative;transition:border-color .15s,background .15s}
+.dck-heard__opt span::before{content:"";position:absolute;left:12px;top:50%;width:16px;height:16px;margin-top:-8px;border-radius:50%;border:2px solid #b8c0d6;background:#fff}
+.dck-heard__opt:hover span{border-color:var(--dck-blue-300,#8aa0dc)}
+.dck-heard__opt input:checked+span{border-color:var(--dck-blue);background:var(--dck-blue-100)}
+.dck-heard__opt input:checked+span::before{border-color:var(--dck-blue);background:var(--dck-blue);box-shadow:inset 0 0 0 3px #fff}
+.dck-heard__opt input:focus-visible+span{outline:3px solid var(--dck-gold);outline-offset:2px}
+.dck-heard__detail{margin-top:10px}
+.dck-heard__detail[hidden]{display:none}
+@media (max-width:520px){.dck-heard__grid{grid-template-columns:1fr}}

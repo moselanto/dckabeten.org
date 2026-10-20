@@ -37,42 +37,48 @@ if ( ! function_exists( 'dck_care_times' ) ) {
 	}
 }
 
-dck_rec_register(
-	'dck_care',
-	array(
-		'label'    => __( 'Pastoral Requests', 'dck-elite' ),
-		'single'   => __( 'Pastoral request', 'dck-elite' ),
-		'icon'     => 'dashicons-heart',
-		'position' => 26,
-		'csv'      => 'pastoral-requests',
-		'csv_skip' => array( 'details' ),
-		'statuses' => array(
-			'new'       => array( __( 'New', 'dck-elite' ), 'amber' ),
-			'scheduled' => array( __( 'Scheduled', 'dck-elite' ), 'blue' ),
-			'done'      => array( __( 'Done', 'dck-elite' ), 'green' ),
-			'closed'    => array( __( 'Closed', 'dck-elite' ), 'gray' ),
-		),
-		'columns'  => array( 'type' => __( 'Request', 'dck-elite' ), 'phone' => __( 'Phone', 'dck-elite' ), 'date' => __( 'Preferred day', 'dck-elite' ), 'slot' => __( 'Time', 'dck-elite' ) ),
-		'fields'   => array( 'type' => 'Request', 'name' => 'Name', 'phone' => 'Phone', 'email' => 'Email', 'date' => 'Preferred day', 'slot' => 'Preferred time', 'private' => 'Confidential', 'details' => 'Details' ),
-		'display'  => array(
-			'type'    => function ( $v ) { $t = dck_care_types(); return isset( $t[ $v ] ) ? $t[ $v ] : $v; },
-			'slot'    => function ( $v ) { $t = dck_care_times(); return isset( $t[ $v ] ) ? $t[ $v ] : $v; },
-			'private' => function ( $v ) { return $v ? 'Yes - pastors only' : 'No'; },
-			'date'    => function ( $v ) { return $v ? wp_date( 'D j M Y', strtotime( $v . ' 12:00' ) ) : ''; },
-		),
-		'filter'         => 'type',
-		'filter_label'   => __( 'All request types', 'dck-elite' ),
-		'filter_options' => 'dck_care_types',
-		'wa'             => function ( $id ) {
-			$t = dck_care_types();
-			$k = get_post_meta( $id, '_dck_type', true );
-			return array(
-				get_post_meta( $id, '_dck_phone', true ),
-				dck_ct_fill( dck_home_val( 'dck_care_wa_text', 'Hello {name}, thank you for reaching out to Deliverance Church Kabete N about {purpose}. A member of our pastoral team will confirm a time with you shortly. God bless you.' ), array( 'name' => get_post_meta( $id, '_dck_name', true ), 'purpose' => strtolower( isset( $t[ $k ] ) ? $t[ $k ] : $k ) ) ),
-				__( 'Reply', 'dck-elite' ),
-			);
-		},
-	)
+add_action(
+	'init',
+	function () {
+	dck_rec_register(
+		'dck_care',
+		array(
+			'label'    => __( 'Pastoral Requests', 'dck-elite' ),
+			'single'   => __( 'Pastoral request', 'dck-elite' ),
+			'icon'     => 'dashicons-heart',
+			'position' => 26,
+			'csv'      => 'pastoral-requests',
+			'csv_skip' => array( 'details' ),
+			'statuses' => array(
+				'new'       => array( __( 'New', 'dck-elite' ), 'amber' ),
+				'scheduled' => array( __( 'Scheduled', 'dck-elite' ), 'blue' ),
+				'done'      => array( __( 'Done', 'dck-elite' ), 'green' ),
+				'closed'    => array( __( 'Closed', 'dck-elite' ), 'gray' ),
+			),
+			'columns'  => array( 'type' => __( 'Request', 'dck-elite' ), 'phone' => __( 'Phone', 'dck-elite' ), 'date' => __( 'Preferred day', 'dck-elite' ), 'slot' => __( 'Time', 'dck-elite' ) ),
+			'fields'   => array( 'type' => 'Request', 'name' => 'Name', 'phone' => 'Phone', 'email' => 'Email', 'date' => 'Preferred day', 'slot' => 'Preferred time', 'private' => 'Confidential', 'details' => 'Details' ),
+			'display'  => array(
+				'type'    => function ( $v ) { $t = dck_care_types(); return isset( $t[ $v ] ) ? $t[ $v ] : $v; },
+				'slot'    => function ( $v ) { $t = dck_care_times(); return isset( $t[ $v ] ) ? $t[ $v ] : $v; },
+				'private' => function ( $v ) { return $v ? 'Yes - pastors only' : 'No'; },
+				'date'    => function ( $v ) { return $v ? wp_date( 'D j M Y', strtotime( $v . ' 12:00' ) ) : ''; },
+			),
+			'filter'         => 'type',
+			'filter_label'   => __( 'All request types', 'dck-elite' ),
+			'filter_options' => 'dck_care_types',
+			'wa'             => function ( $id ) {
+				$t = dck_care_types();
+				$k = get_post_meta( $id, '_dck_type', true );
+				return array(
+					get_post_meta( $id, '_dck_phone', true ),
+					dck_ct_fill( dck_home_val( 'dck_care_wa_text', 'Hello {name}, thank you for reaching out to Deliverance Church Kabete N about {purpose}. A member of our pastoral team will confirm a time with you shortly. God bless you.' ), array( 'name' => get_post_meta( $id, '_dck_name', true ), 'purpose' => strtolower( isset( $t[ $k ] ) ? $t[ $k ] : $k ) ) ),
+					__( 'Reply', 'dck-elite' ),
+				);
+			},
+		)
+	);
+	},
+	1
 );
 
 add_action(

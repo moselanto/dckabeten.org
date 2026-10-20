@@ -79,6 +79,29 @@ if ( ! function_exists( 'dck_visitor_meta' ) ) {
 	}
 }
 
+if ( ! function_exists( 'dck_heard_options' ) ) {
+	/* How people found us - broad, inclusive list (in-person, digital, diaspora, other). */
+	function dck_heard_options() {
+		return apply_filters(
+			'dck_heard_options',
+			array(
+				'invited'   => __( 'Invited by a friend, family or member', 'dck-elite' ),
+				'passed'    => __( 'Walked or drove past the church', 'dck-elite' ),
+				'online'    => __( 'Watched online (YouTube / live stream)', 'dck-elite' ),
+				'social'    => __( 'Social media', 'dck-elite' ),
+				'whatsapp'  => __( 'WhatsApp message or status', 'dck-elite' ),
+				'search'    => __( 'Google search or Google Maps', 'dck-elite' ),
+				'event'     => __( 'Church event, crusade or outreach', 'dck-elite' ),
+				'radio'     => __( 'Radio, TV or poster', 'dck-elite' ),
+				'moved'     => __( 'New to the area', 'dck-elite' ),
+				'visiting'  => __( 'Visiting Kenya / from abroad', 'dck-elite' ),
+				'returning' => __( 'Returning after some time away', 'dck-elite' ),
+				'other'     => __( 'Something else', 'dck-elite' ),
+			)
+		);
+	}
+}
+
 if ( ! function_exists( 'dck_visitor_wa_text' ) ) {
 	function dck_visitor_wa_text( $name ) {
 		return dck_ct_fill(
@@ -109,7 +132,13 @@ if ( ! function_exists( 'dck_visitor_rest' ) ) {
 		$phone  = dck_sec_cap( sanitize_text_field( isset( $p['phone'] ) ? $p['phone'] : '' ), 40 );
 		$email  = dck_sec_cap( sanitize_email( isset( $p['email'] ) ? $p['email'] : '' ), 190 );
 		$area   = dck_sec_cap( sanitize_text_field( isset( $p['area'] ) ? $p['area'] : '' ), 120 );
-		$heard  = dck_sec_cap( sanitize_text_field( isset( $p['heard'] ) ? $p['heard'] : '' ), 80 );
+		$hkey   = sanitize_key( isset( $p['heard'] ) ? $p['heard'] : '' );
+		$hopts  = dck_heard_options();
+		$heard  = isset( $hopts[ $hkey ] ) ? $hopts[ $hkey ] : '';
+		$hdet   = dck_sec_cap( sanitize_text_field( isset( $p['heard_detail'] ) ? $p['heard_detail'] : '' ), 80 );
+		if ( $heard && '' !== $hdet ) {
+			$heard .= ' - ' . $hdet;
+		}
 		$prayer = dck_sec_cap( sanitize_textarea_field( isset( $p['prayer'] ) ? $p['prayer'] : '' ), 2000 );
 		$date   = preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) ( isset( $p['visit_date'] ) ? $p['visit_date'] : '' ) ) ? $p['visit_date'] : current_time( 'Y-m-d' );
 		$ints   = array_values( array_intersect( array_map( 'sanitize_key', (array) ( isset( $p['interests'] ) ? $p['interests'] : array() ) ), array_keys( dck_visitor_interests() ) ) );
