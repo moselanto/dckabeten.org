@@ -32,14 +32,20 @@ $dck_hasmor  = $dck_total > 20;
 
 <section class="dck-page-hero">
 	<div class="dck-container dck-center">
-		<p class="dck-eyebrow" style="color:var(--dck-gold-300)"><?php echo esc_html( dck_home_val( 'dck_gallery_eyebrow', 'Moments of Grace' ) ); ?></p>
+		<p class="dck-eyebrow dck-eyebrow--light"><?php echo esc_html( dck_home_val( 'dck_gallery_eyebrow', 'Moments of Grace' ) ); ?></p>
 		<h1><?php echo esc_html( dck_home_val( 'dck_gallery_title', 'Our Photo Gallery' ) ); ?></h1>
-		<p class="dck-lead" style="color:#e7ecff;max-width:640px;margin:0 auto"><?php echo esc_html( dck_home_val( 'dck_gallery_lead', 'A window into the life of our church family — worship, fellowship, and the goodness of God.' ) ); ?></p>
+		<p class="dck-lead dck-center dck-lead--light"><?php echo esc_html( dck_home_val( 'dck_gallery_lead', 'A window into the life of our church family: worship, fellowship, and the goodness of God.' ) ); ?></p>
+		<?php if ( $dck_total ) : ?>
+			<div class="dck-legal-hero__meta">
+				<span class="dck-pill"><?php echo esc_html( sprintf( _n( '%d photo', '%d photos', $dck_total, 'dck-elite' ), $dck_total ) ); ?></span>
+				<span class="dck-pill"><?php esc_html_e( 'Tap any photo to view full size', 'dck-elite' ); ?></span>
+			</div>
+		<?php endif; ?>
 	</div>
 </section>
 
 <?php if ( ! empty( $dck_cats ) ) : ?>
-<div class="dck-gal-filter-wrap">
+<div class="dck-gal-filter-wrap dck-gal-filter-wrap--sticky">
 	<div class="dck-container">
 		<nav class="dck-gal-filter" role="tablist" aria-label="<?php esc_attr_e( 'Filter photos by category', 'dck-elite' ); ?>">
 			<button class="dck-gf-btn is-active" type="button" data-cat="" role="tab" aria-selected="true"><?php esc_html_e( 'All', 'dck-elite' ); ?></button>
@@ -139,5 +145,20 @@ $dck_hasmor  = $dck_total > 20;
 		</button>
 	</div><!-- .dck-lb__wrap -->
 </div><!-- #dck-lb -->
+
+<section class="dck-section" style="padding-top:0">
+	<div class="dck-container">
+		<div class="dck-sermons-cta dck-reveal">
+			<div>
+				<h3><?php esc_html_e( 'Be part of the next photo', 'dck-elite' ); ?></h3>
+				<p><?php esc_html_e( 'Join us this Sunday and experience the joy for yourself. Prefer not to be photographed? Let us know.', 'dck-elite' ); ?></p>
+			</div>
+			<div class="dck-sermons-cta__btns">
+				<a class="dck-btn dck-btn--gold" href="<?php echo esc_url( dck_elite_page_url( 'services' ) ); ?>"><?php esc_html_e( 'Service Times', 'dck-elite' ); ?></a>
+				<a class="dck-btn dck-btn--ghost" href="<?php echo esc_url( dck_elite_page_url( 'terms' ) . '#dck-optout' ); ?>"><?php esc_html_e( 'Photo preference', 'dck-elite' ); ?></a>
+			</div>
+		</div>
+	</div>
+</section>
 
 <?php get_footer(); ?>

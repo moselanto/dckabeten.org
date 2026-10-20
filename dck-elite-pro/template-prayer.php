@@ -7,116 +7,98 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+wp_enqueue_script( 'dck-prayer', get_template_directory_uri() . '/assets/js/prayer.js', array(), DCK_ELITE_VERSION, true );
+wp_localize_script(
+	'dck-prayer',
+	'DCK_PRAYER',
+	array(
+		'phone'    => dck_phone_display(),
+		'sending'  => __( 'Sending...', 'dck-elite' ),
+		'thanks'   => __( 'Thank you. Our prayer team will be praying with you.', 'dck-elite' ),
+		'errFill'  => __( 'Please fill in your name, phone, email and prayer request.', 'dck-elite' ),
+		'errEmail' => __( 'Please enter a valid email address so we can reach you.', 'dck-elite' ),
+		'errNet'   => __( 'Something went wrong. Please call us on', 'dck-elite' ),
+	)
+);
 get_header();
-$dck_ep    = esc_url( rest_url( 'dck/v1/prayer' ) );
-$dck_nonce = wp_create_nonce( 'wp_rest' );
-$dck_tel   = function_exists( 'dck_home_tel' ) ? dck_home_tel() : '+254110304521';
+$dck_wa     = function_exists( 'dck_prayer_whatsapp' ) ? dck_prayer_whatsapp() : '';
+$dck_topics = array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', (string) dck_home_val( 'dck_prayer_topics', "Healing\nFamily\nMarriage\nFinances and work\nSalvation\nGuidance\nThanksgiving\nOther" ) ) ) );
 ?>
 
 <section class="dck-page-hero">
 	<div class="dck-container">
-		<p class="dck-eyebrow" style="color:var(--dck-gold-300)"><?php esc_html_e( 'We Would Love To Pray With You', 'dck-elite' ); ?></p>
-		<h1><?php esc_html_e( 'Prayer Request', 'dck-elite' ); ?></h1>
-		<p class="dck-lead dck-center" style="color:#e7ecff"><?php esc_html_e( 'Whatever you are facing, you do not have to carry it alone. Share your request and our prayer team will stand with you in prayer.', 'dck-elite' ); ?></p>
+		<p class="dck-eyebrow dck-eyebrow--light"><?php esc_html_e( 'We Would Love To Pray With You', 'dck-elite' ); ?></p>
+		<h1><?php echo esc_html( dck_home_val( 'dck_prayer_title', __( 'Prayer Request', 'dck-elite' ) ) ); ?></h1>
+		<p class="dck-lead dck-center dck-lead--light"><?php echo esc_html( dck_home_val( 'dck_prayer_lead', __( 'Whatever you are facing, you do not have to carry it alone. Share your request and our prayer team will stand with you in prayer.', 'dck-elite' ) ) ); ?></p>
+		<div class="dck-legal-hero__meta">
+			<span class="dck-pill"><?php esc_html_e( 'Received by real people', 'dck-elite' ); ?></span>
+			<span class="dck-pill"><?php esc_html_e( 'Confidential option', 'dck-elite' ); ?></span>
+			<span class="dck-pill"><?php esc_html_e( 'From anywhere in the world', 'dck-elite' ); ?></span>
+		</div>
 	</div>
 </section>
 
-<section class="dck-section">
-	<div class="dck-container dck-prayer">
-
-		<div class="dck-prayer__form-wrap dck-reveal">
-			<form id="dck-prayer-form" class="dck-prayer__form" data-endpoint="<?php echo $dck_ep; ?>" data-nonce="<?php echo esc_attr( $dck_nonce ); ?>" novalidate>
-				<div class="dck-prayer__row">
-					<label class="dck-prayer__field">
-						<span><?php esc_html_e( 'Your name', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
-						<input type="text" name="name" autocomplete="name" required placeholder="<?php esc_attr_e( 'Full name', 'dck-elite' ); ?>">
-					</label>
-					<label class="dck-prayer__field">
-						<span><?php esc_html_e( 'Phone number', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
-						<input type="tel" name="phone" autocomplete="tel" required placeholder="<?php esc_attr_e( 'e.g. 0712 345 678', 'dck-elite' ); ?>">
-					</label>
+<section class="dck-section dck-prayer2">
+	<div class="dck-container dck-prayer2__grid">
+		<div class="dck-formcard dck-reveal">
+			<p class="dck-eyebrow"><?php esc_html_e( 'Share Your Request', 'dck-elite' ); ?></p>
+			<h2><?php esc_html_e( 'How Can We Pray For You?', 'dck-elite' ); ?></h2>
+			<form id="dck-prayer-form" class="dck-cform" data-endpoint="<?php echo esc_url( rest_url( 'dck/v1/prayer' ) ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>" novalidate>
+				<?php if ( $dck_topics ) : ?>
+					<div class="dck-cform__field">
+						<span><?php esc_html_e( 'What is this about?', 'dck-elite' ); ?> <small class="dck-opt"><?php esc_html_e( 'Optional', 'dck-elite' ); ?></small></span>
+						<div class="dck-bible-chips dck-ptopics" role="group">
+							<?php foreach ( $dck_topics as $t ) : ?>
+								<button type="button" class="dck-chip" data-topic="<?php echo esc_attr( $t ); ?>" aria-pressed="false"><?php echo esc_html( $t ); ?></button>
+							<?php endforeach; ?>
+						</div>
+					</div>
+				<?php endif; ?>
+				<div class="dck-cform__row">
+					<label class="dck-cform__field"><span><?php esc_html_e( 'Your name', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="text" name="name" autocomplete="name" required></label>
+					<label class="dck-cform__field"><span><?php esc_html_e( 'Phone number', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="tel" name="phone" autocomplete="tel" required placeholder="<?php esc_attr_e( 'Include country code, e.g. +254', 'dck-elite' ); ?>"></label>
 				</div>
-				<label class="dck-prayer__field">
-					<span><?php esc_html_e( 'Email', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
-					<input type="email" name="email" autocomplete="email" required placeholder="<?php esc_attr_e( 'So our pastors can reach you', 'dck-elite' ); ?>">
-				</label>
-				<label class="dck-prayer__field">
-					<span><?php esc_html_e( 'How can we pray for you?', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
-					<textarea name="request" rows="6" required placeholder="<?php esc_attr_e( 'Share your prayer request here...', 'dck-elite' ); ?>"></textarea>
-				</label>
-				<label class="dck-prayer__check">
+				<label class="dck-cform__field"><span><?php esc_html_e( 'Email', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="email" name="email" autocomplete="email" required placeholder="<?php esc_attr_e( 'So our pastors can reach you', 'dck-elite' ); ?>"></label>
+				<label class="dck-cform__field"><span><?php esc_html_e( 'Your prayer request', 'dck-elite' ); ?> <em class="dck-req">*</em></span><textarea name="request" rows="6" required maxlength="5000" placeholder="<?php esc_attr_e( 'Share as much or as little as you like...', 'dck-elite' ); ?>"></textarea></label>
+				<label class="dck-switch">
 					<input type="checkbox" name="private" value="1">
-					<span><?php esc_html_e( 'Keep this request confidential (pastors only).', 'dck-elite' ); ?></span>
+					<span class="dck-switch__ui" aria-hidden="true"></span>
+					<span class="dck-switch__txt"><strong><?php esc_html_e( 'Keep this confidential', 'dck-elite' ); ?></strong><?php esc_html_e( 'Only our pastors will see it.', 'dck-elite' ); ?></span>
 				</label>
 				<div class="dck-hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-				<button type="submit" class="dck-btn dck-btn--primary"><?php esc_html_e( 'Send Prayer Request', 'dck-elite' ); ?></button>
-				<p id="dck-prayer-status" class="dck-prayer__status" role="status" aria-live="polite"></p>
+				<p class="dck-form-privacy"><?php printf( esc_html__( 'Your details are used only to pray for and follow up with you. See our %s.', 'dck-elite' ), '<a href="' . esc_url( dck_elite_page_url( 'terms' ) ) . '">' . esc_html__( 'Privacy Notice', 'dck-elite' ) . '</a>' ); ?></p>
+				<button type="submit" class="dck-btn dck-btn--primary dck-btn--block"><?php esc_html_e( 'Send Prayer Request', 'dck-elite' ); ?></button>
+				<div id="dck-prayer-status" class="dck-prayer__status" role="status" aria-live="polite"></div>
 			</form>
 		</div>
 
-		<aside class="dck-prayer__aside dck-reveal">
-			<div class="dck-prayer__verse">
-				<p class="dck-prayer__verse-text">&ldquo;<?php esc_html_e( 'Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God.', 'dck-elite' ); ?>&rdquo;</p>
-				<span class="dck-prayer__verse-ref"><?php esc_html_e( 'Philippians 4:6', 'dck-elite' ); ?></span>
+		<aside class="dck-prayer2__aside">
+			<figure class="dck-verse dck-reveal">
+				<blockquote><?php echo esc_html( dck_home_val( 'dck_prayer_verse', __( 'Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God.', 'dck-elite' ) ) ); ?></blockquote>
+				<figcaption><?php echo esc_html( dck_home_val( 'dck_prayer_verse_ref', 'Philippians 4:6' ) ); ?></figcaption>
+			</figure>
+			<div class="dck-psteps dck-reveal">
+				<h3><?php esc_html_e( 'What happens next', 'dck-elite' ); ?></h3>
+				<ol>
+					<li><strong><?php esc_html_e( 'Received', 'dck-elite' ); ?></strong> <?php esc_html_e( 'Your request reaches our prayer team, or our pastors only if you marked it confidential.', 'dck-elite' ); ?></li>
+					<li><strong><?php esc_html_e( 'Prayed for', 'dck-elite' ); ?></strong> <?php esc_html_e( 'We lift it up in prayer, including at our intercessory gatherings.', 'dck-elite' ); ?></li>
+					<li><strong><?php esc_html_e( 'Followed up', 'dck-elite' ); ?></strong> <?php esc_html_e( 'Where helpful, a pastor may reach out to encourage you.', 'dck-elite' ); ?></li>
+				</ol>
 			</div>
-			<h3><?php esc_html_e( 'You Are Not Alone', 'dck-elite' ); ?></h3>
-			<p><?php esc_html_e( 'Every request is received with care and lifted up by our prayer team. If you prefer, tick the confidential box and it will be seen by our pastors only. Your details are kept private and used only to follow up with you.', 'dck-elite' ); ?></p>
-			<p class="dck-prayer__call"><?php esc_html_e( 'Need prayer right now?', 'dck-elite' ); ?></p>
-			<a class="dck-btn dck-btn--gold" href="tel:<?php echo esc_attr( $dck_tel ); ?>"><?php esc_html_e( 'Call Our Prayer Line', 'dck-elite' ); ?></a>
+			<div class="dck-purgent dck-reveal">
+				<h3><?php esc_html_e( 'Need prayer right now?', 'dck-elite' ); ?></h3>
+				<p><?php esc_html_e( 'Talk to someone today.', 'dck-elite' ); ?></p>
+				<div class="dck-faq2__btns">
+					<a class="dck-btn dck-btn--gold dck-btn--block" href="tel:<?php echo esc_attr( dck_home_tel() ); ?>"><?php echo esc_html( sprintf( __( 'Call %s', 'dck-elite' ), dck_phone_display() ) ); ?></a>
+					<?php if ( $dck_wa ) : ?>
+						<a class="dck-btn dck-btn--ghost dck-btn--block" href="https://wa.me/<?php echo esc_attr( $dck_wa ); ?>?text=<?php echo rawurlencode( __( 'Hello, I would like someone to pray with me.', 'dck-elite' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'WhatsApp a pastor', 'dck-elite' ); ?></a>
+					<?php endif; ?>
+				</div>
+				<p class="dck-purgent__note"><?php esc_html_e( 'If you or someone else is in danger, please contact your local emergency services immediately.', 'dck-elite' ); ?></p>
+			</div>
 		</aside>
-
 	</div>
 </section>
-
-<script>
-(function(){
-	var f = document.getElementById("dck-prayer-form");
-	if (!f) { return; }
-	var T0 = Date.now();
-	var status = document.getElementById("dck-prayer-status");
-	function val(n){ return f.elements[n] ? f.elements[n].value.trim() : ""; }
-	f.addEventListener("submit", function(e){
-		e.preventDefault();
-		var btn = f.querySelector("button[type=submit]");
-		var name = val("name"), phone = val("phone"), email = val("email"), req = val("request");
-		if (name === "" || phone === "" || email === "" || req === "") {
-			status.textContent = "Please fill in your name, phone, email, and prayer request.";
-			status.className = "dck-prayer__status is-err";
-			return;
-		}
-		if (email.indexOf("@") === -1 || email.indexOf(".") === -1) {
-			status.textContent = "Please enter a valid email address so we can reach you.";
-			status.className = "dck-prayer__status is-err";
-			return;
-		}
-		var data = {
-			name: name, phone: phone, email: email, request: req,
-			private: f.elements["private"] ? f.elements["private"].checked : false,
-			website: f.elements["website"] ? f.elements["website"].value : "",
-			elapsed: Date.now() - T0
-		};
-		var prev = btn.textContent;
-		btn.disabled = true;
-		btn.textContent = "Sending...";
-		fetch(f.getAttribute("data-endpoint"), {
-			method: "POST",
-			headers: { "Content-Type": "application/json", "X-WP-Nonce": f.getAttribute("data-nonce") },
-			body: JSON.stringify(data)
-		}).then(function(r){ return r.json(); }).then(function(res){
-			status.textContent = (res && res.message) ? res.message : "Thank you. Our prayer team will be praying with you.";
-			status.className = "dck-prayer__status " + (res && res.ok ? "is-ok" : "is-err");
-			if (res && res.ok) { f.reset(); }
-			btn.disabled = false;
-			btn.textContent = prev;
-		}).catch(function(){
-			status.textContent = "Something went wrong. Please call us on <?php echo esc_js( dck_phone_display() ); ?>.";
-			status.className = "dck-prayer__status is-err";
-			btn.disabled = false;
-			btn.textContent = prev;
-		});
-	});
-})();
-</script>
 
 <?php
 get_footer();

@@ -51,9 +51,14 @@ $upcoming = new WP_Query( array(
 
 <section class="dck-page-hero">
 	<div class="dck-container">
-		<p class="dck-eyebrow" style="color:var(--dck-gold-300)"><?php esc_html_e( 'What Is Happening', 'dck-elite' ); ?></p>
-		<h1><?php esc_html_e( 'Events &amp; Gatherings', 'dck-elite' ); ?></h1>
-		<p class="dck-lead dck-center" style="color:#e7ecff"><?php esc_html_e( 'From our weekly services to Keshas, conferences and outreaches - there is always a place for you at DCK.', 'dck-elite' ); ?></p>
+		<p class="dck-eyebrow dck-eyebrow--light"><?php esc_html_e( 'What Is Happening', 'dck-elite' ); ?></p>
+		<h1><?php echo esc_html( dck_home_val( 'dck_events_title', __( 'Events & Gatherings', 'dck-elite' ) ) ); ?></h1>
+		<p class="dck-lead dck-center dck-lead--light"><?php echo esc_html( dck_home_val( 'dck_events_lead', __( 'From our weekly services to Keshas, conferences and outreaches, there is always a place for you at DCK.', 'dck-elite' ) ) ); ?></p>
+		<div class="dck-legal-hero__meta">
+			<a class="dck-pill dck-pill--link" href="#upcoming"><?php esc_html_e( 'Upcoming', 'dck-elite' ); ?></a>
+			<a class="dck-pill dck-pill--link" href="#weekly"><?php esc_html_e( 'Weekly rhythm', 'dck-elite' ); ?></a>
+			<span class="dck-pill"><?php esc_html_e( 'Times in EAT (UTC+3)', 'dck-elite' ); ?></span>
+		</div>
 	</div>
 </section>
 
@@ -81,7 +86,7 @@ $upcoming = new WP_Query( array(
 <?php endif; ?>
 
 <?php if ( $recurring->have_posts() ) : ?>
-<section class="dck-section dck-rhythm">
+<section class="dck-section dck-rhythm" id="weekly">
 	<div class="dck-container">
 		<div class="dck-center">
 			<p class="dck-eyebrow"><?php esc_html_e( 'Our Weekly Rhythm', 'dck-elite' ); ?></p>
@@ -139,7 +144,7 @@ $upcoming = new WP_Query( array(
 </section>
 <?php endif; ?>
 
-<section class="dck-section" style="background:var(--dck-warm)">
+<section class="dck-section dck-upcoming" id="upcoming">
 	<div class="dck-container">
 		<div class="dck-center">
 			<p class="dck-eyebrow"><?php esc_html_e( 'On The Calendar', 'dck-elite' ); ?></p>
@@ -175,7 +180,35 @@ $upcoming = new WP_Query( array(
 								<?php if ( $loc ) : ?><span><?php echo esc_html( $loc ); ?></span><?php endif; ?>
 							</p>
 							<?php if ( has_excerpt() ) : ?><p class="dck-event__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 30 ) ); ?></p><?php endif; ?>
-							<a class="dck-event__link" href="<?php the_permalink(); ?>"><?php esc_html_e( 'Details', 'dck-elite' ); ?></a>
+							<div class="dck-event__actions">
+								<a class="dck-event__link" href="<?php the_permalink(); ?>"><?php esc_html_e( 'Details', 'dck-elite' ); ?></a>
+								<?php
+								$dck_ymd = str_replace( '-', '', (string) get_post_meta( $pid, '_dck_event_date', true ) );
+								if ( preg_match( '/^\d{8}$/', $dck_ymd ) ) :
+									$dck_s = preg_replace( '/[^0-9]/', '', (string) get_post_meta( $pid, '_dck_event_start', true ) );
+									$dck_e = preg_replace( '/[^0-9]/', '', (string) get_post_meta( $pid, '_dck_event_end', true ) );
+									if ( 4 === strlen( $dck_s ) ) {
+										$dck_dates = $dck_ymd . 'T' . $dck_s . '00/' . $dck_ymd . 'T' . ( 4 === strlen( $dck_e ) ? $dck_e : $dck_s ) . '00';
+									} else {
+										$dck_next  = gmdate( 'Ymd', strtotime( $dck_ymd . ' +1 day' ) );
+										$dck_dates = $dck_ymd . '/' . $dck_next;
+									}
+									$dck_gcal = add_query_arg(
+										array(
+											'action'   => 'TEMPLATE',
+											'text'     => rawurlencode( get_the_title() ),
+											'dates'    => $dck_dates,
+											'ctz'      => 'Africa/Nairobi',
+											'location' => rawurlencode( $loc ? $loc : dck_church_address() ),
+											'details'  => rawurlencode( get_permalink() ),
+										),
+										'https://calendar.google.com/calendar/render'
+									);
+									?>
+									<a class="dck-tool" href="<?php echo esc_url( $dck_gcal ); ?>" target="_blank" rel="noopener"><?php esc_html_e( '+ Add to calendar', 'dck-elite' ); ?></a>
+								<?php endif; ?>
+								<a class="dck-tool" target="_blank" rel="noopener" href="https://api.whatsapp.com/send?text=<?php echo rawurlencode( get_the_title() . ' - ' . get_permalink() ); ?>"><?php esc_html_e( 'Share', 'dck-elite' ); ?></a>
+							</div>
 						</div>
 					</article>
 					<?php
@@ -184,7 +217,7 @@ $upcoming = new WP_Query( array(
 				?>
 			</div>
 		<?php else : ?>
-			<p class="dck-lead dck-center" style="margin-top:26px"><?php esc_html_e( 'No special events are scheduled right now - but our weekly services above are always open to you. Watch this space for conferences and Keshas.', 'dck-elite' ); ?></p>
+			<div class="dck-empty" style="margin-top:26px"><h3><?php esc_html_e( 'No special events scheduled yet', 'dck-elite' ); ?></h3><p><?php esc_html_e( 'Our weekly services are always open to you. Watch this space for conferences and Keshas.', 'dck-elite' ); ?></p></div>
 			<div class="dck-hero__cta" style="justify-content:center;margin-top:18px">
 				<a class="dck-btn dck-btn--primary" href="<?php echo esc_url( dck_elite_page_url( 'services' ) ); ?>"><?php esc_html_e( 'See Service Times', 'dck-elite' ); ?></a>
 				<a class="dck-btn dck-btn--outline" href="<?php echo esc_url( dck_elite_page_url( 'live' ) ); ?>"><?php esc_html_e( 'Watch Live', 'dck-elite' ); ?></a>

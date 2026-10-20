@@ -86,3 +86,31 @@
   tick();
   setInterval(tick, 1000);
 })();
+
+/* Church local time (any page with .dck-localtime, except where a page script already runs). */
+(function () {
+  'use strict';
+  if (window.DCK_CONTACT) { return; }
+  var lt = document.querySelector('.dck-localtime');
+  if (!lt || !window.Intl) { return; }
+  try {
+    var fmt = new Intl.DateTimeFormat(undefined, { timeZone: lt.getAttribute('data-tz'), weekday: 'short', hour: 'numeric', minute: '2-digit' });
+    var out = lt.querySelector('strong');
+    var tick = function () { out.textContent = fmt.format(new Date()); };
+    tick(); setInterval(tick, 30000); lt.hidden = false;
+  } catch (e) {}
+})();
+
+/* Generic copy-link buttons outside the Give page. */
+(function () {
+  'use strict';
+  if (window.DCK_GIVE) { return; }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.dck-copy');
+    if (!b || !navigator.clipboard) { return; }
+    var o = b.textContent;
+    navigator.clipboard.writeText(b.getAttribute('data-copy') || '').then(function () {
+      b.textContent = '\u2713'; setTimeout(function () { b.textContent = o; }, 1400);
+    });
+  });
+})();

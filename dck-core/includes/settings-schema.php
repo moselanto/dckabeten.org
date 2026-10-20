@@ -327,6 +327,28 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 					),
 				),
 				array(
+					'title'  => __( 'Prayer page', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_prayer_title', __( 'Page title', 'dck-core' ), 'text', 'Prayer Request' ),
+						$f( 'dck_prayer_lead', __( 'Intro text', 'dck-core' ), 'textarea' ),
+						$f( 'dck_prayer_topics', __( 'Prayer topics (one per line)', 'dck-core' ), 'textarea', "Healing\nFamily\nMarriage\nFinances and work\nSalvation\nGuidance\nThanksgiving\nOther" ),
+						$f( 'dck_prayer_verse', __( 'Scripture quote', 'dck-core' ), 'textarea' ),
+						$f( 'dck_prayer_verse_ref', __( 'Scripture reference', 'dck-core' ), 'text', 'Philippians 4:6' ),
+					),
+				),
+				array(
+					'title'  => __( 'Watch Live, Events and Blog pages', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_live_title', __( 'Watch Live title', 'dck-core' ), 'text', 'Watch Live' ),
+						$f( 'dck_live_lead', __( 'Watch Live intro', 'dck-core' ), 'textarea' ),
+						$f( 'dck_live_default_video', __( 'Fallback YouTube video ID', 'dck-core' ), 'text', 'RKItJ4L4sSY', __( 'Shown when no channel ID or live link is set (Live Stream tab).', 'dck-core' ) ),
+						$f( 'dck_events_title', __( 'Events title', 'dck-core' ), 'text', 'Events & Gatherings' ),
+						$f( 'dck_events_lead', __( 'Events intro', 'dck-core' ), 'textarea' ),
+						$f( 'dck_blog_title', __( 'Blog title', 'dck-core' ), 'text' ),
+						$f( 'dck_blog_lead', __( 'Blog intro', 'dck-core' ), 'textarea' ),
+					),
+				),
+				array(
 					'title'  => __( 'FAQ page', 'dck-core' ),
 					'fields' => array(
 						$f( 'dck_faq_title', __( 'Page title', 'dck-core' ), 'text', 'How can we help you?' ),
