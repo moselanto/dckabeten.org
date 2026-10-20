@@ -151,6 +151,29 @@ if ( ! function_exists( 'dck_ov_render' ) ) {
 				</section>
 
 				<section class="dck-ov__panel">
+					<h2><?php esc_html_e( 'Setup check', 'dck-elite' ); ?></h2>
+					<ul class="dck-ov__check">
+						<?php
+						$smtp = defined( 'WPMS_PLUGIN_VER' ) || class_exists( 'WPMailSMTP\\Core' ) || class_exists( 'FluentMail\\App\\App' ) || function_exists( 'post_smtp_init' );
+						$pg   = function ( $s ) { return (bool) get_page_by_path( $s ); };
+						foreach ( array(
+							array( is_ssl(), __( 'Site uses HTTPS (needed for the app and secure forms)', 'dck-elite' ), '' ),
+							array( (bool) dck_prayer_whatsapp(), __( 'WhatsApp number set', 'dck-elite' ), admin_url( 'admin.php?page=dck-church&tab=church' ) ),
+							array( $smtp, __( 'Email sending plugin active (WP Mail SMTP or similar)', 'dck-elite' ), admin_url( 'plugin-install.php?s=wp+mail+smtp&tab=search&type=term' ) ),
+							array( $pg( 'new-here' ) && $pg( 'pastoral-care' ) && $pg( 'fellowships' ) && $pg( 'serve' ), __( 'Tool pages exist (I\'m New, Pastoral Care, Fellowships, Serve)', 'dck-elite' ), admin_url( 'edit.php?post_type=page' ) ),
+							array( (bool) wp_count_posts( 'dck_fellowship' )->publish, __( 'At least one fellowship group published', 'dck-elite' ), admin_url( 'post-new.php?post_type=dck_fellowship' ) ),
+							array( (bool) wp_next_scheduled( 'dck_rsvp_reminders' ), __( 'Event reminder schedule running', 'dck-elite' ), '' ),
+							array( class_exists( 'Two_Factor_Core' ), __( 'Two-factor login active', 'dck-elite' ), admin_url( 'plugin-install.php?s=two-factor&tab=search&type=term' ) ),
+						) as $ck ) {
+							echo '<li class="' . ( $ck[0] ? 'is-ok' : 'is-todo' ) . '"><span>' . ( $ck[0] ? '&#10003;' : '!' ) . '</span>' . esc_html( $ck[1] ) . ( ! $ck[0] && $ck[2] ? ' <a href="' . esc_url( $ck[2] ) . '">' . esc_html__( 'Fix', 'dck-elite' ) . '</a>' : '' ) . '</li>';
+						}
+						?>
+					</ul>
+					<p><a class="button" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dck_ov_testmail' ), 'dck_ov_testmail' ) ); ?>"><?php esc_html_e( 'Send a test email to each team', 'dck-elite' ); ?></a>
+					<?php if ( isset( $_GET['dck_mail'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification ?><br><strong><?php echo esc_html( sanitize_text_field( wp_unslash( $_GET['dck_mail'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification ?></strong><?php endif; ?></p>
+				</section>
+
+				<section class="dck-ov__panel">
 					<h2><?php esc_html_e( 'Quick links', 'dck-elite' ); ?></h2>
 					<div class="dck-ov__links">
 						<?php
@@ -193,6 +216,11 @@ if ( ! function_exists( 'dck_ov_render' ) ) {
 		.dck-ov__stats li{padding:12px;background:#f6f7fb;border-radius:10px;display:flex;flex-direction:column}
 		.dck-ov__stats strong{font-size:24px;color:#0E1C4D}
 		.dck-ov__links .button{margin:0 6px 8px 0}
+		.dck-ov__check{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:6px}
+		.dck-ov__check li{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:#f6f7fb}
+		.dck-ov__check li span{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;font-weight:700;color:#fff;flex:0 0 auto}
+		.dck-ov__check .is-ok span{background:#1f8f4e}.dck-ov__check .is-todo span{background:#C9A227}
+		.dck-ov__check a{margin-left:auto}
 		</style>
 		<?php
 	}
@@ -217,5 +245,26 @@ add_action(
 				echo '</ul><p><a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=dck-overview' ) ) . '">' . esc_html__( 'Open overview', 'dck-elite' ) . '</a></p>';
 			}
 		);
+	}
+);
+
+/* Send one test email per team address so you can confirm delivery. */
+add_action(
+	'admin_post_dck_ov_testmail',
+	function () {
+		check_admin_referer( 'dck_ov_testmail' );
+		if ( ! current_user_can( 'edit_pages' ) ) {
+			wp_die( esc_html__( 'Not allowed.', 'dck-elite' ) );
+		}
+		$to = array_unique( array_filter( array_map( 'dck_ct_email_to', array( 'dck_give_finance_email', 'dck_welcome_email', 'dck_care_email', 'dck_volunteer_email' ) ) ) );
+		$ok = 0;
+		foreach ( $to as $addr ) {
+			if ( wp_mail( $addr, __( 'Test email from the church website', 'dck-elite' ), __( 'If you can read this, notifications from the church tools will reach this inbox. Check your spam folder if other emails are missing.', 'dck-elite' ) ) ) {
+				++$ok;
+			}
+		}
+		$msg = sprintf( /* translators: 1: sent, 2: total */ __( 'Test emails sent: %1$d of %2$d (%3$s). Check those inboxes and spam.', 'dck-elite' ), $ok, count( $to ), implode( ', ', $to ) );
+		wp_safe_redirect( add_query_arg( 'dck_mail', rawurlencode( $msg ), admin_url( 'admin.php?page=dck-overview' ) ) );
+		exit;
 	}
 );

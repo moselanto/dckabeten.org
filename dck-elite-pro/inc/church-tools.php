@@ -16,12 +16,14 @@ if ( ! function_exists( 'dck_ct_wa_number' ) ) {
 		if ( '' === $d ) {
 			return '';
 		}
+		$cc = preg_replace( '/\D+/', '', (string) get_theme_mod( 'dck_ct_country_code', '254' ) );
+		$cc = $cc ? $cc : '254';
 		if ( 0 === strpos( $d, '00' ) ) {
 			$d = substr( $d, 2 ); // International 00 prefix.
-		} elseif ( 0 === strpos( $d, '0' ) && 10 === strlen( $d ) ) {
-			$d = '254' . substr( $d, 1 );
-		} elseif ( 9 === strlen( $d ) && in_array( $d[0], array( '7', '1' ), true ) ) {
-			$d = '254' . $d;
+		} elseif ( 0 === strpos( $d, '0' ) && strlen( $d ) >= 9 && strlen( $d ) <= 11 ) {
+			$d = $cc . substr( $d, 1 ); // Local trunk 0 -> country code.
+		} elseif ( 9 === strlen( $d ) && '254' === $cc && in_array( $d[0], array( '7', '1' ), true ) ) {
+			$d = $cc . $d;
 		}
 		return ( strlen( $d ) >= 10 && strlen( $d ) <= 15 ) ? $d : '';
 	}

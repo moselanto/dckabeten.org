@@ -413,12 +413,12 @@ if ( ! function_exists( 'dck_gift_form' ) ) {
 					</div>
 					<div class="dck-cform__field"><span><?php esc_html_e( 'Amount', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
 						<div class="dck-amountrow">
-							<select name="currency" class="dck-gift__cur" aria-label="<?php esc_attr_e( 'Currency', 'dck-elite' ); ?>" disabled>
+							<select name="currency" class="dck-gift__cur" data-default="<?php echo esc_attr( strtoupper( preg_replace( '/[^A-Za-z]/', '', (string) dck_home_val( 'dck_ct_currency', 'USD' ) ) ) ); ?>" aria-label="<?php esc_attr_e( 'Currency', 'dck-elite' ); ?>" disabled>
 								<?php foreach ( dck_ct_currencies() as $ck => $cl ) : ?><option value="<?php echo esc_attr( $ck ); ?>" title="<?php echo esc_attr( $cl ); ?>"><?php echo esc_html( $ck ); ?></option><?php endforeach; ?>
 							</select>
 							<input type="number" name="amount" min="1" step="any" inputmode="decimal" required aria-label="<?php esc_attr_e( 'Amount', 'dck-elite' ); ?>">
 						</div>
-						<span class="dck-amounts"><?php foreach ( array( 500, 1000, 2000, 5000, 10000 ) as $amt ) : ?><button type="button" class="dck-chip" data-amt="<?php echo esc_attr( $amt ); ?>"><?php echo esc_html( number_format_i18n( $amt ) ); ?></button><?php endforeach; ?></span>
+						<span class="dck-amounts"><?php foreach ( array_filter( array_map( 'absint', explode( ',', (string) dck_home_val( 'dck_ct_quick_amounts', '500, 1000, 2000, 5000, 10000' ) ) ) ) as $amt ) : ?><button type="button" class="dck-chip" data-amt="<?php echo esc_attr( $amt ); ?>"><?php echo esc_html( number_format_i18n( $amt ) ); ?></button><?php endforeach; ?></span>
 					</div>
 					<label class="dck-cform__field dck-gift__ref" hidden><span><?php esc_html_e( 'Transfer reference', 'dck-elite' ); ?> <small class="dck-opt"><?php esc_html_e( 'Optional - bank, Wise, WorldRemit, Remitly, PayPal...', 'dck-elite' ); ?></small></span><input type="text" name="ref" maxlength="60"></label>
 					<label class="dck-cform__field dck-gift__code"><span><?php esc_html_e( 'M-Pesa code', 'dck-elite' ); ?></span><input type="text" name="code" maxlength="12" autocapitalize="characters" placeholder="<?php esc_attr_e( 'From your M-Pesa SMS, e.g. SJK4ABC12D', 'dck-elite' ); ?>"></label>
@@ -435,7 +435,7 @@ if ( ! function_exists( 'dck_gift_form' ) ) {
 		</section>
 		<script>
 		document.addEventListener('change',function(e){var t=e.target;if(!t){return;}
-			if(t.name==='channel'){var mp=t.value==='mpesa';var c=document.querySelector('.dck-gift__code');if(c){c.hidden=!mp;}var rf=document.querySelector('.dck-gift__ref');if(rf){rf.hidden=mp;}var cu=document.querySelector('.dck-gift__cur');if(cu){cu.disabled=mp;if(mp){cu.value='KES';}else if(t.value==='abroad'&&cu.value==='KES'){cu.value='USD';}}var am=document.querySelector('.dck-amounts');if(am){am.hidden=!mp&&cu&&cu.value!=='KES';}}
+			if(t.name==='channel'){var mp=t.value==='mpesa';var c=document.querySelector('.dck-gift__code');if(c){c.hidden=!mp;}var rf=document.querySelector('.dck-gift__ref');if(rf){rf.hidden=mp;}var cu=document.querySelector('.dck-gift__cur');if(cu){cu.disabled=mp;if(mp){cu.value='KES';}else if(cu.value==='KES'){cu.value=cu.getAttribute('data-default')||'USD';}}var am=document.querySelector('.dck-amounts');if(am){am.hidden=!mp&&cu&&cu.value!=='KES';}}
 			if(t.name==='currency'){var am2=document.querySelector('.dck-amounts');if(am2){am2.hidden=t.value!=='KES';}}
 			if(t.name==='purpose'){var o=document.querySelector('.dck-purpose__other');if(o){o.hidden=t.value!=='other';if(!o.hidden){o.focus();}}}
 		});

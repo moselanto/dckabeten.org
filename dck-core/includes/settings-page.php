@@ -86,7 +86,7 @@ if ( ! function_exists( 'dck_core_render_field' ) ) {
 		$label = $field['label'];
 		$hay   = strtolower( $label . ' ' . $field['help'] );
 
-		echo '<div class="dck-field dck-field--' . esc_attr( $type ) . '" data-search="' . esc_attr( $hay ) . '">';
+		echo '<div class="dck-field dck-field--' . esc_attr( $type ) . ( empty( $field['wide'] ) ? '' : ' dck-field--wide' ) . '" data-search="' . esc_attr( $hay ) . '">';
 
 		if ( in_array( $type, array( 'services', 'sections', 'gatherings' ), true ) ) {
 			$rows = is_array( $value ) ? array_values( $value ) : array();
@@ -185,6 +185,13 @@ if ( ! function_exists( 'dck_core_render_field' ) ) {
 		}
 		if ( $field['help'] ) {
 			echo '<p class="description">' . esc_html( $field['help'] ) . '</p>';
+		}
+		if ( ! empty( $field['tokens'] ) ) {
+			echo '<p class="dck-tokens"><span>' . esc_html__( 'Tap to insert:', 'dck-core' ) . '</span>';
+			foreach ( (array) $field['tokens'] as $tk ) {
+				echo '<button type="button" class="dck-token" data-target="dck-' . esc_attr( $id ) . '">{' . esc_html( $tk ) . '}</button>';
+			}
+			echo '</p>';
 		}
 		echo '</div>';
 	}

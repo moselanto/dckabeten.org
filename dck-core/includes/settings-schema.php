@@ -470,13 +470,22 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 			),
 			'sections' => array(
 				array(
+					'title'  => __( 'Region & formats', 'dck-core' ),
+					'desc'   => __( 'Used by every tool. Dates and times follow Settings > General (time zone and date format).', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_ct_country_code', __( 'Home country calling code', 'dck-core' ), 'text', '254', __( 'Digits only. Local numbers like 0712 345 678 become +254 712 345 678. Visitors abroad can type their own +country code.', 'dck-core' ) ),
+						$f( 'dck_ct_currency', __( 'Default currency for bank / abroad gifts', 'dck-core' ), 'text', 'USD', __( 'ISO code, e.g. USD, GBP, EUR, CAD, AUD, UGX, TZS. M-Pesa gifts are always KES.', 'dck-core' ) ),
+						$f( 'dck_ct_quick_amounts', __( 'Quick amount buttons (KES, comma separated)', 'dck-core' ), 'text', '500, 1000, 2000, 5000, 10000' ),
+					),
+				),
+				array(
 					'title'  => __( 'Giving records', 'dck-core' ),
 					'desc'   => __( 'Members confirm M-Pesa or bank gifts on the Give page. The finance team verifies each one against the Equity statement in Giving Records.', 'dck-core' ),
 					'fields' => array(
 						$f( 'dck_give_finance_email', __( 'Finance team email', 'dck-core' ), 'email', 'info@dckabeten.org', __( 'Gets an email for every gift recorded. Use the treasurer\'s email if different.', 'dck-core' ) ),
 						$f( 'dck_give_confirm_title', __( 'Form heading', 'dck-core' ), 'text', 'Let us know so we can thank you' ),
 						$f( 'dck_give_confirm_text', __( 'Form intro', 'dck-core' ), 'textarea', 'Paid through M-Pesa or the bank? Share the details below. Our finance team confirms every gift against the church statement and sends you a thank-you receipt.' ),
-						$f( 'dck_give_thanks_wa', __( 'Thank-you message (WhatsApp and email)', 'dck-core' ), 'textarea', 'Dear {name}, thank you for your gift of {amount} towards {purpose}. We have received it with gratitude. "Each of you should give what you have decided in your heart to give... for God loves a cheerful giver" (2 Corinthians 9:7). God bless you abundantly! - Deliverance Church Kabete N, Cistern of Hope Center' ),
+						array_merge( $f( 'dck_give_thanks_wa', __( 'Thank-you message (WhatsApp and email)', 'dck-core' ), 'textarea', 'Dear {name}, thank you for your gift of {amount} towards {purpose}. We have received it with gratitude. "Each of you should give what you have decided in your heart to give... for God loves a cheerful giver" (2 Corinthians 9:7). God bless you abundantly! - Deliverance Church Kabete N, Cistern of Hope Center' ), array( 'wide' => 1, 'tokens' => array( 'name', 'amount', 'purpose' ) ) ),
 					),
 				),
 				array(
@@ -487,15 +496,15 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 						$f( 'dck_welcome_img', __( 'Page photo', 'dck-core' ), 'image', '', __( 'Optional. If empty, the church worship photo is used.', 'dck-core' ) ),
 						$f( 'dck_welcome_title', __( 'Page headline', 'dck-core' ), 'text', "We're so glad you came" ),
 						$f( 'dck_welcome_lead', __( 'Page intro', 'dck-core' ), 'textarea', 'Whether this was your first Sunday or you watched online, we would love to know you. It takes one minute, and someone from our welcome team will reach out to you this week.' ),
-						$f( 'dck_welcome_wa_text', __( 'WhatsApp welcome message', 'dck-core' ), 'textarea', 'Hello {name}, thank you for worshipping with us at Deliverance Church Kabete N Market, Cistern of Hope Center. We are so glad you came! Is there anything we can pray with you about this week? We would love to see you again on Sunday. - Welcome Team' ),
-						$f( 'dck_welcome_email_text', __( 'Welcome email to the visitor', 'dck-core' ), 'textarea', "Dear {name},\n\nThank you for worshipping with us at Deliverance Church Kabete N Market. It was a joy to have you!\n\nA member of our welcome team will reach out to you this week. If you have any questions, simply reply to this email or call us on +254 110 304521.\n\nWe gather every Sunday behind N Market, Uthiru. You are always welcome home.\n\nWith love,\nThe Welcome Team\nDeliverance Church Kabete N - Cistern of Hope Center" ),
+						array_merge( $f( 'dck_welcome_wa_text', __( 'WhatsApp welcome message', 'dck-core' ), 'textarea', 'Hello {name}, thank you for worshipping with us at Deliverance Church Kabete N Market, Cistern of Hope Center. We are so glad you came! Is there anything we can pray with you about this week? We would love to see you again on Sunday. - Welcome Team' ), array( 'wide' => 1, 'tokens' => array( 'name' ) ) ),
+						array_merge( $f( 'dck_welcome_email_text', __( 'Welcome email to the visitor', 'dck-core' ), 'textarea', "Dear {name},\n\nThank you for worshipping with us at Deliverance Church Kabete N Market. It was a joy to have you!\n\nA member of our welcome team will reach out to you this week. If you have any questions, simply reply to this email or call us on +254 110 304521.\n\nWe gather every Sunday behind N Market, Uthiru. You are always welcome home.\n\nWith love,\nThe Welcome Team\nDeliverance Church Kabete N - Cistern of Hope Center" ), array( 'wide' => 1, 'tokens' => array( 'name' ) ) ),
 					),
 				),
 				array(
 					'title'  => __( 'Event registration', 'dck-core' ),
 					'desc'   => __( 'Tick "Open registration" on any event. Email reminders go out automatically the day before; WhatsApp reminders are one tap each from Event Registrations.', 'dck-core' ),
 					'fields' => array(
-						$f( 'dck_rsvp_wa_text', __( 'Reminder message (WhatsApp and email)', 'dck-core' ), 'textarea', 'Hello {name}, a friendly reminder that you registered for {event} on {date} at {time}, {place}. We look forward to seeing you - come expecting! - Deliverance Church Kabete N' ),
+						array_merge( $f( 'dck_rsvp_wa_text', __( 'Reminder message (WhatsApp and email)', 'dck-core' ), 'textarea', 'Hello {name}, a friendly reminder that you registered for {event} on {date} at {time}, {place}. We look forward to seeing you - come expecting! - Deliverance Church Kabete N' ), array( 'wide' => 1, 'tokens' => array( 'name', 'event', 'date', 'time', 'place' ) ) ),
 					),
 				),
 				array(
@@ -503,7 +512,7 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 					'desc'   => __( 'Book time with a pastor and requests for baptism, baby dedication, weddings, membership class, home visits and funeral support.', 'dck-core' ),
 					'fields' => array(
 						$f( 'dck_care_email', __( 'Pastoral team email', 'dck-core' ), 'email', 'info@dckabeten.org', __( 'Gets an email for every request. Confidential details stay in wp-admin.', 'dck-core' ) ),
-						$f( 'dck_care_wa_text', __( 'WhatsApp reply to the requester', 'dck-core' ), 'textarea', 'Hello {name}, thank you for reaching out to Deliverance Church Kabete N about {purpose}. A member of our pastoral team will confirm a time with you shortly. God bless you.' ),
+						array_merge( $f( 'dck_care_wa_text', __( 'WhatsApp reply to the requester', 'dck-core' ), 'textarea', 'Hello {name}, thank you for reaching out to Deliverance Church Kabete N about {purpose}. A member of our pastoral team will confirm a time with you shortly. God bless you.' ), array( 'wide' => 1, 'tokens' => array( 'name', 'purpose' ) ) ),
 					),
 				),
 				array(
@@ -518,7 +527,7 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 					'desc'   => __( 'The green WhatsApp button above "Ask Hope". Messages go to the WhatsApp number in Church & Contact.', 'dck-core' ),
 					'fields' => array(
 						$f( 'dck_waw_name', __( 'Chat title', 'dck-core' ), 'text', 'DCK Church Team' ),
-						$f( 'dck_waw_intro', __( 'Welcome message', 'dck-core' ), 'textarea', 'Karibu! How can we help you today? Choose a topic or type your message and we will reply on WhatsApp.' ),
+						array_merge( $f( 'dck_waw_intro', __( 'Welcome message', 'dck-core' ), 'textarea', 'Karibu! How can we help you today? Choose a topic or type your message and we will reply on WhatsApp.' ), array( 'wide' => 1, 'tokens' => array(  ) ) ),
 						$f( 'dck_waw_teaser_title', __( 'Pop-up title (shown once per visit)', 'dck-core' ), 'text', 'Need prayer or have a question?' ),
 						$f( 'dck_waw_teaser_text', __( 'Pop-up text', 'dck-core' ), 'text', 'Chat with our church team on WhatsApp. A real person will reply.' ),
 						$f( 'dck_waw_open', __( 'Replies from (hour, 0-23)', 'dck-core' ), 'text', '8' ),

@@ -76,6 +76,17 @@
 		});
 	});
 
+	/* Insert {placeholder} tokens at the cursor */
+	$(document).on('click', '.dck-token', function () {
+		var el = document.getElementById($(this).data('target'));
+		if (!el) { return; }
+		var t = $(this).text(), s = el.selectionStart || el.value.length, e = el.selectionEnd || s;
+		el.value = el.value.slice(0, s) + t + el.value.slice(e);
+		el.focus();
+		el.selectionStart = el.selectionEnd = s + t.length;
+		$(el).trigger('input');
+	});
+
 	/* Warn before leaving with unsaved changes */
 	var dirty = false;
 	$(document).on('input change', '.dck-form :input', function () { dirty = true; });
