@@ -16,6 +16,13 @@
       if (hdr) { root.style.setProperty('--dck-hdr-b', Math.max(0, Math.round(hdr.getBoundingClientRect().bottom)) + 'px'); }
     }
     nav.classList.toggle('is-open', open);
+    // On phones the top strip is hidden, so show the language picker inside the menu.
+    var gt = document.getElementById('google_translate_element');
+    var slot = document.getElementById('dck-nav-lang');
+    var home = document.querySelector('.dck-lang');
+    if (gt && slot && home) {
+      if (open && mq && mq.matches) { slot.appendChild(gt); } else if (!open && gt.parentNode !== home) { home.appendChild(gt); }
+    }
     root.classList.toggle('dck-menu-open', open);
     for (var i = 0; i < toggles.length; i++) {
       toggles[i].setAttribute('aria-expanded', open ? 'true' : 'false');

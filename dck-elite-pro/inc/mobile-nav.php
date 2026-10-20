@@ -50,6 +50,7 @@ if ( ! function_exists( 'dck_mobile_menu_extras' ) ) {
 			echo '<a href="' . esc_url( dck_home_directions() ) . '" target="_blank" rel="noopener">' . dck_mnav_icon( 'map' ) . '<span>' . esc_html__( 'Get directions', 'dck-elite' ) . '</span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput
 		}
 		echo '</div>';
+		echo '<div class="dck-nav__lang" id="dck-nav-lang"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"/></svg><span>' . esc_html__( 'Language', 'dck-elite' ) . '</span></div>';
 		if ( function_exists( 'dck_social_icons' ) ) {
 			echo '<div class="dck-nav__social">';
 			dck_social_icons();
