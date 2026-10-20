@@ -98,7 +98,11 @@ remove_action( 'wp_head', 'wp_shortlink_wp_head' );
 add_filter( 'login_errors', 'dck_sec_login_error' );
 
 if ( ! function_exists( 'dck_sec_login_error' ) ) {
-	function dck_sec_login_error() {
+	function dck_sec_login_error( $error = '' ) {
+		/* Keep lockout / rate messages (they reveal nothing about accounts); hide everything else. */
+		if ( false !== strpos( (string) $error, 'Too many' ) ) {
+			return $error;
+		}
 		return __( 'Incorrect login details.', 'dck-elite' );
 	}
 }

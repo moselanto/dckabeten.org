@@ -60,3 +60,9 @@ No SQL injection sinks found (no raw `$wpdb` queries; all data access via WP API
 - **NoSQL injection:** no NoSQL database used.
 - **Environment variables:** WordPress uses `wp-config.php` constants (can read `getenv()` there if your host provides env vars).
 - **Dependencies:** no npm/composer packages; only WordPress core and self-hosted fonts.
+
+## Follow-up (v4.15.0, 2026-10-20) - login screen
+- Honeypot field on login and lost-password forms; bots that fill it are rejected with the generic error.
+- Lost-password requests limited to 3 per hour per IP.
+- Lost-password no longer reveals whether an account exists (unknown user/email shows the same "check your email" screen).
+- Generic login errors kept; only the lockout message ("Too many...") is shown as-is.

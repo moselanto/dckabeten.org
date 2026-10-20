@@ -154,8 +154,12 @@ if ( ! function_exists( 'dck_legal_default_sections' ) ) {
 				'body'  => '<p>Sermons, teaching notes, photos, videos and other materials on this site belong to the church unless stated otherwise. You are welcome to share links and use them for personal encouragement and non-commercial ministry with credit to the church. Please do not reproduce, edit or sell them without our written permission.</p>',
 			),
 			array(
+				'title' => 'Links to other sites',
+				'body'  => '<p>Our site may link to other websites, such as live streams, maps or social media. We are not responsible for the content or privacy practices of those external sites.</p>',
+			),
+			array(
 				'title' => 'Privacy: what we collect',
-				'body'  => '<p>We only collect what we need to serve you:</p><ul><li><strong>Contact form:</strong> your name, email, phone (optional) and message.</li><li><strong>Prayer requests:</strong> your name, contact details and request. You may submit confidentially.</li><li><strong>Photography preference:</strong> your name, phone, email and signature.</li><li><strong>Website usage:</strong> basic technical data (such as browser type and pages visited) to keep the site secure and working well.</li></ul>',
+				'body'  => '<p>We only collect what we need to serve you:</p><ul><li><strong>Contact form:</strong> your name, email, phone (optional) and message.</li><li><strong>Prayer requests:</strong> your name, contact details and request. Requests marked confidential reach our pastors only.</li><li><strong>Photography preference:</strong> your name, phone, email and signature.</li><li><strong>Website usage:</strong> basic technical data (such as browser type and pages visited) to keep the site secure and working well.</li></ul>',
 			),
 			array(
 				'title' => 'Privacy: how we use and protect it',
@@ -171,7 +175,7 @@ if ( ! function_exists( 'dck_legal_default_sections' ) ) {
 			),
 			array(
 				'title' => 'Photography and video at church',
-				'body'  => '<p>We sometimes take photos and record video during services and events to share what God is doing. Only authorised media team members may do this on behalf of the church.</p><p>By attending, you may appear in photos or video. If you would prefer not to be photographed or recorded, complete the form below or speak to an usher when you arrive. Children are photographed only with care, and we will remove any image on request.</p>',
+				'body'  => '<p>To share the joy and testimony of what God is doing, we sometimes take photos and record video during services, events and gatherings. Only authorised media team members may do this on behalf of the church.</p><p>These photos and videos may be used to encourage and inform our church family and community, for example on this website, our social media pages, posters and other church communications.</p><p>By attending, you may appear in photos or video. If you would prefer not to be photographed or recorded, complete the form below or speak to an usher when you arrive. Children are photographed only with care, and we will remove any image on request.</p>',
 			),
 			array(
 				'title' => 'Children and young people',

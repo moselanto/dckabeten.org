@@ -54,6 +54,16 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 					),
 				),
 				array(
+					'title'  => __( 'Staff login page', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_login_img', __( 'Background photo', 'dck-core' ), 'image' ),
+						$f( 'dck_login_tag', __( 'Small label', 'dck-core' ), 'text', 'Staff & ministry team' ),
+						$f( 'dck_login_title', __( 'Headline', 'dck-core' ), 'text', 'Every life we reach online begins with the work you do here.' ),
+						$f( 'dck_login_text', __( 'Intro text', 'dck-core' ), 'textarea' ),
+						$f( 'dck_login_points', __( 'Checklist (one per line)', 'dck-core' ), 'textarea' ),
+					),
+				),
+				array(
 					'title'  => __( 'Footer', 'dck-core' ),
 					'fields' => array(
 						$f( 'dck_copyright', __( 'Copyright name', 'dck-core' ), 'text', 'Deliverance Church Kabete N' ),

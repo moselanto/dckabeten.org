@@ -1,0 +1,65 @@
+/* DCK Elite - branded login screen */
+:root{--b9:#0E1C4D;--b7:#1D347F;--b:#24409A;--b1:#E9EEFA;--g:#C9A227;--g3:#E7C86A;--warm:#FAF8F4;--ink:#141414;--gray:#6B6862;--line:rgba(20,20,20,.12)}
+@font-face{font-family:'Inter';font-weight:400;font-display:swap;src:url(../fonts/inter-400.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:600;font-display:swap;src:url(../fonts/inter-600.woff2) format('woff2')}
+@font-face{font-family:'Playfair Display';font-weight:700;font-display:swap;src:url(../fonts/playfair-700.woff2) format('woff2')}
+html,body.login{height:auto;min-height:100%}
+body.login{margin:0;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);min-height:100vh;background:var(--warm);font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:var(--ink)}
+/* Left panel */
+.dck-lg-aside{grid-column:1;grid-row:1/span 3;position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(28px,4vw,56px);color:#fff;background:linear-gradient(160deg,rgba(7,12,38,.88),rgba(14,28,77,.72) 50%,rgba(14,28,77,.55)),var(--dck-login-img) center/cover no-repeat}
+.dck-lg-brand{display:inline-flex;align-items:center;gap:12px;color:#fff;text-decoration:none;font-weight:600;font-size:15px}
+.dck-lg-brand img{width:40px;height:40px;object-fit:contain;background:#fff;border-radius:10px;padding:4px}
+.dck-lg-aside__body{max-width:520px}
+.dck-lg-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--b9);background:var(--g3);border-radius:999px;padding:6px 14px}
+.dck-lg-aside h2{font-family:'Playfair Display',Georgia,serif;font-size:clamp(28px,3.4vw,46px);line-height:1.12;margin:18px 0 14px;color:#fff;font-weight:700}
+.dck-lg-aside p{color:#d7deff;font-size:16px;line-height:1.7;margin:0 0 18px}
+.dck-lg-aside ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.dck-lg-aside li{position:relative;padding-left:30px;font-size:15px;color:#fff}
+.dck-lg-aside li::before{content:"";position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;background:var(--g) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230E1C4D' stroke-width='3.5'%3E%3Cpath d='M6 12l4 4 8-8'/%3E%3C/svg%3E") center/11px no-repeat}
+.dck-lg-aside__help{font-size:13px!important;margin:0!important;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.dck-lg-aside__help a{color:#fff;font-weight:600;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.35)}
+/* Right column */
+#login{grid-column:2;align-self:center;justify-self:center;width:min(420px,calc(100% - 40px));padding:32px 0 0;margin:0}
+.login h1 a{background:url(../images/logo.webp) center/contain no-repeat!important;width:240px!important;height:64px!important;margin:0 auto 4px!important}
+.dck-lg-head{text-align:left;margin:0 0 4px}
+.dck-lg-head h1{font-family:'Playfair Display',Georgia,serif;font-size:32px;color:var(--b9);margin:0 0 6px;font-weight:700}
+.dck-lg-head p{color:var(--gray);margin:0;font-size:14px}
+.login form{margin:0!important;padding:28px 28px 24px!important;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 70px -40px rgba(14,28,77,.55);overflow:visible}
+.login #login_error,.login .message,.login .success,.login .notice{border-radius:12px;border-left-width:4px;box-shadow:none;margin:14px 0}
+.login .message,.login .success{border-left-color:var(--g)}
+.login #login_error{border-left-color:#b3261e}
+.login label{font-size:13px;font-weight:600;color:var(--b9)}
+.login form .input,.login input[type=text],.login input[type=password],.login input[type=email]{min-height:48px;margin:6px 0 16px;padding:10px 14px;font-size:15px;border:1px solid var(--line);border-radius:12px;background:var(--warm);box-shadow:none;transition:border-color .2s,box-shadow .2s}
+.login form .input:focus,.login input:focus{border-color:var(--b);box-shadow:0 0 0 4px rgba(36,64,154,.14);outline:none;background:#fff}
+.login .wp-pwd{position:relative}
+.login .button.wp-hide-pw{height:46px;min-height:46px;top:7px;right:4px;color:var(--b)}
+.login .button.wp-hide-pw:focus{box-shadow:0 0 0 3px rgba(36,64,154,.25);border-color:transparent}
+.login .forgetmenot{margin:4px 0 0;float:none}
+.login .forgetmenot label{font-weight:500;color:var(--gray)}
+.login input[type=checkbox]{border-radius:5px;border-color:#b8c0d6}
+.login input[type=checkbox]:checked::before{filter:hue-rotate(0)}
+.login .submit{display:block;margin-top:16px}
+.wp-core-ui.login .button-primary{float:none;width:100%;min-height:50px;margin-top:6px;font-size:15px;font-weight:600;border:0;border-radius:12px;background:var(--b);box-shadow:0 12px 26px -12px rgba(36,64,154,.7);text-shadow:none;transition:background .2s,transform .1s}
+.wp-core-ui.login .button-primary:hover,.wp-core-ui.login .button-primary:focus{background:var(--b7)}
+.wp-core-ui.login .button-primary:active{transform:translateY(1px)}
+.login #nav,.login #backtoblog{text-align:center;margin:16px 0 0;padding:0}
+.login #nav a,.login #backtoblog a{color:var(--b)!important;font-weight:600;font-size:14px;text-decoration:none}
+.login #nav a:hover,.login #backtoblog a:hover{color:var(--g)!important}
+.login .privacy-policy-page-link{text-align:center;margin:14px 0 0}
+.login .privacy-policy-page-link a{color:var(--gray);font-size:13px}
+.language-switcher{grid-column:2;justify-self:center;margin-top:10px}
+.dck-lg-hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+.dck-lg-foot{grid-column:2;text-align:center;padding:14px 20px 28px}
+.dck-lg-secure{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--gray);margin:0 0 6px}
+.dck-lg-copy{font-size:12px;color:#9a978f;margin:0}
+.login *:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+@media (max-width:900px){
+  body.login{grid-template-columns:1fr}
+  .dck-lg-aside{grid-column:1;grid-row:auto;min-height:0;padding:22px 22px 26px;gap:14px}
+  .dck-lg-aside__body h2{font-size:24px;margin:12px 0 8px}
+  .dck-lg-aside ul,.dck-lg-aside__help{display:none}
+  .dck-lg-aside__body p{font-size:14px;margin:0}
+  #login,.dck-lg-foot,.language-switcher{grid-column:1}
+  #login{padding-top:22px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
