@@ -15,6 +15,7 @@
  "assets/js/main.js": 7775,
  "assets/js/pages.js": 3019,
  "assets/js/pastors.js": 2136,
+ "assets/js/paystack.js": 4976,
  "assets/js/prayer.js": 2324,
  "assets/js/pwa.js": 1677,
  "assets/js/read-aloud.js": 3013,
@@ -28,7 +29,7 @@
  "assets/js/voice.js": 4463,
  "assets/js/wa-widget.js": 3984,
  "assets/js/week.js": 1569,
- "style.css": 201893,
+ "style.css": 206153,
  "assets/css/login.css": 7089,
  "assets/css/admin.css": 426
 }

@@ -69,6 +69,8 @@ if ( ! function_exists( 'dck_give_row' ) ) {
 	</div>
 </section>
 
+<?php if ( function_exists( 'dck_pay_form' ) ) { dck_pay_form(); } ?>
+
 <?php if ( $dck_tabs ) : ?>
 <section class="dck-section dck-give-now" id="give-now">
 	<div class="dck-container">

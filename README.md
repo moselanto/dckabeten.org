@@ -79,3 +79,11 @@ Settings: DCK Church > Church Tools (finance email, welcome team email, message 
 - **Event registration**: on an event, tick "Open registration" (and an optional limit). The form appears on the event page with a Register button on the Events list. Events > Registrations: check-in at the door, WhatsApp reminders, CSV. Email reminders go out automatically the day before; for WhatsApp, copy the number list from the event into a WhatsApp Business broadcast list.
 - **Installable app**: visitors see "Get the DCK app" in the mobile menu (Android/Chrome install; iPhone shows Share > Add to Home Screen). Recently viewed pages work offline. Requires HTTPS. If Cloudflare caches query strings, exclude /?dck_sw=1 and /?dck_manifest=1 from cache.
 - Emails rely on WordPress being able to send mail: install an SMTP plugin (e.g. WP Mail SMTP) with the church email account so notifications don't land in spam.
+
+
+## Instant M-Pesa giving (Paystack)
+1. Paystack account (Kenya) with **Mobile Money / M-PESA** enabled under Settings > Preferences, settlement account set.
+2. Add to wp-config.php (never in the database or repo): `define( 'DCK_PAYSTACK_SECRET', 'sk_live_xxx' );` (use `sk_test_xxx` first to test; the card shows TEST MODE).
+3. Paystack > Settings > API Keys & Webhooks > Webhook URL: `https://dckabeten.org/wp-json/dck/v1/pay/webhook` (also shown on DCK Church > Overview).
+4. Cloudflare: do not cache `/wp-json/*`; allow POST to the webhook (no bot challenge on that path).
+5. Givers choose purpose + amount (KES 10 - 150,000) + M-Pesa number, get the STK prompt, enter PIN; records are auto-verified in Giving Records and thanked by email. The manual Paybill / bank options stay below as a fallback.

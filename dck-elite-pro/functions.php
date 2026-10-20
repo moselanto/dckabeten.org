@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.27.0' );
+	define( 'DCK_ELITE_VERSION', '4.28.0' );
 }
 
 /**
@@ -911,6 +911,9 @@ if ( file_exists( get_template_directory() . '/inc/pastoral-care.php' ) ) {
 }
 if ( file_exists( get_template_directory() . '/inc/serve.php' ) ) {
 	require_once get_template_directory() . '/inc/serve.php';
+}
+if ( file_exists( get_template_directory() . '/inc/paystack.php' ) ) {
+	require_once get_template_directory() . '/inc/paystack.php';
 }
 if ( file_exists( get_template_directory() . '/inc/tools-overview.php' ) ) {
 	require_once get_template_directory() . '/inc/tools-overview.php';

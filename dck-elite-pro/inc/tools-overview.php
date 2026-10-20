@@ -164,11 +164,13 @@ if ( ! function_exists( 'dck_ov_render' ) ) {
 							array( (bool) wp_count_posts( 'dck_fellowship' )->publish, __( 'At least one fellowship group published', 'dck-elite' ), admin_url( 'post-new.php?post_type=dck_fellowship' ) ),
 							array( (bool) wp_next_scheduled( 'dck_rsvp_reminders' ), __( 'Event reminder schedule running', 'dck-elite' ), '' ),
 							array( class_exists( 'Two_Factor_Core' ), __( 'Two-factor login active', 'dck-elite' ), admin_url( 'plugin-install.php?s=two-factor&tab=search&type=term' ) ),
+							array( function_exists( 'dck_pay_ready' ) && dck_pay_ready(), __( 'Paystack key set for instant M-Pesa giving', 'dck-elite' ) . ( function_exists( 'dck_pay_test_mode' ) && dck_pay_test_mode() ? ' (TEST MODE)' : '' ), '' ),
 						) as $ck ) {
 							echo '<li class="' . ( $ck[0] ? 'is-ok' : 'is-todo' ) . '"><span>' . ( $ck[0] ? '&#10003;' : '!' ) . '</span>' . esc_html( $ck[1] ) . ( ! $ck[0] && $ck[2] ? ' <a href="' . esc_url( $ck[2] ) . '">' . esc_html__( 'Fix', 'dck-elite' ) . '</a>' : '' ) . '</li>';
 						}
 						?>
 					</ul>
+					<p class="description"><?php esc_html_e( 'Paystack webhook URL (paste in Paystack > Settings > API Keys & Webhooks):', 'dck-elite' ); ?><br><code style="user-select:all"><?php echo esc_html( rest_url( 'dck/v1/pay/webhook' ) ); ?></code></p>
 					<p><a class="button" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dck_ov_testmail' ), 'dck_ov_testmail' ) ); ?>"><?php esc_html_e( 'Send a test email to each team', 'dck-elite' ); ?></a>
 					<?php if ( isset( $_GET['dck_mail'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification ?><br><strong><?php echo esc_html( sanitize_text_field( wp_unslash( $_GET['dck_mail'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification ?></strong><?php endif; ?></p>
 				</section>

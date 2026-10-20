@@ -233,6 +233,9 @@ add_action(
 				break;
 			case 'dck_code':
 				echo '<code>' . esc_html( $m['code'] ? $m['code'] : strtoupper( $m['channel'] ) ) . '</code>';
+				if ( 'paystack' === $m['channel'] ) {
+					echo '<br><small>' . esc_html__( 'M-Pesa via Paystack (auto-confirmed)', 'dck-elite' ) . '</small>';
+				}
 				break;
 			case 'dck_phone':
 				echo esc_html( $m['phone'] );
