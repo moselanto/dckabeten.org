@@ -11,7 +11,11 @@
   if (!reader || !selTr || !text) { return; }
   var I = R.i18n || {};
   var LS = 'dck_reader_v1';
-  var st = { tr: R.default || 'BSB', tr2: '', book: 'JHN', ch: 1, size: 1, night: false, votdHidden: '' };
+  var st = { tr: R.default || 'BSB', tr2: '', book: 'JHN', ch: 1, size: 1, night: false, votdHidden: '', verse: false, sans: false };
+  var MK = 'dck_reader_marks';
+  var marks = { hl: {}, bm: [], recent: [] };
+  try { var mm = JSON.parse(localStorage.getItem(MK) || '{}'); marks.hl = mm.hl || {}; marks.bm = mm.bm || []; marks.recent = mm.recent || []; } catch (e) {}
+  function saveMarks() { try { localStorage.setItem(MK, JSON.stringify(marks)); } catch (e) {} }
   try { var saved = JSON.parse(localStorage.getItem(LS) || '{}'); for (var k in saved) { st[k] = saved[k]; } } catch (e) {}
   var books = {}, order = [], bookCache = {}, chapterCache = {}, verName = {}, testament = 'all';
   (R.versions || []).forEach(function (v) { verName[v.id] = v; });
@@ -47,7 +51,35 @@
   function isMobile() { return window.matchMedia('(max-width: 1023px)').matches; }
 
   /* ---------- Book navigator ---------- */
+  function renderSaved() {
+    blist.innerHTML = '';
+    var box = function (title, list, empty) {
+      blist.appendChild(el('p', 'dck-rside__grp', title));
+      if (!list.length) { blist.appendChild(el('p', 'dck-rside__empty', empty)); return; }
+      list.forEach(function (it) {
+        var b = el('button', 'dck-rsaved');
+        b.type = 'button';
+        b.appendChild(el('strong', '', it.label));
+        if (it.t) { b.appendChild(el('span', '', it.t.length > 90 ? it.t.slice(0, 90) + '...' : it.t)); }
+        b.addEventListener('click', function () {
+          var p = it.ref.split('/');
+          if (!books[p[0]]) { return; }
+          pendingVerse = parseInt(p[2] || '0', 10);
+          go(p[0], parseInt(p[1], 10));
+        });
+        if (it.del) {
+          var x = el('span', 'dck-rsaved__x', '\u00d7'); x.setAttribute('role', 'button'); x.setAttribute('aria-label', 'Remove');
+          x.addEventListener('click', function (e) { e.stopPropagation(); marks.bm = marks.bm.filter(function (m) { return m.ref !== it.ref; }); saveMarks(); renderSaved(); });
+          b.appendChild(x);
+        }
+        blist.appendChild(b);
+      });
+    };
+    box('Saved verses', marks.bm.map(function (m) { return { ref: m.ref, label: m.label, t: m.t, del: true }; }), 'Tap any verse and choose Save to keep it here.');
+    box('Recently read', marks.recent.map(function (r) { return { ref: r.ref, label: r.label }; }), 'Chapters you read will appear here.');
+  }
   function renderList() {
+    if (testament === 'saved') { renderSaved(); return; }
     blist.innerHTML = '';
     var q = norm(bfilter.value);
     var lastT = '';
@@ -130,6 +162,9 @@
       if (it.h) { text.appendChild(el('h3', 'dck-rhead', it.h)); return; }
       var row = el(b ? 'div' : 'span', 'dck-rrow');
       row.setAttribute('data-v', it.n); row.id = 'v' + it.n; row.tabIndex = 0;
+      var hk = st.book + '/' + st.ch + '/' + it.n;
+      if (marks.hl[hk]) { row.classList.add('hl-' + marks.hl[hk]); }
+      if (marks.bm.some(function (m) { return m.ref === hk; })) { row.classList.add('is-bm'); }
       var c1 = el('span', 'dck-rcol');
       c1.appendChild(el('sup', 'dck-vnum', String(it.n)));
       c1.appendChild(document.createTextNode(it.t + ' '));
@@ -187,6 +222,9 @@
       render(r[0], r[1]);
       if (r[0].audio) { audio.src = r[0].audio; audio.hidden = false; } else { audio.removeAttribute('src'); audio.hidden = true; }
       save(); setHash();
+      var rref = st.book + '/' + st.ch;
+      marks.recent = [{ ref: rref, label: r[0].book.name + ' ' + st.ch }].concat(marks.recent.filter(function (x) { return x.ref !== rref; })).slice(0, 8);
+      saveMarks();
       if (pendingVerse) {
         var t = $('v' + pendingVerse);
         if (t) { t.classList.add('is-hl'); t.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
@@ -256,6 +294,10 @@
   });
 
   function applyLook() {
+    text.classList.toggle('is-verse', !!st.verse);
+    text.classList.toggle('is-sans', !!st.sans);
+    $('dck-r-layout').setAttribute('aria-pressed', st.verse ? 'true' : 'false');
+    $('dck-r-font').setAttribute('aria-pressed', st.sans ? 'true' : 'false');
     text.style.setProperty('--dck-rsize', st.size);
     reader.classList.toggle('is-night', !!st.night);
     $('dck-r-mode').setAttribute('aria-pressed', st.night ? 'true' : 'false');
@@ -263,6 +305,8 @@
   $('dck-r-bigger').addEventListener('click', function () { st.size = Math.min(1.7, +(st.size + 0.1).toFixed(1)); applyLook(); save(); });
   $('dck-r-smaller').addEventListener('click', function () { st.size = Math.max(0.8, +(st.size - 0.1).toFixed(1)); applyLook(); save(); });
   $('dck-r-mode').addEventListener('click', function () { st.night = !st.night; applyLook(); save(); });
+  $('dck-r-layout').addEventListener('click', function () { st.verse = !st.verse; applyLook(); save(); });
+  $('dck-r-font').addEventListener('click', function () { st.sans = !st.sans; applyLook(); save(); });
   $('dck-r-full').addEventListener('click', function () {
     var on = !document.documentElement.classList.contains('dck-focus');
     document.documentElement.classList.toggle('dck-focus', on);
@@ -326,6 +370,24 @@
       if (navigator.clipboard) { navigator.clipboard.writeText('"' + t + '" ' + ref(v)).then(function () { var o = b.textContent; b.textContent = I.copied || 'Copied'; setTimeout(function () { b.textContent = o; }, 1200); }); }
       return;
     }
+    var key = st.book + '/' + st.ch + '/' + v;
+    if (act === 'hl') {
+      var c = b.getAttribute('data-c');
+      ['y', 'g', 'b'].forEach(function (x) { curV.classList.remove('hl-' + x); });
+      if (c) { marks.hl[key] = c; curV.classList.add('hl-' + c); } else { delete marks.hl[key]; }
+      saveMarks(); pop.hidden = true; curV.classList.remove('is-sel'); return;
+    }
+    if (act === 'bm') {
+      if (!marks.bm.some(function (m) { return m.ref === key; })) {
+        marks.bm.unshift({ ref: key, label: title.textContent + ':' + v, t: t, tr: st.tr });
+        marks.bm = marks.bm.slice(0, 100);
+      }
+      curV.classList.add('is-bm'); saveMarks();
+      if (testament === 'saved') { renderSaved(); }
+      var o = b.textContent; b.textContent = '\u2713'; setTimeout(function () { b.textContent = o; }, 1100);
+      return;
+    }
+    if (act === 'img') { verseImage(t, ref(v)); }
     if (act === 'share') { window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent('"' + t + '" ' + ref(v) + ' ' + link(v)), '_blank', 'noopener'); }
     if (act === 'ask') {
       var inp = $('dck-bible-input'), goBtn = $('dck-bible-go');
@@ -334,6 +396,34 @@
     pop.hidden = true; curV.classList.remove('is-sel');
   });
   document.addEventListener('click', function (e) { if (!pop.hidden && !e.target.closest('#dck-vpop') && !e.target.closest('.dck-rrow')) { pop.hidden = true; if (curV) { curV.classList.remove('is-sel'); } } });
+
+  /* ---------- Share a verse as an image (1080x1080) ---------- */
+  function wrap(ctx, text, maxW) {
+    var words = text.split(' '), lines = [], line = '';
+    words.forEach(function (w) { var test = line ? line + ' ' + w : w; if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; } else { line = test; } });
+    if (line) { lines.push(line); }
+    return lines;
+  }
+  function verseImage(t, r) {
+    var cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1080;
+    var x = cv.getContext('2d');
+    var g = x.createLinearGradient(0, 0, 1080, 1080); g.addColorStop(0, '#0E1C4D'); g.addColorStop(1, '#24409A');
+    x.fillStyle = g; x.fillRect(0, 0, 1080, 1080);
+    x.fillStyle = 'rgba(231,200,106,.18)'; x.font = 'bold 420px Georgia, serif'; x.fillText('\u201C', 60, 400);
+    var size = t.length > 260 ? 40 : (t.length > 160 ? 48 : 58);
+    x.font = size + 'px "Playfair Display", Georgia, serif'; x.fillStyle = '#ffffff'; x.textAlign = 'center';
+    var lines = wrap(x, t, 860), lh = size * 1.4, y = 540 - (lines.length * lh) / 2 + size * 0.4;
+    lines.forEach(function (l) { x.fillText(l, 540, y); y += lh; });
+    x.font = '600 34px Inter, Arial, sans-serif'; x.fillStyle = '#E7C86A'; x.fillText(r, 540, y + 40);
+    x.font = '500 26px Inter, Arial, sans-serif'; x.fillStyle = 'rgba(255,255,255,.75)'; x.fillText(location.host, 540, 1010);
+    cv.toBlob(function (blob) {
+      if (!blob) { return; }
+      var file = new File([blob], 'verse.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: r }).catch(function () {}); return; }
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = r.replace(/[^\w]+/g, '-') + '.png';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    });
+  }
 
   /* ---------- Verse of the day ---------- */
   function votd() {

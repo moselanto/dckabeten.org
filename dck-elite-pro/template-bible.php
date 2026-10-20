@@ -50,8 +50,9 @@ if ( ! function_exists( 'dck_reader_version_options' ) ) {
 			<div class="dck-rside__head">
 				<div class="dck-rside__tabs" role="tablist">
 					<button type="button" role="tab" class="dck-rside__tab is-active" data-test="all" aria-selected="true"><?php esc_html_e( 'All', 'dck-elite' ); ?></button>
-					<button type="button" role="tab" class="dck-rside__tab" data-test="ot" aria-selected="false"><?php esc_html_e( 'Old Testament', 'dck-elite' ); ?></button>
-					<button type="button" role="tab" class="dck-rside__tab" data-test="nt" aria-selected="false"><?php esc_html_e( 'New Testament', 'dck-elite' ); ?></button>
+					<button type="button" role="tab" class="dck-rside__tab" data-test="ot" aria-selected="false"><?php esc_html_e( 'OT', 'dck-elite' ); ?></button>
+					<button type="button" role="tab" class="dck-rside__tab" data-test="nt" aria-selected="false"><?php esc_html_e( 'NT', 'dck-elite' ); ?></button>
+					<button type="button" role="tab" class="dck-rside__tab" data-test="saved" aria-selected="false"><?php esc_html_e( 'Saved', 'dck-elite' ); ?></button>
 				</div>
 				<button type="button" class="dck-rside__close" id="dck-r-sideclose" aria-label="<?php esc_attr_e( 'Close', 'dck-elite' ); ?>">&times;</button>
 			</div>
@@ -86,6 +87,8 @@ if ( ! function_exists( 'dck_reader_version_options' ) ) {
 						<div class="dck-rtop__tools">
 							<button type="button" class="dck-ibtn" id="dck-r-smaller" title="<?php esc_attr_e( 'Smaller text', 'dck-elite' ); ?>" aria-label="<?php esc_attr_e( 'Smaller text', 'dck-elite' ); ?>">A&minus;</button>
 							<button type="button" class="dck-ibtn" id="dck-r-bigger" title="<?php esc_attr_e( 'Larger text', 'dck-elite' ); ?>" aria-label="<?php esc_attr_e( 'Larger text', 'dck-elite' ); ?>">A+</button>
+							<button type="button" class="dck-ibtn" id="dck-r-layout" title="<?php esc_attr_e( 'Verse by verse', 'dck-elite' ); ?>" aria-label="<?php esc_attr_e( 'Verse by verse', 'dck-elite' ); ?>"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button>
+							<button type="button" class="dck-ibtn" id="dck-r-font" title="<?php esc_attr_e( 'Change font', 'dck-elite' ); ?>" aria-label="<?php esc_attr_e( 'Change font', 'dck-elite' ); ?>">Aa</button>
 							<button type="button" class="dck-ibtn" id="dck-r-mode" title="<?php esc_attr_e( 'Night mode', 'dck-elite' ); ?>" aria-label="<?php esc_attr_e( 'Night mode', 'dck-elite' ); ?>"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
 							<button type="button" class="dck-ibtn" id="dck-r-listen" title="<?php esc_attr_e( 'Listen', 'dck-elite' ); ?>" aria-label="<?php esc_attr_e( 'Listen', 'dck-elite' ); ?>"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg></button>
 							<button type="button" class="dck-ibtn" id="dck-r-share" title="<?php esc_attr_e( 'Share chapter', 'dck-elite' ); ?>" aria-label="<?php esc_attr_e( 'Share chapter', 'dck-elite' ); ?>"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
@@ -118,6 +121,14 @@ if ( ! function_exists( 'dck_reader_version_options' ) ) {
 			</article>
 
 			<div class="dck-vpop" id="dck-vpop" role="dialog" aria-label="<?php esc_attr_e( 'Verse actions', 'dck-elite' ); ?>" hidden>
+				<span class="dck-vpop__hl" role="group" aria-label="<?php esc_attr_e( 'Highlight', 'dck-elite' ); ?>">
+					<button type="button" data-act="hl" data-c="y" class="dck-sw dck-sw--y" aria-label="<?php esc_attr_e( 'Highlight yellow', 'dck-elite' ); ?>"></button>
+					<button type="button" data-act="hl" data-c="g" class="dck-sw dck-sw--g" aria-label="<?php esc_attr_e( 'Highlight green', 'dck-elite' ); ?>"></button>
+					<button type="button" data-act="hl" data-c="b" class="dck-sw dck-sw--b" aria-label="<?php esc_attr_e( 'Highlight blue', 'dck-elite' ); ?>"></button>
+					<button type="button" data-act="hl" data-c="" class="dck-sw dck-sw--x" aria-label="<?php esc_attr_e( 'Remove highlight', 'dck-elite' ); ?>">&times;</button>
+				</span>
+				<button type="button" data-act="bm"><?php esc_html_e( 'Save', 'dck-elite' ); ?></button>
+				<button type="button" data-act="img"><?php esc_html_e( 'Image', 'dck-elite' ); ?></button>
 				<button type="button" data-act="copy"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button>
 				<button type="button" data-act="share"><?php esc_html_e( 'WhatsApp', 'dck-elite' ); ?></button>
 				<button type="button" data-act="ask"><?php esc_html_e( 'Ask about this', 'dck-elite' ); ?></button>

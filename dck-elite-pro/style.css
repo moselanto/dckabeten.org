@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.11.0
+Version: 4.12.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -2155,3 +2155,37 @@ html.dck-noscroll{overflow:hidden}
 /* v4.11.0 - editor shortcut */
 .dck-editbar{position:fixed;right:18px;bottom:96px;z-index:960;display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;background:var(--dck-gold);color:var(--dck-blue-900);font-weight:700;font-size:.88rem;text-decoration:none;box-shadow:0 14px 34px -12px rgba(14,28,77,.55)}
 .dck-editbar:hover{background:var(--dck-gold-300);color:var(--dck-blue-900)}
+
+
+/* v4.12.0 - Bible reader: verse mode, fonts, highlights, saved, compact VOTD */
+.dck-rtext.is-verse .dck-rrow{display:block;padding:6px 10px;border-radius:10px}
+.dck-rtext.is-verse .dck-vnum{display:inline-block;min-width:1.6em}
+.dck-rtext.is-sans{font-family:var(--dck-font-body);font-size:calc(1.06rem * var(--dck-rsize));line-height:1.85}
+.dck-rrow.hl-y{background:rgba(250,214,92,.45)}
+.dck-rrow.hl-g{background:rgba(120,210,150,.38)}
+.dck-rrow.hl-b{background:rgba(120,170,255,.35)}
+.dck-reader.is-night .dck-rrow.hl-y{background:rgba(250,214,92,.28)}
+.dck-reader.is-night .dck-rrow.hl-g{background:rgba(120,210,150,.25)}
+.dck-reader.is-night .dck-rrow.hl-b{background:rgba(120,170,255,.25)}
+.dck-rrow.is-bm .dck-vnum::after{content:"\2605";color:var(--dck-gold);margin-left:2px}
+.dck-vpop{flex-wrap:wrap;align-items:center;max-width:calc(100% - 16px)}
+.dck-vpop__hl{display:inline-flex;gap:6px;padding:0 6px 0 4px;margin-right:2px;border-right:1px solid rgba(255,255,255,.2)}
+.dck-vpop .dck-sw{width:24px;height:24px;padding:0;border-radius:50%;border:2px solid rgba(255,255,255,.7)}
+.dck-sw--y{background:#fad65c!important}.dck-sw--g{background:#78d296!important}.dck-sw--b{background:#78aaff!important}
+.dck-sw--x{background:transparent!important;color:#fff;font-size:1rem;line-height:1}
+.dck-rside__empty{font-size:.84rem;color:var(--dck-rmuted);margin:0 10px 8px}
+.dck-rsaved{position:relative;display:block;width:100%;text-align:left;font:inherit;padding:10px 34px 10px 12px;margin:0 0 6px;border:1px solid var(--dck-line);border-radius:10px;background:transparent;color:inherit;cursor:pointer}
+.dck-rsaved:hover{border-color:var(--dck-blue)}
+.dck-rsaved strong{display:block;font-size:.9rem}
+.dck-rsaved span{display:block;font-size:.8rem;color:var(--dck-rmuted);line-height:1.45;margin-top:2px}
+.dck-rsaved__x{position:absolute;right:8px;top:8px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:var(--dck-rmuted)}
+.dck-rsaved__x:hover{background:rgba(192,57,43,.12);color:#c0392b}
+.dck-rside__tab{font-size:.72rem;padding:7px 2px}
+/* compact Verse of the Day */
+.dck-reader .dck-votd{display:grid;grid-template-columns:auto 1fr auto;gap:6px 16px;align-items:center;padding:14px 18px;border-radius:var(--dck-radius)}
+.dck-reader .dck-votd::after{display:none}
+.dck-reader .dck-votd__k{grid-row:1/3;writing-mode:horizontal-tb;background:rgba(231,200,106,.15);border-radius:10px;padding:8px 10px;font-size:.66rem;text-align:center;max-width:72px;line-height:1.3}
+.dck-reader .dck-votd__t{margin:0;font-size:clamp(1rem,1.6vw,1.15rem);line-height:1.5}
+.dck-reader .dck-votd__f{grid-column:2/4;gap:10px;font-size:.82rem}
+.dck-reader .dck-votd__f .dck-tool{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+@media (max-width:640px){.dck-reader .dck-votd{grid-template-columns:1fr}.dck-reader .dck-votd__k{grid-row:auto;max-width:none;justify-self:start}.dck-reader .dck-votd__f{grid-column:auto}}
