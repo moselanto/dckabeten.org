@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.5.0
+Version: 4.6.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -1698,3 +1698,62 @@ body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-o
 .dck-post{max-width:760px}
 .dck-post img{border-radius:var(--dck-radius)}
 .dck-post__share{color:var(--dck-gray);padding:20px 0;margin-top:30px;border-top:1px solid var(--dck-line)}
+
+
+/* =====================================================================
+   v4.6.0 - Bible reader (multilingual)
+   ===================================================================== */
+.dck-reader{position:relative;margin-top:-48px;z-index:2;--dck-rbg:#fff;--dck-rink:#1d1d1f;--dck-rmuted:var(--dck-gray)}
+.dck-reader.is-night{--dck-rbg:#0f1530;--dck-rink:#e8ecff;--dck-rmuted:#9aa6d6}
+.dck-votd{background:linear-gradient(135deg,var(--dck-blue-900),var(--dck-blue-700));color:#fff;border-radius:calc(var(--dck-radius) + 4px);padding:clamp(22px,4vw,34px);margin-bottom:16px;position:relative;overflow:hidden;box-shadow:var(--dck-shadow)}
+.dck-votd::after{content:"\201C";position:absolute;right:18px;top:-36px;font-family:var(--dck-font-display);font-size:10rem;color:rgba(231,200,106,.15);line-height:1}
+.dck-votd__k{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dck-gold-300)}
+.dck-votd__t{margin:10px 0 14px;font-family:var(--dck-font-display);font-size:clamp(1.2rem,2.4vw,1.6rem);line-height:1.5;position:relative;z-index:1}
+.dck-votd__f{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;color:#d7deff;font-weight:600;font-size:.9rem}
+.dck-rbar{display:grid;grid-template-columns:1.6fr 1.1fr .6fr 1.4fr 1.3fr;gap:10px;align-items:end;background:#fff;border:1px solid var(--dck-line);border-radius:var(--dck-radius);padding:14px;box-shadow:var(--dck-shadow);margin-bottom:16px}
+.dck-rbar__f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.dck-rbar__f span{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dck-gray)}
+.dck-rbar select,.dck-rbar input{width:100%;min-height:44px;padding:9px 12px;border:1px solid var(--dck-line);border-radius:10px;font:inherit;font-size:.92rem;background:#fff;color:var(--dck-ink)}
+.dck-rbar select:focus,.dck-rbar input:focus{outline:2px solid var(--dck-blue-300);border-color:var(--dck-blue)}
+.dck-rbar__go{display:flex;gap:6px}
+.dck-rbar__go .dck-btn{min-height:44px;padding:0 16px}
+.dck-rpage{background:var(--dck-rbg);color:var(--dck-rink);border:1px solid var(--dck-line);border-radius:calc(var(--dck-radius) + 4px);box-shadow:var(--dck-shadow);padding:clamp(18px,4vw,44px);transition:background .3s,color .3s}
+.dck-rpage__head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.dck-rpage__title{text-align:center;flex:1}
+.dck-rpage__title h2{margin:0;font-size:clamp(1.6rem,3.4vw,2.4rem);color:inherit}
+.dck-rpage__title p{margin:4px 0 0;color:var(--dck-rmuted);font-size:.88rem}
+.dck-rnav{flex:0 0 46px;height:46px;border-radius:50%;border:1px solid var(--dck-line);background:transparent;color:inherit;font-size:1.2rem;cursor:pointer;transition:background .2s}
+.dck-rnav:hover{background:var(--dck-blue);color:#fff;border-color:var(--dck-blue)}
+.dck-rpage__tools{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:18px 0 8px;padding-bottom:18px;border-bottom:1px solid var(--dck-line)}
+.dck-rpage__tools audio{height:34px;max-width:260px}
+.dck-tool.is-active,.dck-tool[aria-pressed=true]{background:var(--dck-blue);color:#fff;border-color:var(--dck-blue)}
+.dck-rtext{--dck-rsize:1;font-family:var(--dck-font-display);font-size:calc(1.14rem * var(--dck-rsize));line-height:1.95;max-width:760px;margin:0 auto;padding-top:10px}
+.dck-rtext.is-compare{max-width:none;font-size:calc(1.02rem * var(--dck-rsize))}
+.dck-rhead{font-family:var(--dck-font-body);font-size:.95rem;font-weight:700;letter-spacing:.02em;color:var(--dck-blue-300);margin:26px 0 6px;text-transform:none}
+.dck-reader:not(.is-night) .dck-rhead{color:var(--dck-blue)}
+.dck-rrow{margin:0;padding:3px 8px;border-radius:8px;cursor:pointer;transition:background .2s}
+.dck-rrow:hover{background:rgba(36,64,154,.06)}
+.dck-rrow.is-sel{background:rgba(201,162,39,.18)}
+.dck-rrow.is-hl{background:rgba(201,162,39,.28);animation:dckhl 2.4s ease-out 1}
+@keyframes dckhl{from{background:rgba(201,162,39,.6)}to{background:rgba(201,162,39,.28)}}
+.dck-rtext:not(.is-compare) .dck-rrow{display:inline;padding:2px 3px}
+.dck-rtext.is-compare .dck-rrow{display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:8px 10px;border-bottom:1px dashed var(--dck-line)}
+.dck-rrow--head{font-family:var(--dck-font-body);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dck-rmuted);cursor:default;position:sticky;top:0;background:var(--dck-rbg);z-index:1}
+.dck-rcol--b{color:var(--dck-rmuted)}
+.dck-reader.is-night .dck-rcol--b{color:#c7cff5}
+.dck-vnum{font-family:var(--dck-font-body);font-size:.62em;font-weight:700;color:var(--dck-gold);vertical-align:super;margin-right:2px}
+.dck-rerr{font-family:var(--dck-font-body);font-size:.95rem;color:#b3261e;background:#fdecea;border-radius:10px;padding:12px 14px}
+.dck-rpage__foot{display:flex;justify-content:space-between;gap:10px;margin-top:28px;padding-top:20px;border-top:1px solid var(--dck-line)}
+.dck-reader.is-night .dck-btn--outline{color:#e8ecff;border-color:rgba(255,255,255,.35)}
+.dck-reader.is-night .dck-tool{background:transparent;color:#e8ecff;border-color:rgba(255,255,255,.25)}
+.dck-rcredit{font-size:.75rem;color:var(--dck-rmuted);margin:14px 0 0;text-align:center}
+.dck-rcredit a{color:inherit;text-decoration:underline}
+.dck-vpop{position:absolute;z-index:30;display:flex;gap:4px;background:var(--dck-blue-900);border-radius:12px;padding:6px;box-shadow:0 16px 40px rgba(0,0,0,.35)}
+.dck-vpop[hidden]{display:none}
+.dck-vpop button{font:inherit;font-size:.82rem;font-weight:600;color:#fff;background:transparent;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;white-space:nowrap}
+.dck-vpop button:hover{background:rgba(255,255,255,.14)}
+.dck-ask-head{margin:56px 0 0}
+.dck-ask-head + .dck-studio{margin-top:24px}
+@media (max-width:1000px){.dck-rbar{grid-template-columns:1fr 1fr 1fr}.dck-rbar__f--ver{grid-column:span 3}.dck-rbar__go{grid-column:span 3}}
+@media (max-width:640px){.dck-reader{margin-top:-28px}.dck-rbar{grid-template-columns:1fr .5fr}.dck-rbar__f--ver,.dck-rbar__go{grid-column:span 2}.dck-rtext.is-compare .dck-rrow{grid-template-columns:1fr;gap:6px}.dck-rrow--head{display:none!important}.dck-rcol--b{border-left:3px solid var(--dck-gold-300);padding-left:10px;display:block}.dck-rnav{flex-basis:40px;height:40px}}
+@media print{.dck-rbar,.dck-rpage__tools,.dck-rpage__foot,.dck-votd,.dck-studio,.dck-bible-ways,.dck-ask-head,.dck-vpop{display:none!important}}

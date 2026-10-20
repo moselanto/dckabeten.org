@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.5.0' );
+	define( 'DCK_ELITE_VERSION', '4.6.0' );
 }
 
 /**
@@ -794,6 +794,10 @@ if ( file_exists( get_template_directory() . '/inc/sermons.php' ) ) {
 
 if ( file_exists( get_template_directory() . '/inc/pages.php' ) ) {
 	require_once get_template_directory() . '/inc/pages.php';
+}
+
+if ( file_exists( get_template_directory() . '/inc/scripture.php' ) ) {
+	require_once get_template_directory() . '/inc/scripture.php';
 }
 
 /* Shared AI layer (Church Assistant). */

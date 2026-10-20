@@ -16,7 +16,12 @@ $dck_chips = array_filter( array_map( 'trim', explode( "\n", (string) dck_home_v
 	<div class="dck-container">
 		<p class="dck-eyebrow dck-eyebrow--light"><?php echo esc_html( dck_home_val( 'dck_bible_eyebrow', __( 'Grow in the Word', 'dck-elite' ) ) ); ?></p>
 		<h1 data-i18n="bible_title"><?php echo esc_html( dck_home_val( 'dck_bible_title', __( 'Bible Study Assistant', 'dck-elite' ) ) ); ?></h1>
-		<p class="dck-lead dck-center dck-lead--light" data-i18n="bible_lead"><?php echo esc_html( dck_home_val( 'dck_bible_lead', __( 'Ask about any verse or topic and receive a clear, Scripture-grounded explanation with cross references, application, and prayer.', 'dck-elite' ) ) ); ?></p>
+		<p class="dck-lead dck-center dck-lead--light" data-i18n="bible_lead"><?php echo esc_html( dck_home_val( 'dck_bible_lead', __( 'Read the Bible in English, Kiswahili and Kenyan languages, compare versions side by side, and ask our study assistant about any verse or topic.', 'dck-elite' ) ) ); ?></p>
+		<div class="dck-legal-hero__meta">
+			<a class="dck-pill dck-pill--link" href="#read"><?php esc_html_e( 'Read the Bible', 'dck-elite' ); ?></a>
+			<a class="dck-pill dck-pill--link" href="#ask"><?php esc_html_e( 'Ask the study assistant', 'dck-elite' ); ?></a>
+			<span class="dck-pill"><?php echo esc_html( sprintf( _n( '%d version', '%d versions', count( dck_bible_versions() ), 'dck-elite' ), count( dck_bible_versions() ) ) ); ?></span>
+		</div>
 	</div>
 </section>
 
@@ -32,6 +37,88 @@ $dck_chips = array_filter( array_map( 'trim', explode( "\n", (string) dck_home_v
 			endif;
 		endwhile;
 		?>
+
+		<?php
+		$dck_vers   = dck_bible_versions();
+		$dck_groups = array();
+		foreach ( $dck_vers as $v ) {
+			$dck_groups[ $v['group'] ][] = $v;
+		}
+		?>
+		<div class="dck-reader" id="read">
+			<div class="dck-votd" id="dck-votd" hidden>
+				<span class="dck-votd__k"><?php esc_html_e( 'Verse of the Day', 'dck-elite' ); ?></span>
+				<blockquote class="dck-votd__t" id="dck-votd-t"></blockquote>
+				<div class="dck-votd__f"><span id="dck-votd-r"></span><button type="button" class="dck-tool" id="dck-votd-open"><?php esc_html_e( 'Read chapter', 'dck-elite' ); ?></button></div>
+			</div>
+
+			<div class="dck-rbar" role="toolbar" aria-label="<?php esc_attr_e( 'Bible reader controls', 'dck-elite' ); ?>">
+				<label class="dck-rbar__f dck-rbar__f--ver"><span><?php esc_html_e( 'Version', 'dck-elite' ); ?></span>
+					<select id="dck-r-tr">
+						<?php foreach ( $dck_groups as $g => $list ) : ?>
+							<optgroup label="<?php echo esc_attr( $g ); ?>">
+								<?php foreach ( $list as $v ) : ?>
+									<option value="<?php echo esc_attr( $v['id'] ); ?>"><?php echo esc_html( $v['lang'] . ' - ' . $v['name'] ); ?></option>
+								<?php endforeach; ?>
+							</optgroup>
+						<?php endforeach; ?>
+					</select>
+				</label>
+				<label class="dck-rbar__f"><span><?php esc_html_e( 'Book', 'dck-elite' ); ?></span><select id="dck-r-book"></select></label>
+				<label class="dck-rbar__f dck-rbar__f--ch"><span><?php esc_html_e( 'Chapter', 'dck-elite' ); ?></span><select id="dck-r-ch"></select></label>
+				<label class="dck-rbar__f dck-rbar__f--ver"><span><?php esc_html_e( 'Compare with', 'dck-elite' ); ?></span>
+					<select id="dck-r-tr2">
+						<option value=""><?php esc_html_e( 'No second version', 'dck-elite' ); ?></option>
+						<?php foreach ( $dck_groups as $g => $list ) : ?>
+							<optgroup label="<?php echo esc_attr( $g ); ?>">
+								<?php foreach ( $list as $v ) : ?>
+									<option value="<?php echo esc_attr( $v['id'] ); ?>"><?php echo esc_html( $v['lang'] . ' - ' . $v['name'] ); ?></option>
+								<?php endforeach; ?>
+							</optgroup>
+						<?php endforeach; ?>
+					</select>
+				</label>
+				<form class="dck-rbar__go" id="dck-r-go" role="search">
+					<label class="screen-reader-text" for="dck-r-ref"><?php esc_html_e( 'Go to a reference', 'dck-elite' ); ?></label>
+					<input type="search" id="dck-r-ref" placeholder="<?php esc_attr_e( 'Go to: John 3:16', 'dck-elite' ); ?>" autocomplete="off">
+					<button type="submit" class="dck-btn dck-btn--primary"><?php esc_html_e( 'Go', 'dck-elite' ); ?></button>
+				</form>
+			</div>
+
+			<div class="dck-rpage">
+				<div class="dck-rpage__head">
+					<button type="button" class="dck-rnav" id="dck-r-prev" aria-label="<?php esc_attr_e( 'Previous chapter', 'dck-elite' ); ?>">&larr;</button>
+					<div class="dck-rpage__title"><h2 id="dck-r-title">&nbsp;</h2><p id="dck-r-sub"></p></div>
+					<button type="button" class="dck-rnav" id="dck-r-next" aria-label="<?php esc_attr_e( 'Next chapter', 'dck-elite' ); ?>">&rarr;</button>
+				</div>
+				<div class="dck-rpage__tools">
+					<button type="button" class="dck-tool" id="dck-r-smaller" aria-label="<?php esc_attr_e( 'Smaller text', 'dck-elite' ); ?>">A&minus;</button>
+					<button type="button" class="dck-tool" id="dck-r-bigger" aria-label="<?php esc_attr_e( 'Larger text', 'dck-elite' ); ?>">A+</button>
+					<button type="button" class="dck-tool" id="dck-r-mode"><?php esc_html_e( 'Night mode', 'dck-elite' ); ?></button>
+					<button type="button" class="dck-tool" id="dck-r-listen"><?php esc_html_e( 'Listen', 'dck-elite' ); ?></button>
+					<button type="button" class="dck-tool" id="dck-r-share"><?php esc_html_e( 'Share chapter', 'dck-elite' ); ?></button>
+					<audio id="dck-r-audio" controls preload="none" hidden></audio>
+				</div>
+				<div class="dck-rtext" id="dck-r-text" aria-live="polite"></div>
+				<div class="dck-rpage__foot">
+					<button type="button" class="dck-btn dck-btn--outline" id="dck-r-prev2">&larr; <?php esc_html_e( 'Previous', 'dck-elite' ); ?></button>
+					<button type="button" class="dck-btn dck-btn--primary" id="dck-r-next2"><?php esc_html_e( 'Next chapter', 'dck-elite' ); ?> &rarr;</button>
+				</div>
+				<p class="dck-rcredit" id="dck-r-credit"></p>
+			</div>
+
+			<div class="dck-vpop" id="dck-vpop" role="dialog" aria-label="<?php esc_attr_e( 'Verse actions', 'dck-elite' ); ?>" hidden>
+				<button type="button" data-act="copy"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button>
+				<button type="button" data-act="share"><?php esc_html_e( 'WhatsApp', 'dck-elite' ); ?></button>
+				<button type="button" data-act="ask"><?php esc_html_e( 'Ask about this', 'dck-elite' ); ?></button>
+				<button type="button" data-act="close" aria-label="<?php esc_attr_e( 'Close', 'dck-elite' ); ?>">&times;</button>
+			</div>
+		</div>
+
+		<div class="dck-center dck-ask-head" id="ask">
+			<p class="dck-eyebrow"><?php esc_html_e( 'Go Deeper', 'dck-elite' ); ?></p>
+			<h2><?php esc_html_e( 'Ask the Bible Study Assistant', 'dck-elite' ); ?></h2>
+		</div>
 
 		<div class="dck-studio dck-reveal">
 			<label class="screen-reader-text" for="dck-bible-input"><?php esc_html_e( 'Your Bible question', 'dck-elite' ); ?></label>
