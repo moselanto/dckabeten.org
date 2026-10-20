@@ -261,7 +261,7 @@ if ( ! function_exists( 'dck_ai_rate_ok' ) ) {
 			return false;
 		}
 		set_transient( $key, $n + 1, 10 * MINUTE_IN_SECONDS );
-		return true;
+		return function_exists( 'dck_ai_budget_ok' ) ? dck_ai_budget_ok() : true;
 	}
 }
 

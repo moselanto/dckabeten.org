@@ -37,10 +37,19 @@ if ( ! function_exists( 'dck_ai_rest_stt' ) ) {
 		if ( empty( $_FILES['audio'] ) || ! isset( $_FILES['audio']['tmp_name'] ) ) { return new WP_REST_Response( array( 'text' => '' ), 200 ); }
 		$file = $_FILES['audio'];
 		if ( ! empty( $file['error'] ) ) { return new WP_REST_Response( array( 'text' => '' ), 200 ); }
-		if ( isset( $file['size'] ) && (int) $file['size'] > 12000000 ) { return new WP_REST_Response( array( 'text' => '' ), 200 ); }
-		$bin = file_get_contents( $file['tmp_name'] );
+		/* Upload hardening: real upload, size cap, MIME sniffed from content (never trust the browser). */
+		if ( ! is_uploaded_file( $file['tmp_name'] ) ) { return new WP_REST_Response( array( 'text' => '' ), 400 ); }
+		if ( (int) $file['size'] <= 0 || (int) $file['size'] > 8 * MB_IN_BYTES ) { return new WP_REST_Response( array( 'text' => '' ), 413 ); }
+		$allowed = array( 'audio/webm', 'video/webm', 'audio/ogg', 'audio/mpeg', 'audio/mp4', 'video/mp4', 'audio/x-m4a', 'audio/wav', 'audio/x-wav', 'audio/aac' );
+		$ctype   = '';
+		if ( function_exists( 'finfo_open' ) ) {
+			$fi    = finfo_open( FILEINFO_MIME_TYPE );
+			$ctype = (string) finfo_file( $fi, $file['tmp_name'] );
+			finfo_close( $fi );
+		}
+		if ( ! in_array( $ctype, $allowed, true ) ) { return new WP_REST_Response( array( 'text' => '' ), 415 ); }
+		$bin = file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 		if ( false === $bin || '' === $bin ) { return new WP_REST_Response( array( 'text' => '' ), 200 ); }
-		$ctype = ! empty( $file['type'] ) ? sanitize_text_field( $file['type'] ) : 'audio/webm';
 		$params = $request->get_params();
 		$lang   = isset( $params['lang'] ) ? sanitize_key( $params['lang'] ) : '';
 
@@ -83,6 +92,7 @@ if ( ! function_exists( 'dck_ai_rest_tts' ) ) {
 		if ( strlen( $text ) > 900 ) { $text = substr( $text, 0, 900 ); }
 		if ( '' === $text ) { return new WP_REST_Response( array( 'audio' => '' ), 200 ); }
 		$voice = get_theme_mod( 'dck_ai_tts_voice', 'alloy' );
+		if ( ! in_array( $voice, array( 'alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer' ), true ) ) { $voice = 'alloy'; }
 
 		$resp = wp_remote_post( dck_ai_base_url() . '/audio/speech', array(
 			'timeout' => 45,

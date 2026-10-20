@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.13.0' );
+	define( 'DCK_ELITE_VERSION', '4.14.0' );
 }
 
 /**
@@ -874,6 +874,9 @@ if ( file_exists( get_template_directory() . '/inc/events.php' ) ) {
 	require_once get_template_directory() . '/inc/events.php';
 }
 
+if ( file_exists( get_template_directory() . '/inc/hardening.php' ) ) {
+	require_once get_template_directory() . '/inc/hardening.php';
+}
 if ( file_exists( get_template_directory() . '/inc/security.php' ) ) {
 	require_once get_template_directory() . '/inc/security.php';
 }

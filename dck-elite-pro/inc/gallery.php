@@ -174,7 +174,7 @@ if ( ! function_exists( 'dck_gallery_rest' ) ) {
 				'id'      => $post->ID,
 				'thumb'   => esc_url_raw( $thumb ),
 				'full'    => esc_url_raw( $full ),
-				'caption' => esc_html( $post->post_title ),
+				'caption' => wp_strip_all_tags( $post->post_title ), // Rendered with textContent in gallery.js.
 			);
 		}
 		$total    = (int) $q->found_posts;

@@ -20,10 +20,17 @@ add_filter( 'wp_headers', 'dck_sec_http_headers' );
 
 if ( ! function_exists( 'dck_sec_http_headers' ) ) {
 	function dck_sec_http_headers( $headers ) {
-		$headers['X-Frame-Options']        = 'SAMEORIGIN';
-		$headers['X-Content-Type-Options'] = 'nosniff';
-		$headers['Referrer-Policy']        = 'strict-origin-when-cross-origin';
-		$headers['X-XSS-Protection']       = '1; mode=block';
+		$headers['X-Frame-Options']           = 'SAMEORIGIN';
+		$headers['X-Content-Type-Options']    = 'nosniff';
+		$headers['Referrer-Policy']           = 'strict-origin-when-cross-origin';
+		$headers['X-XSS-Protection']          = '0'; // Legacy filter disabled (modern guidance); CSP below replaces it.
+		$headers['Permissions-Policy']        = 'camera=(), geolocation=(), payment=(), usb=(), microphone=(self)';
+		$headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups';
+		/* Safe CSP baseline: blocks clickjacking, plugins and <base> hijacking without breaking embeds/inline scripts. */
+		$headers['Content-Security-Policy']   = "frame-ancestors 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests";
+		if ( is_ssl() || dck_sec_forwarded_https() ) {
+			$headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains';
+		}
 		unset( $headers['X-Pingback'] );
 		return $headers;
 	}
@@ -128,26 +135,67 @@ if ( ! function_exists( 'dck_sec_hide_rest_users' ) ) {
 /* ============================================================
    6. Shared client IP helper (Cloudflare-aware)
    ============================================================ */
-if ( ! function_exists( 'dck_sec_client_ip' ) ) {
-	function dck_sec_client_ip() {
-		$candidates = array();
-		if ( isset( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
-			$candidates[] = trim( (string) wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) );
+if ( ! function_exists( 'dck_sec_ip_in_cidr' ) ) {
+	/** IPv4/IPv6 CIDR match. */
+	function dck_sec_ip_in_cidr( $ip, $cidr ) {
+		list( $net, $bits ) = array_pad( explode( '/', $cidr ), 2, null );
+		$ip_b  = @inet_pton( $ip );  // phpcs:ignore WordPress.PHP.NoSilencedErrors
+		$net_b = @inet_pton( $net ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+		if ( false === $ip_b || false === $net_b || strlen( $ip_b ) !== strlen( $net_b ) ) {
+			return false;
 		}
-		if ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-			$xff = explode( ',', (string) wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
-			$candidates[] = trim( $xff[0] );
+		$bits = null === $bits ? strlen( $ip_b ) * 8 : (int) $bits;
+		$full = intdiv( $bits, 8 );
+		if ( substr( $ip_b, 0, $full ) !== substr( $net_b, 0, $full ) ) {
+			return false;
 		}
-		if ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
-			$candidates[] = trim( (string) wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+		$rem = $bits % 8;
+		if ( 0 === $rem ) {
+			return true;
 		}
-		foreach ( $candidates as $cand ) {
-			$cand = sanitize_text_field( $cand );
-			if ( filter_var( $cand, FILTER_VALIDATE_IP ) ) {
-				return $cand;
+		$mask = chr( ( 0xff << ( 8 - $rem ) ) & 0xff );
+		return ( $ip_b[ $full ] & $mask ) === ( $net_b[ $full ] & $mask );
+	}
+}
+
+if ( ! function_exists( 'dck_sec_is_cloudflare' ) ) {
+	/** True when the direct peer is a Cloudflare edge server (published ranges). */
+	function dck_sec_is_cloudflare( $ip ) {
+		$ranges = array( '173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22', '141.101.64.0/18', '108.162.192.0/18', '190.93.240.0/20', '188.114.96.0/20', '197.234.240.0/22', '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/13', '104.24.0.0/14', '172.64.0.0/13', '131.0.72.0/22', '2400:cb00::/32', '2606:4700::/32', '2803:f800::/32', '2405:b500::/32', '2405:8100::/32', '2a06:98c0::/29', '2c0f:f248::/32' );
+		foreach ( $ranges as $r ) {
+			if ( dck_sec_ip_in_cidr( $ip, $r ) ) {
+				return true;
 			}
 		}
-		return '0.0.0.0';
+		return false;
+	}
+}
+
+if ( ! function_exists( 'dck_sec_client_ip' ) ) {
+	/**
+	 * Visitor IP for rate limiting. Forwarding headers are trusted ONLY when the
+	 * request really comes through Cloudflare (or a proxy declared with the
+	 * DCK_TRUSTED_PROXY constant), so attackers cannot spoof their IP to bypass limits.
+	 */
+	function dck_sec_client_ip() {
+		$remote = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+		if ( ! filter_var( $remote, FILTER_VALIDATE_IP ) ) {
+			return '0.0.0.0';
+		}
+		if ( isset( $_SERVER['HTTP_CF_CONNECTING_IP'] ) && dck_sec_is_cloudflare( $remote ) ) {
+			$cf = sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) );
+			if ( filter_var( $cf, FILTER_VALIDATE_IP ) ) {
+				return $cf;
+			}
+		}
+		if ( defined( 'DCK_TRUSTED_PROXY' ) && DCK_TRUSTED_PROXY && $remote === DCK_TRUSTED_PROXY && isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+			$xff = explode( ',', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) );
+			$ip  = trim( $xff[0] );
+			if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+				return $ip;
+			}
+		}
+		return $remote;
 	}
 }
 
