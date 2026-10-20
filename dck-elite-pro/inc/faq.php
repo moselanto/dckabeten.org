@@ -175,6 +175,25 @@ DCKA
 				),
 			),
 		);
+		/* Admin override: DCK Church > Page Text > FAQ page (Group|Question|Answer per line). */
+		$custom = trim( (string) get_theme_mod( 'dck_faq_items', '' ) );
+		if ( '' !== $custom ) {
+			$byg = array();
+			foreach ( preg_split( '/\r\n|\r|\n/', $custom ) as $line ) {
+				$parts = array_map( 'trim', explode( '|', $line, 3 ) );
+				if ( count( $parts ) < 3 || '' === $parts[1] || '' === $parts[2] ) {
+					continue;
+				}
+				$g = '' !== $parts[0] ? $parts[0] : __( 'Questions', 'dck-elite' );
+				$byg[ $g ][] = array( 'q' => $parts[1], 'a' => $parts[2] );
+			}
+			if ( $byg ) {
+				$groups = array();
+				foreach ( $byg as $h => $items ) {
+					$groups[] = array( 'heading' => $h, 'items' => $items );
+				}
+			}
+		}
 		return apply_filters( 'dck_elite_faq_groups', $groups );
 	}
 }

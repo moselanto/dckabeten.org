@@ -276,6 +276,13 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 						$f( 'dck_bible_suggestions', __( 'Suggested questions (one per line)', 'dck-core' ), 'textarea', "Romans 8:28\nPsalm 23\nPhilippians 4:6-7\nOvercoming anxiety\nForgiveness\nFinding hope in hard times\nGrowing in faith\nThe armor of God" ),
 					),
 				),
+				array(
+					'title'  => __( 'FAQ page', 'dck-core' ),
+					'desc'   => __( 'Leave blank to keep the built-in questions. To use your own, write one question per line as: Group|Question|Answer. You can use %PHONE%, %EMAIL%, %SERVICES% and %HOME% (website address) in answers.', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_faq_items', __( 'Questions and answers (one per line: Group|Question|Answer)', 'dck-core' ), 'textarea', '', __( 'Example: Visiting Us|Is there parking?|Yes, there is free parking behind the church.', 'dck-core' ) ),
+					),
+				),
 			),
 		);
 

@@ -6,14 +6,15 @@ Last updated: 2026-10-20 (Tue), by Ray (Town assistant). Update this file at the
 
 | Item | Version / state |
 |---|---|
-| Theme `dck-elite-pro/` on `main` | **4.30.0** (PR #1 merged 2026-10-20, merge commit d20f9df) |
-| Plugin `dck-core/` on `main` | **1.8.0** |
+| Theme `dck-elite-pro/` on `main` | **4.31.0** (4.30.0 = PR #1 merged, d20f9df; 4.31.0 = FAQ editable in admin) |
+| Plugin `dck-core/` on `main` | **1.9.0** (FAQ field in DCK Church > Page Text) |
 | Theme installed on the live site | **older than 4.29.0** (live I'm New page still shows the old "How did you hear about us?" dropdown). 4.29.0 and 4.30.0 are NOT live yet |
 | Live SEO plugin | Rank Math (free), fully configured 2026-10-20 (see section 3) |
 | Live robots.txt | Replaced by Agnes with `docs/seo/robots.txt`; **not yet re-verified** from outside |
 | Hosting | cPanel, behind Cloudflare. WordPress zip uploader fails on this server |
 
 ## 2. Code work done (summary, newest first; details in AGENTS.md changelog)
+- **4.31.0 / Core 1.9.0** editability audit: all church facts (phone, WhatsApp, email, address, gatherings, pastors, ministries, page text, giving, legal) were confirmed editable in DCK Church; the remaining gap, the FAQ page, is now editable (`dck_faq_items`, one line per question `Group|Question|Answer`, tokens %PHONE% %EMAIL% %SERVICES% %HOME%; blank = built-in FAQ). Remaining literal text in code is only fallback defaults, one-time seed content (sermons/posts already stored in the database) and SEO fallbacks unused while Rank Math is active. Handover manual for church staff: `DCK Kabete - Website Editing and Handover Manual.docx` in the Town library (DCK Website).
 - **4.30.0** SEO single source of truth: with Rank Math/Yoast active the plugin owns title, description, canonical, robots, OG and sitemap; the theme outputs ONE JSON-LD `@graph` (#church, #website, {url}#webpage, breadcrumb, video/article/event, blog posts) and strips the plugin graph via `rank_math/json_ld` and `wpseo_json_ld_output`. Hours from Gatherings, no placeholder sameAs, YouTube VideoObject embedUrl, Event only for dated events, SearchAction and meta keywords removed, AI search crawlers allowed in robots. Report: `docs/seo/SEO-AUDIT-2026.md`.
 - **4.29.0** full local verification (24 pages, 10 REST forms, 17 admin screens, 2 Excel exports); translations-too-early notice fixed; I'm New "How did you hear" = 12 radio cards + follow-up detail.
 - **4.17-4.28 / Core 1.1-1.8**: speed pass, mobile app navigation, PWA, church tools (giving, visitors, RSVP, pastoral care, fellowships, volunteers), Paystack M-Pesa STK, Member Register with Excel round trip, security audit.
@@ -31,7 +32,7 @@ Done through the live wp-admin (user `moses`) with Rank Math, 2026-10-20:
 
 ## 4. Pending - next agent picks up here (in priority order)
 1. **Test 4.30.0 with Rank Math installed** on the local test WordPress (`wp plugin install seo-by-rank-math --activate`), configure it like section 3, and confirm each page outputs exactly 1 canonical, 1 description, 1 JSON-LD graph, and no Rank Math `@graph`. This path was never exercised. Fix and bump to 4.30.1 if needed.
-2. **Build and hand over the theme zip** (4.30.x) to `content://collections/DCK Website/`. Install steps for the church: cPanel File Manager, rename `wp-content/themes/dck-elite-pro` to `dck-elite-pro-old`, upload + extract zip, purge WordPress cache and Cloudflare cache. Also upload `dck-core` 1.8.0 the same way if the live plugin is older.
+2. **Build and hand over the theme zip** (4.31.x; zips of 4.31.0 and dck-core 1.9.0 were produced 2026-10-20 but the Rank Math coexistence is still untested) to `content://collections/DCK Website/`. Install steps for the church: cPanel File Manager, rename `wp-content/themes/dck-elite-pro` to `dck-elite-pro-old`, upload + extract zip, purge WordPress cache and Cloudflare cache. Also upload `dck-core` 1.9.0 the same way if the live plugin is older.
 3. **After install, verify live** (view-source or curl): one canonical/description/JSON-LD per page on Home, Services, Contact, a sermon, an event, a post; Rich Results Test on Home, a sermon and an event; `https://dckabeten.org/robots.txt` contains `Sitemap: https://dckabeten.org/sitemap_index.xml` and no `/test/`.
 4. **Search engines**: verify the site in Google Search Console and Bing Webmaster Tools (Bing sign-up was started and stalled), submit `sitemap_index.xml`, request indexing for Home, Services, Contact, Plan Your Visit.
 5. **Google Business Profile**: claim/verify "Deliverance Church Kabete N Market", category Church, same name/address/phone/hours as section 3, add photos, start collecting reviews. Biggest lever for "church near me / church in Uthiru" searches.
