@@ -52,3 +52,10 @@ Everything else (contact details, service times, giving numbers, page text, phot
 
 ## Versioning
 Bump `DCK_ELITE_VERSION` in `dck-elite-pro/functions.php` **and** `Version:` in `dck-elite-pro/style.css` together (this also busts browser caches). Plugin: `DCK_CORE_VERSION` + header in `dck-core/dck-core.php`.
+
+
+## Two-factor login (required for staff)
+1. Plugins > Add New > search "Two Factor" (by WordPress.org contributors) > Install > Activate.
+2. Every user who can edit content is taken to Users > Profile until they enable it: tick **Authenticator App** and scan the QR code, generate **Recovery Codes** and store them safely, set Primary Method to Authenticator App, Update Profile.
+3. To switch enforcement off temporarily: `define( 'DCK_REQUIRE_2FA', false );` in wp-config.php.
+4. Locked out (lost phone and recovery codes)? Another admin can disable two-factor on that user's profile, or deactivate the plugin by renaming its folder over FTP.

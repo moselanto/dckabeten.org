@@ -66,3 +66,6 @@ No SQL injection sinks found (no raw `$wpdb` queries; all data access via WP API
 - Lost-password requests limited to 3 per hour per IP.
 - Lost-password no longer reveals whether an account exists (unknown user/email shows the same "check your email" screen).
 - Generic login errors kept; only the lockout message ("Too many...") is shown as-is.
+
+## Follow-up (v4.16.0) - two-factor authentication
+- Staff accounts (edit_posts and above) must enable two-factor (authenticator app + recovery codes) via the official Two Factor plugin before using wp-admin. Enforcement can be disabled with DCK_REQUIRE_2FA.

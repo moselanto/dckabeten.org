@@ -74,7 +74,10 @@ add_filter(
 	'login_message',
 	function ( $message ) {
 		$action = isset( $_REQUEST['action'] ) ? sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : 'login'; // phpcs:ignore WordPress.Security.NonceVerification
-		if ( in_array( $action, array( 'login', '' ), true ) && ! isset( $_GET['checkemail'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+		if ( did_action( 'wp_login' ) || in_array( $action, array( 'validate_2fa', 'backup_2fa', 'revalidate_2fa' ), true ) ) {
+			/* Two-factor code screen (shown by the Two Factor plugin after the password). */
+			$message = '<div class="dck-lg-head"><h1>' . esc_html__( 'Two-step verification', 'dck-elite' ) . '</h1><p>' . esc_html__( 'One more step to keep the church website safe.', 'dck-elite' ) . '</p></div>' . $message;
+		} elseif ( in_array( $action, array( 'login', '' ), true ) && ! isset( $_GET['checkemail'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			$message = '<div class="dck-lg-head"><h1>' . esc_html__( 'Welcome back', 'dck-elite' ) . '</h1><p>' . esc_html__( 'Sign in to manage the church website.', 'dck-elite' ) . '</p></div>' . $message;
 		} elseif ( 'lostpassword' === $action ) {
 			$message = '<div class="dck-lg-head"><h1>' . esc_html__( 'Reset your password', 'dck-elite' ) . '</h1><p>' . esc_html__( 'Enter your username or email and we will send you a secure reset link.', 'dck-elite' ) . '</p></div>';
