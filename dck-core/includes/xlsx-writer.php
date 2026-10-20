@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'DCK_XLSX_CLI' ) ) {
 if ( ! class_exists( 'DCK_Xlsx' ) ) {
 	class DCK_Xlsx {
 		/* Style ids (see styles()). */
-		const S_HEAD = 1, S_TITLE = 2, S_SUB = 3, S_BODY = 4, S_ZEBRA = 5, S_GOLD = 6, S_LABEL = 7, S_NUM = 8, S_NUMZ = 9, S_NOTE = 10, S_SECTION = 11;
+		const S_HEAD = 1, S_TITLE = 2, S_SUB = 3, S_BODY = 4, S_ZEBRA = 5, S_GOLD = 6, S_LABEL = 7, S_NUM = 8, S_NUMZ = 9, S_NOTE = 10, S_SECTION = 11, S_TEXT = 12, S_HEADGOLD = 13, S_LOCK = 14, S_WRAP = 15;
 
 		private $sheets = array();
 		private $logo   = '';
@@ -45,7 +45,8 @@ if ( ! class_exists( 'DCK_Xlsx' ) ) {
 		 * @param array  $widths   Column widths (characters).
 		 * @param array  $blocks   Optional summary blocks: [ [heading, [[label, value], ...]], ... ] rendered instead of a table.
 		 */
-		public function add_sheet( $name, $title, $subtitle, $head, $rows, $widths = array(), $blocks = array() ) {
+		/* $opts: validations [colIndex => [list...]], col_styles [colIndex => style], head_styles [colIndex => style], blank_rows int (pre-formatted input rows), note string. */
+		public function add_sheet( $name, $title, $subtitle, $head, $rows, $widths = array(), $blocks = array(), $opts = array() ) {
 			$name = trim( preg_replace( '/[\[\]\*\?\/\\\\:]/', ' ', (string) $name ) );
 			$name = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 31 ) : substr( $name, 0, 31 );
 			$base = $name ? $name : 'Sheet';
@@ -54,7 +55,7 @@ if ( ! class_exists( 'DCK_Xlsx' ) ) {
 			while ( in_array( strtolower( $name ), $used, true ) ) {
 				$name = substr( $base, 0, 27 ) . ' (' . $n++ . ')';
 			}
-			$this->sheets[] = compact( 'name', 'title', 'subtitle', 'head', 'rows', 'widths', 'blocks' );
+			$this->sheets[] = compact( 'name', 'title', 'subtitle', 'head', 'rows', 'widths', 'blocks', 'opts' );
 		}
 
 		private static function x( $s ) {
@@ -101,7 +102,8 @@ if ( ! class_exists( 'DCK_Xlsx' ) ) {
 			$xml .= '</sheetView></sheetViews><sheetFormatPr defaultRowHeight="18" customHeight="1"/><cols>';
 			for ( $c = 0; $c < $cols; $c++ ) {
 				$w    = isset( $s['widths'][ $c ] ) ? (float) $s['widths'][ $c ] : 18;
-				$xml .= '<col min="' . ( $c + 1 ) . '" max="' . ( $c + 1 ) . '" width="' . $w . '" customWidth="1"/>';
+				$cs   = isset( $s['opts']['col_styles'][ $c ] ) ? ' style="' . (int) $s['opts']['col_styles'][ $c ] . '"' : '';
+				$xml .= '<col min="' . ( $c + 1 ) . '" max="' . ( $c + 1 ) . '" width="' . $w . '" customWidth="1"' . $cs . '/>';
 			}
 			$xml .= '</cols><sheetData>';
 			$fill = function ( $r, $style ) use ( $cols ) {
@@ -133,7 +135,9 @@ if ( ! class_exists( 'DCK_Xlsx' ) ) {
 					$z = 0;
 					foreach ( $b[1] as $pair ) {
 						$st   = ( $z++ % 2 ) ? self::S_ZEBRA : self::S_BODY;
-						$xml .= '<row r="' . $r . '" ht="20" customHeight="1">' . self::cell( 'A' . $r, $pair[0], self::S_LABEL ) . self::cell( 'B' . $r, '', $st ) . self::cell( 'C' . $r, $pair[1], ( $z % 2 ) ? self::S_NUM : self::S_NUMZ ) . '</row>';
+						$long = is_string( $pair[1] ) && strlen( $pair[1] ) > 30;
+						$ht   = $long ? max( 20, 16 * (int) ceil( strlen( $pair[1] ) / 95 ) + 6 ) : 20;
+						$xml .= '<row r="' . $r . '" ht="' . $ht . '" customHeight="1">' . self::cell( 'A' . $r, $pair[0], self::S_LABEL ) . self::cell( 'B' . $r, '', $st ) . self::cell( 'C' . $r, $pair[1], $long ? self::S_WRAP : ( ( $z % 2 ) ? self::S_NUM : self::S_NUMZ ) ) . '</row>';
 						$merges[] = 'A' . $r . ':B' . $r;
 						$r++;
 					}
@@ -143,7 +147,7 @@ if ( ! class_exists( 'DCK_Xlsx' ) ) {
 			} else {
 				$xml .= '<row r="' . $r . '" ht="30" customHeight="1">';
 				foreach ( $s['head'] as $c => $h ) {
-					$xml .= self::cell( self::col( $c ) . $r, $h, self::S_HEAD );
+					$xml .= self::cell( self::col( $c ) . $r, $h, isset( $s['opts']['head_styles'][ $c ] ) ? (int) $s['opts']['head_styles'][ $c ] : self::S_HEAD );
 				}
 				$xml .= '</row>';
 				foreach ( $s['rows'] as $k => $row ) {
@@ -151,25 +155,37 @@ if ( ! class_exists( 'DCK_Xlsx' ) ) {
 					$st   = ( $k % 2 ) ? self::S_ZEBRA : self::S_BODY;
 					$xml .= '<row r="' . $r . '" ht="20" customHeight="1">';
 					foreach ( array_values( $row ) as $c => $v ) {
-						$xml .= self::cell( self::col( $c ) . $r, $v, $st );
+						$cst  = isset( $s['opts']['col_styles'][ $c ] ) && in_array( (int) $s['opts']['col_styles'][ $c ], array( self::S_TEXT, self::S_LOCK ), true ) ? (int) $s['opts']['col_styles'][ $c ] : $st;
+						$xml .= self::cell( self::col( $c ) . $r, $v, $cst );
 					}
 					$xml .= '</row>';
 				}
-				if ( ! $s['rows'] ) {
+				if ( ! $s['rows'] && empty( $s['opts']['blank_rows'] ) ) {
 					$r++;
 					$xml     .= '<row r="' . $r . '">' . self::cell( 'A' . $r, 'No members in this category yet.', self::S_NOTE ) . '</row>';
 				}
 			}
 			$xml .= '</sheetData>';
-			if ( ! $s['blocks'] && $s['rows'] ) {
-				$xml .= '<autoFilter ref="A' . $hr . ':' . self::col( count( $s['head'] ) - 1 ) . ( $hr + count( $s['rows'] ) ) . '"/>';
+			$blank = isset( $s['opts']['blank_rows'] ) ? (int) $s['opts']['blank_rows'] : 0;
+			if ( ! $s['blocks'] && ( $s['rows'] || $blank ) ) {
+				$xml .= '<autoFilter ref="A' . $hr . ':' . self::col( count( $s['head'] ) - 1 ) . ( $hr + max( 1, count( $s['rows'] ) + $blank ) ) . '"/>';
 			}
+			$dv_xml = '';
 			if ( $merges ) {
 				$xml .= '<mergeCells count="' . count( $merges ) . '">';
 				foreach ( $merges as $m ) {
 					$xml .= '<mergeCell ref="' . $m . '"/>';
 				}
 				$xml .= '</mergeCells>';
+			}
+			if ( ! empty( $s['opts']['validations'] ) ) {
+				$end = $hr + max( 1, count( $s['rows'] ) + $blank );
+				$dv  = '';
+				foreach ( $s['opts']['validations'] as $c => $list ) {
+					$f   = '"' . str_replace( '"', '', implode( ',', array_map( function ( $v ) { return str_replace( ',', ' ', $v ); }, $list ) ) ) . '"';
+					$dv .= '<dataValidation type="list" allowBlank="1" showInputMessage="1" showErrorMessage="1" errorStyle="warning" errorTitle="Please pick from the list" error="Choose one of the options in the drop-down." sqref="' . self::col( $c ) . ( $hr + 1 ) . ':' . self::col( $c ) . $end . '"><formula1>' . self::x( $f ) . '</formula1></dataValidation>';
+				}
+				$xml .= '<dataValidations count="' . count( $s['opts']['validations'] ) . '">' . $dv . '</dataValidations>';
 			}
 			$xml .= '<printOptions horizontalCentered="1"/><pageMargins left="0.4" right="0.4" top="0.6" bottom="0.6" header="0.3" footer="0.3"/>';
 			$xml .= '<pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>';
@@ -215,7 +231,7 @@ if ( ! class_exists( 'DCK_Xlsx' ) ) {
 				. '<border><left style="thin"><color rgb="FF24409A"/></left><right style="thin"><color rgb="FF24409A"/></right><top/><bottom style="medium"><color rgb="' . $gold . '"/></bottom><diagonal/></border>'
 				. '</borders>'
 				. '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'
-				. '<cellXfs count="12">'
+				. '<cellXfs count="16">'
 				. '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'
 				. '<xf numFmtId="0" fontId="1" fillId="2" borderId="2" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1" indent="1"/></xf>'
 				. '<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment vertical="center"/></xf>'
@@ -228,6 +244,10 @@ if ( ! class_exists( 'DCK_Xlsx' ) ) {
 				. '<xf numFmtId="3" fontId="4" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>'
 				. '<xf numFmtId="0" fontId="5" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment vertical="center"/></xf>'
 				. '<xf numFmtId="0" fontId="6" fillId="5" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="center" indent="1"/></xf>'
+				. '<xf numFmtId="49" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1" applyAlignment="1"><alignment vertical="center" indent="1"/></xf>'
+				. '<xf numFmtId="0" fontId="4" fillId="3" borderId="2" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>'
+				. '<xf numFmtId="0" fontId="5" fillId="4" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>'
+				. '<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf>'
 				. '</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
 		}
 
@@ -277,6 +297,156 @@ if ( ! class_exists( 'DCK_Xlsx' ) ) {
 				$z->addFile( $this->logo, 'xl/media/logo.png' );
 			}
 			return $z->close();
+		}
+	}
+}
+
+/**
+ * Safe, minimal XLSX reader: returns the rows of one worksheet as arrays of strings.
+ * Limits: file 5 MB, unpacked XML 40 MB, 5000 rows. No external entities.
+ */
+if ( ! class_exists( 'DCK_Xlsx_Reader' ) ) {
+	class DCK_Xlsx_Reader {
+		public static function rows( $path, $prefer = 'Members' ) {
+			if ( ! class_exists( 'ZipArchive' ) || ! is_readable( $path ) || filesize( $path ) > 5 * 1024 * 1024 ) {
+				return new Exception( 'File too large or unreadable.' );
+			}
+			$z = new ZipArchive();
+			if ( true !== $z->open( $path ) ) {
+				return new Exception( 'This is not a valid Excel (.xlsx) file.' );
+			}
+			$total = 0;
+			for ( $i = 0; $i < $z->numFiles; $i++ ) {
+				$st     = $z->statIndex( $i );
+				$total += isset( $st['size'] ) ? (int) $st['size'] : 0;
+			}
+			if ( $total > 40 * 1024 * 1024 ) {
+				$z->close();
+				return new Exception( 'The file is unusually large when unpacked.' );
+			}
+			$load = function ( $name ) use ( $z ) {
+				$x = $z->getFromName( $name );
+				if ( false === $x || '' === $x ) {
+					return null;
+				}
+				if ( stripos( $x, '<!DOCTYPE' ) !== false || stripos( $x, '<!ENTITY' ) !== false ) {
+					return null; // Refuse DTD/entities outright.
+				}
+				$prev = function_exists( 'libxml_use_internal_errors' ) ? libxml_use_internal_errors( true ) : false;
+				$el   = simplexml_load_string( $x, 'SimpleXMLElement', LIBXML_NONET | LIBXML_COMPACT );
+				if ( function_exists( 'libxml_use_internal_errors' ) ) {
+					libxml_use_internal_errors( $prev );
+				}
+				return false === $el ? null : $el;
+			};
+			// Shared strings.
+			$shared = array();
+			$ss     = $load( 'xl/sharedStrings.xml' );
+			if ( $ss ) {
+				foreach ( $ss->si as $si ) {
+					if ( isset( $si->t ) ) {
+						$shared[] = (string) $si->t;
+					} else {
+						$t = '';
+						foreach ( $si->r as $run ) {
+							$t .= (string) $run->t;
+						}
+						$shared[] = $t;
+					}
+				}
+			}
+			// Find sheet file: preferred name, else first sheet that is not Instructions/Summary.
+			$wb   = $load( 'xl/workbook.xml' );
+			$rels = $load( 'xl/_rels/workbook.xml.rels' );
+			$target = 'xl/worksheets/sheet1.xml';
+			if ( $wb && $rels ) {
+				$map = array();
+				foreach ( $rels->Relationship as $r ) {
+					$map[ (string) $r['Id'] ] = (string) $r['Target'];
+				}
+				$pick = null;
+				$fallback = null;
+				foreach ( $wb->sheets->sheet as $sh ) {
+					$rid  = (string) $sh->attributes( 'http://schemas.openxmlformats.org/officeDocument/2006/relationships' )->id;
+					$name = strtolower( (string) $sh['name'] );
+					if ( ! isset( $map[ $rid ] ) ) {
+						continue;
+					}
+					if ( strtolower( $prefer ) === $name ) {
+						$pick = $map[ $rid ];
+					}
+					if ( null === $fallback && ! in_array( $name, array( 'instructions', 'summary', 'read me', 'readme' ), true ) ) {
+						$fallback = $map[ $rid ];
+					}
+				}
+				$t = $pick ? $pick : $fallback;
+				if ( $t ) {
+					$t      = ltrim( $t, '/' );
+					$target = 0 === strpos( $t, 'xl/' ) ? $t : 'xl/' . $t;
+				}
+			}
+			$sheet = $load( $target );
+			$z->close();
+			if ( ! $sheet || ! isset( $sheet->sheetData ) ) {
+				return new Exception( 'Could not find the Members sheet in this file.' );
+			}
+			$out = array();
+			$n   = 0;
+			foreach ( $sheet->sheetData->row as $row ) {
+				if ( ++$n > 5100 ) {
+					break;
+				}
+				$vals = array();
+				foreach ( $row->c as $c ) {
+					$ref = (string) $c['r'];
+					$col = 0;
+					if ( preg_match( '/^([A-Z]+)/', $ref, $m ) ) {
+						foreach ( str_split( $m[1] ) as $ch ) {
+							$col = $col * 26 + ( ord( $ch ) - 64 );
+						}
+						$col--;
+					} else {
+						$col = count( $vals );
+					}
+					$t = (string) $c['t'];
+					if ( 's' === $t ) {
+						$v = isset( $shared[ (int) $c->v ] ) ? $shared[ (int) $c->v ] : '';
+					} elseif ( 'inlineStr' === $t ) {
+						$v = '';
+						if ( isset( $c->is->t ) ) {
+							$v = (string) $c->is->t;
+						} elseif ( isset( $c->is->r ) ) {
+							foreach ( $c->is->r as $run ) {
+								$v .= (string) $run->t;
+							}
+						}
+					} elseif ( 'b' === $t ) {
+						$v = ( '1' === (string) $c->v ) ? 'Yes' : 'No';
+					} else {
+						$v = (string) $c->v;
+					}
+					$vals[ $col ] = trim( $v );
+				}
+				$r = (int) $row['r'];
+				$out[ $r ? $r : $n ] = $vals;
+			}
+			return $out;
+		}
+
+		/* Excel serial date (e.g. 45231) -> Y-m-d. */
+		public static function date( $v ) {
+			$v = trim( (string) $v );
+			if ( '' === $v ) {
+				return '';
+			}
+			if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $v ) ) {
+				return $v;
+			}
+			if ( is_numeric( $v ) && (float) $v > 20000 && (float) $v < 80000 ) {
+				return gmdate( 'Y-m-d', (int) round( ( (float) $v - 25569 ) * 86400 ) );
+			}
+			$ts = strtotime( str_replace( '/', '-', $v ) );
+			return $ts ? gmdate( 'Y-m-d', $ts ) : '';
 		}
 	}
 }

@@ -95,3 +95,6 @@ Settings: DCK Church > Church Tools (finance email, welcome team email, message 
 - **Import**: Members > Import & access > upload a CSV (headings: Name, Phone, Email, Gender, Age group, Marital status, Area, Status, Date joined, Baptised, Departments separated by ;, Fellowship). Same phone/email updates instead of duplicating.
 - Access: administrators only; tick "Editors can view..." to allow editors. Departments come from DCK Church > Church Tools > ministries list.
 - Keep downloaded files on a password-protected computer/drive; in Excel use File > Info > Protect Workbook > Encrypt with Password before sharing.
+
+### Excel template round-trip (DCK Core 1.8.0)
+Members > Template & upload: 1) download the blank template (or "with current members" to edit people already on the register), 2) fill the Members sheet in Excel/Google Sheets using the drop-downs and "Yes" under each ministry department, 3) upload the .xlsx back. Nobody is duplicated (matched by Member ID, then phone, then email); skipped rows are listed after upload.
