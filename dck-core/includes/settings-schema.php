@@ -276,6 +276,13 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 				'fields' => array(
 					$f( 'dck_pastors_title', __( 'Page title', 'dck-core' ), 'text', 'Our Pastors' ),
 					$f( 'dck_pastors_lead', __( 'Intro text', 'dck-core' ), 'textarea' ),
+					$f( 'dck_pastors_couple_img', __( 'Lead couple photo (header)', 'dck-core' ), 'image' ),
+					$f( 'dck_pastors_story_title', __( 'Story heading', 'dck-core' ), 'text', 'From Kangemi to Uthiru, by faith' ),
+					$f( 'dck_pastors_story', __( 'Story text', 'dck-core' ), 'textarea' ),
+					$f( 'dck_pastors_credentials', __( 'Training & impact (one per line: Title|Detail)', 'dck-core' ), 'textarea' ),
+					$f( 'dck_pastors_found_title', __( 'Foundation heading', 'dck-core' ), 'text', 'Cistern of Hope Foundation' ),
+					$f( 'dck_pastors_found_text', __( 'Foundation text', 'dck-core' ), 'textarea' ),
+					$f( 'dck_pastors_care', __( 'Pastoral care cards (one per line: Title|Description)', 'dck-core' ), 'textarea' ),
 				),
 			),
 		);
@@ -289,6 +296,7 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 						$f( 'dck_pastor_' . $k . '_role', __( 'Role badge', 'dck-core' ), 'text', $p['role'] ),
 						$f( 'dck_pastor_' . $k . '_title', __( 'Title line', 'dck-core' ), 'text', $p['title'] ),
 						$f( 'dck_pastor_' . $k . '_lead', __( 'Short introduction', 'dck-core' ), 'textarea', $p['lead'] ),
+						$f( 'dck_pastor_' . $k . '_focus', __( 'Focus areas (comma separated)', 'dck-core' ), 'text', isset( $p['focus'] ) ? $p['focus'] : '' ),
 						$f( 'dck_pastor_' . $k . '_bio', __( 'Full biography (leave blank to keep the current one)', 'dck-core' ), 'html' ),
 						$f( 'dck_pastor_' . $k . '_img', __( 'Photo', 'dck-core' ), 'image' ),
 						$f( 'dck_pastor_' . $k . '_hide', __( 'Hide this pastor (type yes)', 'dck-core' ), 'text' ),

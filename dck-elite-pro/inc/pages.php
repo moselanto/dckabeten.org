@@ -49,6 +49,7 @@ if ( ! function_exists( 'dck_pastor_defs' ) ) {
 		return array(
 			array(
 				'k'     => 'justus',
+				'focus' => 'Teaching the Word, Church planting, Marriage & family counselling, Community development',
 				'img'   => 'assets/images/pastors/justus.webp',
 				'ini'   => 'JK',
 				'name'  => 'Pastor Justus Kubai',
@@ -59,6 +60,7 @@ if ( ! function_exists( 'dck_pastor_defs' ) ) {
 			),
 			array(
 				'k'     => 'clare',
+				'focus' => 'Women\'s ministry, Pastoral care, Mentoring young women, Community outreach',
 				'img'   => 'assets/images/pastors/clare.webp',
 				'ini'   => 'CK',
 				'name'  => 'Pastor Clare Auma Justus',
@@ -69,6 +71,7 @@ if ( ! function_exists( 'dck_pastor_defs' ) ) {
 			),
 			array(
 				'k'     => 'henry',
+				'focus' => 'Discipleship, Youth ministry, Home churches, Prayer',
 				'img'   => 'assets/images/pastors/onzere.webp',
 				'ini'   => 'HO',
 				'name'  => 'Pastor Henry Onzere',
@@ -79,6 +82,7 @@ if ( ! function_exists( 'dck_pastor_defs' ) ) {
 			),
 			array(
 				'k'     => 'nancy',
+				'focus' => 'Intercession, Worship & singing, Encouragement',
 				'img'   => 'assets/images/pastors/nancy.webp',
 				'ini'   => 'NO',
 				'name'  => 'Pastor Nancy Onzere',
@@ -107,6 +111,8 @@ if ( ! function_exists( 'dck_pastors' ) ) {
 				'title' => dck_home_val( 'dck_pastor_' . $k . '_title', $d['title'] ),
 				'lead'  => dck_home_val( 'dck_pastor_' . $k . '_lead', $d['lead'] ),
 				'bio'   => dck_home_val( 'dck_pastor_' . $k . '_bio', $d['bio'] ),
+				'focus' => array_filter( array_map( 'trim', explode( ',', (string) dck_home_val( 'dck_pastor_' . $k . '_focus', $d['focus'] ) ) ) ),
+				'img'   => ( '' !== trim( (string) get_theme_mod( 'dck_pastor_' . $k . '_img', '' ) ) ) ? trim( (string) get_theme_mod( 'dck_pastor_' . $k . '_img', '' ) ) : get_template_directory_uri() . '/' . $d['img'],
 				'photo' => dck_pastor_photo_html( 'dck_pastor_' . $k . '_img', dck_home_val( 'dck_pastor_' . $k . '_name', $d['name'] ), $d['ini'], $d['img'] ),
 			);
 		}
@@ -131,7 +137,10 @@ if ( ! function_exists( 'dck_services_defaults' ) ) {
 add_action(
 	'wp_enqueue_scripts',
 	function () {
-		if ( is_page_template( array( 'template-ministries.php', 'template-faq.php', 'template-pastors.php' ) ) ) {
+		if ( is_page_template( 'template-pastors.php' ) ) {
+			wp_enqueue_script( 'dck-pastors', get_template_directory_uri() . '/assets/js/pastors.js', array(), DCK_ELITE_VERSION, true );
+		}
+		if ( is_page_template( array( 'template-ministries.php', 'template-faq.php' ) ) ) {
 			wp_enqueue_script( 'dck-pages', get_template_directory_uri() . '/assets/js/pages.js', array(), DCK_ELITE_VERSION, true );
 			wp_localize_script(
 				'dck-pages',
