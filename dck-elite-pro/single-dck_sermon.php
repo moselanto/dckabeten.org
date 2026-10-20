@@ -37,7 +37,7 @@ while ( have_posts() ) :
 		if ( $video ) {
 			echo dck_elite_video_embed( $video, get_the_title() ); // phpcs:ignore
 		} elseif ( $thumb ) {
-			echo '<img class="dck-sermon-single__img" src="' . esc_url( $thumb ) . '" alt="' . esc_attr( get_the_title() ) . '">';
+			echo '<img class="dck-sermon-single__img" src="' . esc_url( $thumb ) . '" alt="' . esc_attr( get_the_title() ) . '" fetchpriority="high" decoding="async">';
 		}
 		?>
 
@@ -91,7 +91,7 @@ while ( have_posts() ) :
 			<?php endif; ?>
 			<a class="dck-btn dck-btn--outline" target="_blank" rel="noopener" href="https://api.whatsapp.com/send?text=<?php echo rawurlencode( get_the_title() . ' - ' . $permalink ); ?>"><?php esc_html_e( 'Share on WhatsApp', 'dck-elite' ); ?></a>
 			<a class="dck-btn dck-btn--outline" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo rawurlencode( $permalink ); ?>"><?php esc_html_e( 'Share on Facebook', 'dck-elite' ); ?></a>
-			<a class="dck-btn dck-btn--outline dck-print-sermon" href="#"><?php esc_html_e( 'Print sermon', 'dck-elite' ); ?></a>
+			<button type="button" class="dck-btn dck-btn--outline dck-print-sermon"><?php esc_html_e( 'Print sermon', 'dck-elite' ); ?></button>
 		</div>
 
 		<p class="dck-back-btn" style="margin-top:30px"><a class="dck-btn dck-btn--primary" href="<?php echo esc_url( get_post_type_archive_link( 'dck_sermon' ) ); ?>"><?php esc_html_e( 'Back to Sermons', 'dck-elite' ); ?></a></p>

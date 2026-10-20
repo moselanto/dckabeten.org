@@ -42,6 +42,11 @@ WordPress site for Deliverance Church Kabete N Market (Nairobi). Classic PHP the
 
 ## Changelog for agents (newest first)
 - 2026-10-20 - Security audit v4.14.0 / DCK Core 1.1.0: spoof-proof client IP, HSTS + CSP baseline + Permissions-Policy, HTTPS redirect, CORS lock for dck/v1, login brute-force limit, shorter staff sessions, AI daily cost cap, STT upload MIME sniffing, scripture rate limit, DISALLOW_FILE_EDIT, docs added.
+- 2026-10-20 - v4.17.0: speed pass - hero images are real <img fetchpriority=high> (LCP), YouTube click-to-play (dck_yt_facade), minified assets via assets/min-manifest.json (run tools/build-assets.sh after editing CSS/JS!), unused WP extras removed (block CSS only when content uses blocks, wp-embed, heartbeat for visitors, oEmbed/RSD/shortlink), ~1.5 MB of images recompressed, services photo now webp, print button is a real <button>.
 - 2026-10-20 - v4.16.0: two-factor login (inc/two-factor.php) using the official Two Factor plugin; staff (edit_posts) are sent to their profile until 2FA is on; disable with DCK_REQUIRE_2FA false; styled code screen.
 - 2026-10-20 - v4.15.0 / DCK Core 1.2.0: branded split-screen login page (inc/login.php, assets/css/login.css; text + photo editable in DCK Church > Church & Contact > Staff login page), login + lost-password honeypot, lost-password rate limit (3/hour/IP) and no account enumeration, lockout message kept visible.
 - 2026-10-20 - v4.13 gallery mosaic; theme screenshot.png; v4.12 Bible highlights/saved/verse image; v4.11 Gatherings manager; v4.10 Services/Events; v4.9 Pastors; v4.8 Live/Sermons; v4.6-4.7 multilingual Bible reader; v4.3-4.5 DCK Core plugin + redesign of all pages.
+
+
+## Rule: after editing any CSS or JS
+Run `bash tools/build-assets.sh` and commit the *.min.* files and assets/min-manifest.json together with the source. If you skip it, the site safely serves the unminified file.

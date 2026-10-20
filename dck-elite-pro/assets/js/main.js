@@ -114,3 +114,21 @@
     });
   });
 })();
+
+/* YouTube click-to-play: load the real player only when asked. */
+(function () {
+	document.addEventListener('click', function (e) {
+		var b = e.target.closest ? e.target.closest('.dck-yt') : null;
+		if (!b) { return; }
+		var src = b.getAttribute('data-src') || '';
+		if (!/^https:\/\/www\.youtube(-nocookie)?\.com\/embed\//.test(src)) { return; }
+		var f = document.createElement('iframe');
+		f.src = src + (src.indexOf('?') > -1 ? '&' : '?') + 'autoplay=1&rel=0';
+		f.title = b.getAttribute('data-title') || 'Video';
+		f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+		f.setAttribute('allowfullscreen', '');
+		f.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0';
+		b.replaceWith(f);
+		f.focus();
+	});
+})();

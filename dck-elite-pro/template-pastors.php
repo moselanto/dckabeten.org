@@ -104,7 +104,7 @@ foreach ( $dck_ps as $p ) {
 					</div>
 					<template id="dck-bio-<?php echo esc_attr( $p['k'] ); ?>">
 						<div class="dck-pdlg__head">
-							<img src="<?php echo esc_url( $p['img'] ); ?>" alt="" class="dck-pdlg__img">
+							<img src="<?php echo esc_url( $p['img'] ); ?>" alt="" class="dck-pdlg__img" loading="lazy" decoding="async">
 							<div>
 								<span class="dck-pro__role dck-pro__role--static"><?php echo esc_html( $p['role'] ); ?></span>
 								<h2 id="dck-pdlg-title"><?php echo esc_html( $p['name'] ); ?></h2>

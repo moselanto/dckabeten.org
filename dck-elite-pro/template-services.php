@@ -118,7 +118,7 @@ dck_photo_hero(
 			<p class="dck-eyebrow"><?php esc_html_e( 'Your First Visit', 'dck-elite' ); ?></p>
 			<h2><?php esc_html_e( 'What To Expect', 'dck-elite' ); ?></h2>
 			<p class="dck-lead"><?php esc_html_e( 'Visiting a church for the first time can feel like a big step. Here is what your Sunday with us looks like.', 'dck-elite' ); ?></p>
-			<img src="<?php echo esc_url( dck_theme_image( 'dck_services_image', 'assets/images/services-worship.jpg' ) ); ?>" alt="" loading="lazy" decoding="async">
+			<img src="<?php echo esc_url( dck_theme_image( 'dck_services_image', 'assets/images/services-worship.webp' ) ); ?>" alt="" loading="lazy" decoding="async">
 		</div>
 		<ol class="dck-expect2__list">
 			<?php foreach ( $dck_exp as $e ) : ?>

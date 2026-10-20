@@ -59,3 +59,15 @@ Bump `DCK_ELITE_VERSION` in `dck-elite-pro/functions.php` **and** `Version:` in 
 2. Every user who can edit content is taken to Users > Profile until they enable it: tick **Authenticator App** and scan the QR code, generate **Recovery Codes** and store them safely, set Primary Method to Authenticator App, Update Profile.
 3. To switch enforcement off temporarily: `define( 'DCK_REQUIRE_2FA', false );` in wp-config.php.
 4. Locked out (lost phone and recovery codes)? Another admin can disable two-factor on that user's profile, or deactivate the plugin by renaming its folder over FTP.
+
+
+## Speed (target: pages ready in 1-3 seconds)
+Built into the theme: minified CSS/JS (served automatically), deferred scripts, preloaded fonts/logo, hero photos loaded first, all other images lazy, YouTube players load only when Play is pressed, unused WordPress extras removed, compressed WebP images.
+
+Server side (needed for consistent 1-3 s):
+1. Page cache: install **LiteSpeed Cache** (if the host runs LiteSpeed) or **WP Super Cache**, and turn page caching on. Exclude /wp-admin, /wp-login.php and /wp-json.
+2. Cloudflare: Speed > Optimization - turn on Brotli and Early Hints; Caching > set Browser Cache TTL to 1 month; optionally Automatic Platform Optimization (APO) for WordPress.
+3. Hosting: PHP 8.2 or newer with OPcache on.
+4. Images uploaded in wp-admin: keep them under ~300 KB (export at 1600 px wide, WebP or JPEG quality 75).
+5. If the server is Apache without Cloudflare, add long cache headers for /wp-content/themes/dck-elite-pro/assets/ in .htaccess (mod_expires: images, fonts, css, js = 1 year; versioned with ?ver=).
+6. Test at https://pagespeed.web.dev after purging caches.

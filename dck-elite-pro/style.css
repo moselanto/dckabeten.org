@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.16.0
+Version: 4.17.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -2027,7 +2027,9 @@ html.dck-noscroll{overflow:hidden}
    v4.10.0 - Services & Events redesign
    ===================================================================== */
 /* Photo hero */
-.dck-phero{position:relative;color:#fff;background:linear-gradient(100deg,rgba(7,12,38,.92) 0%,rgba(14,28,77,.82) 45%,rgba(14,28,77,.45) 100%),var(--dck-phero-img) center/cover no-repeat;padding:clamp(56px,8vw,110px) clamp(16px,4vw,40px)}
+.dck-phero{position:relative;isolation:isolate;overflow:hidden;color:#fff;background:#0E1C4D;padding:clamp(56px,8vw,110px) clamp(16px,4vw,40px)}
+.dck-phero__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.dck-phero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,rgba(7,12,38,.92) 0%,rgba(14,28,77,.82) 45%,rgba(14,28,77,.45) 100%)}
 .dck-phero__inner{max-width:1240px;margin:0 auto}
 .dck-phero--split .dck-phero__inner{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(24px,5vw,64px);align-items:center}
 .dck-phero h1{color:#fff;font-size:clamp(2.4rem,5vw,3.8rem);line-height:1.05;margin:6px 0 14px}
@@ -2221,3 +2223,13 @@ html.dck-noscroll{overflow:hidden}
   .dck-gal-item.is-wide,.dck-gal-item:nth-child(7n+1):not(.is-tall){grid-column:span 2;grid-row:span 1}
   .dck-galstats{padding:16px}
 }
+
+/* YouTube click-to-play (perf) */
+.dck-yt{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;margin:0;cursor:pointer;background:#000;display:block}
+.dck-yt img{width:100%;height:100%;object-fit:cover;opacity:.85;transition:opacity .2s}
+.dck-yt:hover img,.dck-yt:focus-visible img{opacity:1}
+.dck-yt__play{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;background:rgba(201,162,39,.95);box-shadow:0 12px 30px rgba(0,0,0,.45);display:grid;place-items:center}
+.dck-yt__play::after{content:"";margin-left:6px;border-style:solid;border-width:14px 0 14px 22px;border-color:transparent transparent transparent #0E1C4D}
+.dck-yt__label{position:absolute;left:0;right:0;bottom:16px;text-align:center;color:#fff;font-weight:600;font-size:15px;text-shadow:0 2px 8px rgba(0,0,0,.7)}
+.dck-yt:focus-visible{outline:3px solid #C9A227;outline-offset:-3px}
+button.dck-print-sermon{cursor:pointer;font:inherit}

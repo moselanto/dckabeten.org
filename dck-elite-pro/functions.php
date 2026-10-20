@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.16.0' );
+	define( 'DCK_ELITE_VERSION', '4.17.0' );
 }
 
 /**
@@ -384,7 +384,8 @@ if ( ! function_exists( 'dck_elite_video_embed' ) ) {
 				}
 			}
 			if ( $id ) {
-				$embed = '<iframe src="https://www.youtube.com/embed/' . esc_attr( $id ) . '" title="' . esc_attr( $title ) . '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>';
+				$id    = preg_replace( '/[^A-Za-z0-9_-]/', '', (string) $id );
+				$embed = dck_yt_facade( 'https://www.youtube.com/embed/' . $id, $title, 'https://i.ytimg.com/vi/' . $id . '/hqdefault.jpg' );
 			}
 		} elseif ( false !== strpos( $lc, 'facebook' ) || false !== strpos( $lc, 'fb.watch' ) ) {
 			$embed = '<iframe src="https://www.facebook.com/plugins/video.php?show_text=false&href=' . rawurlencode( $url ) . '" title="' . esc_attr( $title ) . '" allowfullscreen loading="lazy" scrolling="no"></iframe>';
@@ -393,6 +394,22 @@ if ( ! function_exists( 'dck_elite_video_embed' ) ) {
 		}
 
 		return '<div class="dck-embed">' . $embed . '</div>';
+	}
+}
+
+if ( ! function_exists( 'dck_yt_facade' ) ) {
+	/**
+	 * Lightweight YouTube placeholder: a poster + play button that swaps in the real
+	 * player on click (assets/js/main.js). Keeps YouTube's heavy scripts off the first load.
+	 *
+	 * @param string $src    Embed URL (https://www.youtube.com/embed/...).
+	 * @param string $title  Accessible title.
+	 * @param string $poster Poster image URL.
+	 */
+	function dck_yt_facade( $src, $title, $poster ) {
+		return '<button type="button" class="dck-yt" data-src="' . esc_url( $src ) . '" data-title="' . esc_attr( $title ) . '" aria-label="' . esc_attr( sprintf( /* translators: %s video title */ __( 'Play video: %s', 'dck-elite' ), $title ) ) . '">'
+			. '<img src="' . esc_url( $poster ) . '" alt="" loading="lazy" decoding="async" width="1280" height="720">'
+			. '<span class="dck-yt__play" aria-hidden="true"></span><span class="dck-yt__label">' . esc_html__( 'Play video', 'dck-elite' ) . '</span></button>';
 	}
 }
 

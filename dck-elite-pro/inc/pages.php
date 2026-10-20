@@ -169,7 +169,10 @@ if ( ! function_exists( 'dck_photo_hero' ) ) {
 	 * @param string $aside   Optional HTML for the right-hand card (already escaped).
 	 */
 	function dck_photo_hero( $img, $eyebrow, $title, $lead, $aside = '' ) {
-		echo '<section class="dck-phero' . ( $aside ? ' dck-phero--split' : '' ) . '" style="--dck-phero-img:url(' . esc_url( $img ) . ')">';
+		echo '<section class="dck-phero' . ( $aside ? ' dck-phero--split' : '' ) . '">';
+		if ( $img ) {
+			echo '<img class="dck-phero__img skip-lazy" src="' . esc_url( $img ) . '" alt="" width="1600" height="900" fetchpriority="high" loading="eager" decoding="async" data-no-lazy="1">';
+		}
 		echo '<div class="dck-phero__inner"><div class="dck-phero__copy">';
 		echo '<p class="dck-eyebrow dck-eyebrow--light">' . esc_html( $eyebrow ) . '</p>';
 		echo '<h1>' . esc_html( $title ) . '</h1>';

@@ -52,13 +52,14 @@ $playlist = get_theme_mod( 'dck_youtube_playlist_url', '' );
 $yt_ch    = get_theme_mod( 'dck_yt_url', '' );
 $fb_url   = get_theme_mod( 'dck_fb_url', '' );
 
-$attrs = 'title="DCK Live Service" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"';
+$dck_live_poster = dck_theme_image( 'dck_live_poster', 'assets/images/home/joy.webp' );
 if ( $channel ) {
-	$embed_markup = '<div class="dck-embed"><iframe src="https://www.youtube.com/embed/live_stream?channel=' . esc_attr( $channel ) . '" ' . $attrs . '></iframe></div>';
+	$embed_markup = '<div class="dck-embed">' . dck_yt_facade( 'https://www.youtube.com/embed/live_stream?channel=' . rawurlencode( $channel ), __( 'DCK Live Service', 'dck-elite' ), $dck_live_poster ) . '</div>';
 } elseif ( $live_url && function_exists( 'dck_elite_video_embed' ) ) {
 	$embed_markup = dck_elite_video_embed( $live_url, 'Live Service' );
 } else {
-	$embed_markup = '<div class="dck-embed"><iframe src="https://www.youtube.com/embed/' . esc_attr( dck_home_val( 'dck_live_default_video', 'RKItJ4L4sSY' ) ) . '" ' . $attrs . '></iframe></div>';
+	$dck_vid      = preg_replace( '/[^A-Za-z0-9_-]/', '', (string) dck_home_val( 'dck_live_default_video', 'RKItJ4L4sSY' ) );
+	$embed_markup = '<div class="dck-embed">' . dck_yt_facade( 'https://www.youtube.com/embed/' . $dck_vid, __( 'DCK Live Service', 'dck-elite' ), 'https://i.ytimg.com/vi/' . $dck_vid . '/hqdefault.jpg' ) . '</div>';
 }
 ?>
 
