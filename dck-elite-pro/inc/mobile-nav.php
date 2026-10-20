@@ -34,6 +34,7 @@ if ( ! function_exists( 'dck_mobile_menu_extras' ) ) {
 		$tel   = function_exists( 'dck_home_tel' ) ? dck_home_tel() : '';
 		$items = array(
 			array( dck_elite_page_url( 'live' ), 'live', dck_home_val( 'dck_btn_watch_live', __( 'Watch Live', 'dck-elite' ) ) ),
+			array( get_post_type_archive_link( 'dck_sermon' ) ? get_post_type_archive_link( 'dck_sermon' ) : home_url( '/' ), 'sermons', __( 'Sermons', 'dck-elite' ) ),
 			array( dck_elite_page_url( 'prayer-requests' ), 'pray', __( 'Prayer Request', 'dck-elite' ) ),
 			array( dck_elite_page_url( 'give' ), 'give', __( 'Give', 'dck-elite' ) ),
 			array( dck_elite_page_url( 'services' ), 'clock', __( 'Service Times', 'dck-elite' ) ),
@@ -83,13 +84,13 @@ add_action(
 		$sermons = get_post_type_archive_link( 'dck_sermon' );
 		$tabs    = array(
 			array( home_url( '/' ), 'home', __( 'Home', 'dck-elite' ), is_front_page() ),
-			array( $sermons ? $sermons : home_url( '/' ), 'sermons', __( 'Sermons', 'dck-elite' ), is_post_type_archive( 'dck_sermon' ) || is_singular( 'dck_sermon' ) ),
+			array( 'tel:' . ( function_exists( 'dck_home_tel' ) ? dck_home_tel() : '+254110304521' ), 'phone', __( 'Call Us', 'dck-elite' ), false ),
 			array( dck_elite_page_url( 'live' ), 'live', __( 'Live', 'dck-elite' ), is_page_template( 'template-live.php' ) ),
 			array( dck_elite_page_url( 'give' ), 'give', __( 'Give', 'dck-elite' ), is_page_template( 'template-give.php' ) ),
 		);
 		echo '<nav class="dck-tabbar" aria-label="' . esc_attr__( 'Quick navigation', 'dck-elite' ) . '">';
 		foreach ( $tabs as $t ) {
-			$cls = 'dck-tabbar__item' . ( 'live' === $t[1] ? ' dck-tabbar__item--live' : '' ) . ( $t[3] ? ' is-active' : '' );
+			$cls = 'dck-tabbar__item' . ( 'live' === $t[1] ? ' dck-tabbar__item--live' : '' ) . ( 'phone' === $t[1] ? ' dck-tabbar__item--call' : '' ) . ( $t[3] ? ' is-active' : '' );
 			echo '<a class="' . esc_attr( $cls ) . '" href="' . esc_url( $t[0] ) . '"' . ( $t[3] ? ' aria-current="page"' : '' ) . '><span class="dck-tabbar__ic">' . dck_mnav_icon( $t[1] ) . '</span><span class="dck-tabbar__txt">' . esc_html( $t[2] ) . '</span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput
 		}
 		echo '<button type="button" class="dck-tabbar__item dck-tabbar__menu" aria-controls="dck-nav" aria-expanded="false"><span class="dck-tabbar__ic">' . dck_mnav_icon( 'menu' ) . '</span><span class="dck-tabbar__txt">' . esc_html__( 'Menu', 'dck-elite' ) . '</span></button>'; // phpcs:ignore WordPress.Security.EscapeOutput
