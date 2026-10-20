@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.7.0' );
+	define( 'DCK_ELITE_VERSION', '4.8.0' );
 }
 
 /**
@@ -395,9 +395,11 @@ if ( ! function_exists( 'dck_elite_next_service_ms' ) ) {
 		$tz     = function_exists( 'wp_timezone' ) ? wp_timezone() : new DateTimeZone( 'Africa/Nairobi' );
 		$now    = new DateTime( 'now', $tz );
 		$target = new DateTime( 'now', $tz );
-		$days   = ( 7 - (int) $now->format( 'w' ) ) % 7;
+		$day    = (int) dck_home_val( 'dck_live_day', '0' );
+		$hm     = explode( ':', (string) dck_home_val( 'dck_live_start', '10:40' ) );
+		$days   = ( 7 + $day - (int) $now->format( 'w' ) ) % 7;
 		$target->modify( '+' . $days . ' days' );
-		$target->setTime( 10, 40, 0 );
+		$target->setTime( (int) $hm[0], isset( $hm[1] ) ? (int) $hm[1] : 0, 0 );
 		if ( $target <= $now ) {
 			$target->modify( '+7 days' );
 		}
@@ -563,6 +565,9 @@ if ( ! function_exists( 'dck_elite_filter_sermons' ) ) {
 		}
 		if ( $q->is_post_type_archive( 'dck_sermon' ) ) {
 			$q->set( 'posts_per_page', 9 );
+			if ( isset( $_GET['sort'] ) && 'oldest' === sanitize_key( wp_unslash( $_GET['sort'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+				$q->set( 'order', 'ASC' );
+			}
 			$tax_query = array();
 			foreach ( array( 'dck_sermon_series', 'dck_sermon_speaker', 'dck_sermon_topic' ) as $tax ) {
 				if ( ! empty( $_GET[ $tax ] ) ) {

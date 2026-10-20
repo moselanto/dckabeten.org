@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.7.0
+Version: 4.8.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -1873,3 +1873,82 @@ html.dck-noscroll{overflow:hidden}
 }
 @media (max-width:420px){.dck-rtop__nav{padding:0 10px;font-size:.88rem}.dck-rtop__sel select{font-size:.85rem}}
 @media print{.dck-rside,.dck-rtop,.dck-rbottom,.dck-rhint{display:none!important}.dck-reader{display:block}}
+
+
+/* =====================================================================
+   v4.8.0 - Watch Live theater + Sermon library refinements
+   ===================================================================== */
+.dck-theater{position:relative;overflow:hidden;background:radial-gradient(120% 80% at 50% 0%,#1b2a6b 0%,var(--dck-blue-900) 55%,#070c26 100%);color:#fff;padding:clamp(36px,5vw,64px) clamp(12px,3vw,32px) clamp(40px,6vw,72px)}
+.dck-theater__glow{position:absolute;inset:auto -20% -40% -20%;height:60%;background:radial-gradient(closest-side,rgba(201,162,39,.18),transparent);pointer-events:none}
+.dck-theater__inner{position:relative;max-width:1400px;margin:0 auto}
+.dck-theater__head{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+.dck-theater__head h1{color:#fff;margin:4px 0 6px;font-size:clamp(2rem,4vw,3rem)}
+.dck-theater__lead{color:#c9d3f5;margin:0;max-width:620px}
+.dck-status{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;font-weight:700;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2)}
+.dck-status__dot{width:10px;height:10px;border-radius:50%;background:var(--dck-gold-300)}
+.dck-status[data-state=live]{background:#c0392b;border-color:#e0574a}
+.dck-status[data-state=live] .dck-status__dot{background:#fff;animation:dckpulse 1.4s ease-in-out infinite}
+.dck-theater__grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:22px;align-items:start}
+.dck-theater__player{border-radius:18px;overflow:hidden;background:#000;box-shadow:0 40px 90px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08)}
+.dck-theater__player .dck-embed{margin:0;border-radius:0}
+.dck-theater__under{display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:#0b1233}
+.dck-qa{display:inline-flex;align-items:center;gap:8px;flex:1 1 140px;justify-content:center;min-height:44px;padding:0 14px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#e7ecff;font:inherit;font-size:.9rem;font-weight:600;text-decoration:none;cursor:pointer;transition:background .2s}
+.dck-qa:hover{background:rgba(255,255,255,.14);color:#fff}
+.dck-theater__side{display:grid;gap:14px}
+.dck-tcard{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:20px;backdrop-filter:blur(6px)}
+.dck-tcard__k{font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dck-gold-300);margin:0 0 10px}
+.dck-cd{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
+.dck-cd span{background:rgba(255,255,255,.08);border-radius:12px;padding:10px 4px}
+.dck-cd b{display:block;font-family:var(--dck-font-display);font-size:clamp(1.5rem,2.6vw,2rem);font-variant-numeric:tabular-nums;line-height:1.1}
+.dck-cd i{font-style:normal;font-size:.7rem;color:#aeb9e6;text-transform:uppercase;letter-spacing:.06em}
+.dck-cd.is-live{display:none}
+.dck-tz{display:grid;gap:8px;margin:16px 0;padding:12px 0;border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12)}
+.dck-tz div{display:flex;justify-content:space-between;gap:10px;font-size:.88rem}
+.dck-tz span{color:#aeb9e6}
+.dck-tz strong{text-align:right}
+.dck-tcard__btns{display:grid;gap:8px}
+.dck-tcard .dck-btn--ghost{color:#fff;border-color:rgba(255,255,255,.35)}
+.dck-tprog{list-style:none;margin:0;padding:0}
+.dck-tprog li{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:.9rem}
+.dck-tprog li:last-child{border-bottom:0}
+.dck-tprog strong{color:var(--dck-gold-300);white-space:nowrap}
+.dck-join__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:34px}
+.dck-jcard{display:flex;flex-direction:column;gap:6px;padding:24px;border:1px solid var(--dck-line);border-radius:var(--dck-radius);background:#fff;text-decoration:none;color:var(--dck-ink);transition:transform .25s var(--dck-ease),box-shadow .25s}
+.dck-jcard:hover{transform:translateY(-4px);box-shadow:var(--dck-shadow)}
+.dck-jcard h3{margin:8px 0 0;color:var(--dck-blue-900);font-size:1.15rem}
+.dck-jcard p{margin:0;color:var(--dck-gray);font-size:.92rem;line-height:1.55}
+.dck-jcard__ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--dck-blue-100);color:var(--dck-blue)}
+.dck-jcard__ic--yt{background:#fde8e6;color:#e62117}
+.dck-jcard__ic--fb{background:#e7f0ff;color:#1877f2}
+.dck-jcard__go{margin-top:auto;padding-top:10px;font-weight:700;font-size:.88rem;color:var(--dck-blue)}
+.dck-jcard--gold{border-color:var(--dck-gold-300);background:linear-gradient(180deg,#fffaf0,#fff)}
+.dck-past{background:var(--dck-warm)}
+.dck-past__head{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:26px}
+.dck-past__head h2{margin:4px 0 0}
+.dck-seg{display:inline-flex;gap:4px;padding:4px;background:#fff;border:1px solid var(--dck-line);border-radius:12px}
+.dck-seg button{font:inherit;font-size:.88rem;font-weight:600;padding:9px 16px;border:0;border-radius:9px;background:transparent;color:var(--dck-gray);cursor:pointer}
+.dck-seg button.is-active{background:var(--dck-blue);color:#fff}
+.dck-past__playlist{max-width:980px;margin:0 auto}
+.dck-online{padding-top:0;background:var(--dck-warm)}
+@media (max-width:1100px){.dck-theater__grid{grid-template-columns:1fr}.dck-theater__side{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.dck-theater__side{grid-template-columns:1fr}.dck-qa{flex-basis:45%}.dck-theater__head{align-items:flex-start}}
+
+/* Sermons */
+.dck-filter select{min-height:44px}
+.dck-view{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--dck-line);border-radius:999px;margin-left:auto}
+.dck-view__btn{display:grid;place-items:center;width:38px;height:36px;border:0;border-radius:999px;background:transparent;color:var(--dck-gray);cursor:pointer}
+.dck-view__btn.is-active{background:var(--dck-blue);color:#fff}
+.dck-sermons-grid.is-list{grid-template-columns:1fr!important;gap:14px}
+.dck-sermons-grid.is-list .dck-sermon-card{flex-direction:row;align-items:stretch}
+.dck-sermons-grid.is-list .dck-sermon-card__media{flex:0 0 clamp(140px,28%,300px);aspect-ratio:16/10;height:auto}
+.dck-sermons-grid.is-list .dck-sermon-card__exc{-webkit-line-clamp:2}
+@media (max-width:600px){.dck-sermons-grid.is-list .dck-sermon-card{flex-direction:column}.dck-sermons-grid.is-list .dck-sermon-card__media{flex-basis:auto}.dck-view{margin-left:0}}
+.dck-srail{margin:0 0 44px}
+.dck-srail__track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(220px,260px);gap:14px;overflow-x:auto;padding:4px 2px 14px;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.dck-scard{scroll-snap-align:start;display:flex;flex-direction:column;border-radius:var(--dck-radius);overflow:hidden;background:#fff;border:1px solid var(--dck-line);text-decoration:none;color:var(--dck-ink);transition:transform .25s var(--dck-ease),box-shadow .25s}
+.dck-scard:hover{transform:translateY(-4px);box-shadow:var(--dck-shadow)}
+.dck-scard__img{display:block;aspect-ratio:16/9;background:linear-gradient(135deg,var(--dck-blue-800),var(--dck-blue)) center/cover no-repeat}
+.dck-scard__body{padding:14px 16px}
+.dck-scard__body strong{display:block;color:var(--dck-blue-900)}
+.dck-scard__body em{font-style:normal;font-size:.82rem;color:var(--dck-gray)}
+.dck-sfinder{position:relative}

@@ -344,6 +344,10 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 					'fields' => array(
 						$f( 'dck_live_title', __( 'Watch Live title', 'dck-core' ), 'text', 'Watch Live' ),
 						$f( 'dck_live_lead', __( 'Watch Live intro', 'dck-core' ), 'textarea' ),
+						$f( 'dck_live_day', __( 'Live service day (0 = Sunday ... 6 = Saturday)', 'dck-core' ), 'text', '0' ),
+						$f( 'dck_live_start', __( 'Live service start (24h, EAT, e.g. 10:40)', 'dck-core' ), 'text', '10:40' ),
+						$f( 'dck_live_end', __( 'Live service end (24h, EAT, e.g. 13:00)', 'dck-core' ), 'text', '13:00' ),
+						$f( 'dck_live_event_title', __( 'Calendar event title', 'dck-core' ), 'text', 'Sunday Glorious Service - Deliverance Church Kabete N' ),
 						$f( 'dck_live_default_video', __( 'Fallback YouTube video ID', 'dck-core' ), 'text', 'RKItJ4L4sSY', __( 'Shown when no channel ID or live link is set (Live Stream tab).', 'dck-core' ) ),
 						$f( 'dck_events_title', __( 'Events title', 'dck-core' ), 'text', 'Events & Gatherings' ),
 						$f( 'dck_events_lead', __( 'Events intro', 'dck-core' ), 'textarea' ),

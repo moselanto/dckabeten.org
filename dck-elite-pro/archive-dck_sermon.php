@@ -7,6 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+wp_enqueue_script( 'dck-sermons-ui', get_template_directory_uri() . '/assets/js/sermons-ui.js', array(), DCK_ELITE_VERSION, true );
 get_header();
 $archive_url = get_post_type_archive_link( 'dck_sermon' );
 
@@ -29,7 +30,8 @@ if ( ! function_exists( 'dck_elite_tax_select' ) ) {
 
 <?php
 $dck_paged    = max( 1, (int) get_query_var( 'paged' ) );
-$dck_filtered = ! empty( $_GET['dck_sermon_series'] ) || ! empty( $_GET['dck_sermon_speaker'] ) || ! empty( $_GET['dck_sermon_topic'] ); // phpcs:ignore WordPress.Security.NonceVerification
+$dck_sort     = ( isset( $_GET['sort'] ) && 'oldest' === sanitize_key( wp_unslash( $_GET['sort'] ) ) ) ? 'oldest' : 'newest'; // phpcs:ignore WordPress.Security.NonceVerification
+$dck_filtered = ! empty( $_GET['dck_sermon_series'] ) || ! empty( $_GET['dck_sermon_speaker'] ) || ! empty( $_GET['dck_sermon_topic'] ) || 'oldest' === $dck_sort; // phpcs:ignore WordPress.Security.NonceVerification
 $dck_feature  = ( 1 === $dck_paged && ! $dck_filtered && have_posts() );
 $dck_count    = wp_count_posts( 'dck_sermon' );
 $dck_total    = isset( $dck_count->publish ) ? (int) $dck_count->publish : 0;
@@ -69,6 +71,14 @@ $dck_series_n = wp_count_terms( array( 'taxonomy' => 'dck_sermon_series', 'hide_
 				dck_elite_tax_select( 'dck_sermon_speaker', __( 'All Speakers', 'dck-elite' ) );
 				dck_elite_tax_select( 'dck_sermon_topic', __( 'All Topics', 'dck-elite' ) );
 				?>
+				<select name="sort" onchange="this.form.submit()" aria-label="<?php esc_attr_e( 'Sort', 'dck-elite' ); ?>">
+					<option value="newest" <?php selected( $dck_sort, 'newest' ); ?>><?php esc_html_e( 'Newest first', 'dck-elite' ); ?></option>
+					<option value="oldest" <?php selected( $dck_sort, 'oldest' ); ?>><?php esc_html_e( 'Oldest first', 'dck-elite' ); ?></option>
+				</select>
+				<span class="dck-view" role="group" aria-label="<?php esc_attr_e( 'Layout', 'dck-elite' ); ?>">
+					<button type="button" class="dck-view__btn is-active" data-view="grid" aria-pressed="true" aria-label="<?php esc_attr_e( 'Grid view', 'dck-elite' ); ?>"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg></button>
+					<button type="button" class="dck-view__btn" data-view="list" aria-pressed="false" aria-label="<?php esc_attr_e( 'List view', 'dck-elite' ); ?>"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="3" y="4" width="18" height="4" rx="1.5"/><rect x="3" y="10" width="18" height="4" rx="1.5"/><rect x="3" y="16" width="18" height="4" rx="1.5"/></svg></button>
+				</span>
 				<?php if ( $dck_filtered ) : ?>
 					<a class="dck-filter__reset" href="<?php echo esc_url( $archive_url ); ?>"><?php esc_html_e( 'Clear filters', 'dck-elite' ); ?></a>
 				<?php endif; ?>
@@ -109,11 +119,31 @@ $dck_series_n = wp_count_terms( array( 'taxonomy' => 'dck_sermon_series', 'hide_
 						</div>
 					</div>
 				</article>
+				<?php
+				$dck_series = get_terms( array( 'taxonomy' => 'dck_sermon_series', 'hide_empty' => true ) );
+				if ( ! is_wp_error( $dck_series ) && $dck_series ) :
+					?>
+					<div class="dck-srail">
+						<div class="dck-srail__head"><h2 class="dck-sermons-sub"><?php esc_html_e( 'Browse by Series', 'dck-elite' ); ?></h2></div>
+						<div class="dck-srail__track">
+							<?php
+							foreach ( $dck_series as $ser ) :
+								$sq   = get_posts( array( 'post_type' => 'dck_sermon', 'numberposts' => 1, 'tax_query' => array( array( 'taxonomy' => 'dck_sermon_series', 'terms' => $ser->term_id ) ) ) ); // phpcs:ignore WordPress.DB.SlowDBQuery
+								$simg = $sq ? dck_sermon_image_url( $sq[0]->ID, 'medium_large' ) : '';
+								?>
+								<a class="dck-scard" href="<?php echo esc_url( add_query_arg( 'dck_sermon_series', $ser->slug, $archive_url ) ); ?>">
+									<span class="dck-scard__img"<?php echo $simg ? ' style="background-image:url(' . esc_url( $simg ) . ')"' : ''; ?>></span>
+									<span class="dck-scard__body"><strong><?php echo esc_html( $ser->name ); ?></strong><em><?php echo esc_html( sprintf( _n( '%d message', '%d messages', $ser->count, 'dck-elite' ), $ser->count ) ); ?></em></span>
+								</a>
+							<?php endforeach; ?>
+						</div>
+					</div>
+				<?php endif; ?>
 				<h2 class="dck-sermons-sub"><?php esc_html_e( 'More Messages', 'dck-elite' ); ?></h2>
 				<?php
 			endif;
 			?>
-			<div class="dck-sermons-grid">
+			<div class="dck-sermons-grid" id="dck-sgrid">
 			<?php
 			while ( have_posts() ) :
 				the_post();
