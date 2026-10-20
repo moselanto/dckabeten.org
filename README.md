@@ -87,3 +87,11 @@ Settings: DCK Church > Church Tools (finance email, welcome team email, message 
 3. Paystack > Settings > API Keys & Webhooks > Webhook URL: `https://dckabeten.org/wp-json/dck/v1/pay/webhook` (also shown on DCK Church > Overview).
 4. Cloudflare: do not cache `/wp-json/*`; allow POST to the webhook (no bot challenge on that path).
 5. Givers choose purpose + amount (KES 10 - 150,000) + M-Pesa number, get the STK prompt, enter PIN; records are auto-verified in Giving Records and thanked by email. The manual Paybill / bank options stay below as a fallback.
+
+
+## Member Register (DCK Core 1.7.0)
+- wp-admin > **Members**: add members (name, phone, email, gender, age group, marital status, area, status, date joined, baptised, home fellowship, ministry departments, consent). Pastoral notes are staff-only and never exported.
+- **Download Excel register**: branded workbook - Summary, All Members, one sheet per ministry department, "No department yet". Every download is logged (Members > Import & access).
+- **Import**: Members > Import & access > upload a CSV (headings: Name, Phone, Email, Gender, Age group, Marital status, Area, Status, Date joined, Baptised, Departments separated by ;, Fellowship). Same phone/email updates instead of duplicating.
+- Access: administrators only; tick "Editors can view..." to allow editors. Departments come from DCK Church > Church Tools > ministries list.
+- Keep downloaded files on a password-protected computer/drive; in Excel use File > Info > Protect Workbook > Encrypt with Password before sharing.
