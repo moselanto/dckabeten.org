@@ -81,6 +81,21 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 			),
 		);
 
+		/* ---------- Gatherings (Services page) ---------- */
+		$tabs['gatherings'] = array(
+			'title'    => __( 'Gatherings', 'dck-core' ),
+			'icon'     => 'dashicons-calendar',
+			'intro'    => __( 'Everything on the Services page in one list: Sunday programme, midweek gatherings and monthly rhythms. Add, edit, reorder, change photos or remove any gathering. The homepage, Watch Live, Contact page and AI assistant update automatically.', 'dck-core' ),
+			'sections' => array(
+				array(
+					'title'  => __( 'All gatherings', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_gatherings', __( 'Gatherings', 'dck-core' ), 'gatherings', function_exists( 'dck_gatherings_defaults' ) ? dck_gatherings_defaults() : array() ),
+					),
+				),
+			),
+		);
+
 		/* ---------- Service times ---------- */
 		$tabs['services'] = array(
 			'title'    => __( 'Service Times', 'dck-core' ),

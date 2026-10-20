@@ -88,31 +88,61 @@ if ( ! function_exists( 'dck_core_render_field' ) ) {
 
 		echo '<div class="dck-field dck-field--' . esc_attr( $type ) . '" data-search="' . esc_attr( $hay ) . '">';
 
-		if ( 'services' === $type || 'sections' === $type ) {
+		if ( in_array( $type, array( 'services', 'sections', 'gatherings' ), true ) ) {
 			$rows = is_array( $value ) ? array_values( $value ) : array();
-			$cols = 'services' === $type
-				? array( 'name' => __( 'Gathering', 'dck-core' ), 'time' => __( 'Day / time', 'dck-core' ) )
-				: array( 'title' => __( 'Section title', 'dck-core' ), 'body' => __( 'Content', 'dck-core' ) );
-			echo '<div class="dck-repeater" data-name="' . esc_attr( $name ) . '" data-type="' . esc_attr( $type ) . '">';
+			if ( 'services' === $type ) {
+				$cols = array( 'name' => array( __( 'Gathering', 'dck-core' ), 'text' ), 'time' => array( __( 'Day / time', 'dck-core' ), 'text' ) );
+			} elseif ( 'sections' === $type ) {
+				$cols = array( 'title' => array( __( 'Section title', 'dck-core' ), 'text' ), 'body' => array( __( 'Content', 'dck-core' ), 'textarea' ) );
+			} else {
+				$cols = array(
+					'name' => array( __( 'Name', 'dck-core' ), 'text' ),
+					'type' => array( __( 'Shows under', 'dck-core' ), 'select', array( 'sunday' => __( 'Sunday programme', 'dck-core' ), 'weekly' => __( 'During the week', 'dck-core' ), 'monthly' => __( 'Monthly / special rhythm', 'dck-core' ) ) ),
+					'when' => array( __( 'Day(s) - e.g. Sunday, Tuesday, Friday & Saturday', 'dck-core' ), 'text' ),
+					'time' => array( __( 'Time - e.g. 10:40 AM - 1:00 PM', 'dck-core' ), 'text' ),
+					'desc' => array( __( 'Short description', 'dck-core' ), 'textarea' ),
+					'img'  => array( __( 'Photo', 'dck-core' ), 'image' ),
+					'live' => array( __( 'Streamed live online', 'dck-core' ), 'check' ),
+				);
+			}
+			echo '<div class="dck-repeater dck-repeater--' . esc_attr( $type ) . '" data-name="' . esc_attr( $name ) . '" data-type="' . esc_attr( $type ) . '">';
 			echo '<div class="dck-rows">';
 			$rows[] = array(); // Template row.
 			$last   = count( $rows ) - 1;
 			foreach ( $rows as $i => $row ) {
 				$is_tpl = ( $i === $last );
 				$idx    = $is_tpl ? '__i__' : $i;
+				$na     = $is_tpl ? 'data-name' : 'name';
 				echo '<div class="dck-row' . ( $is_tpl ? ' dck-row--tpl' : '' ) . '"' . ( $is_tpl ? ' hidden' : '' ) . '>';
 				echo '<span class="dck-row__handle" title="' . esc_attr__( 'Move', 'dck-core' ) . '">';
 				echo '<button type="button" class="button-link dck-up" aria-label="' . esc_attr__( 'Move up', 'dck-core' ) . '">&#9650;</button>';
 				echo '<button type="button" class="button-link dck-down" aria-label="' . esc_attr__( 'Move down', 'dck-core' ) . '">&#9660;</button></span>';
 				echo '<div class="dck-row__cols">';
-				foreach ( $cols as $k => $cl ) {
-					$v  = isset( $row[ $k ] ) ? $row[ $k ] : '';
-					$nm = $name . '[' . $idx . '][' . $k . ']';
-					echo '<label><span>' . esc_html( $cl ) . '</span>';
-					if ( 'body' === $k ) {
-						echo '<textarea rows="6" ' . ( $is_tpl ? 'data-' : '' ) . 'name="' . esc_attr( $nm ) . '">' . esc_textarea( $v ) . '</textarea>';
+				foreach ( $cols as $k => $c ) {
+					$v    = isset( $row[ $k ] ) ? $row[ $k ] : '';
+					$nm   = $name . '[' . $idx . '][' . $k . ']';
+					$kind = $c[1];
+					echo '<label class="dck-col dck-col--' . esc_attr( $k ) . ' dck-col--' . esc_attr( $kind ) . '"><span>' . esc_html( $c[0] ) . '</span>';
+					if ( 'textarea' === $kind ) {
+						echo '<textarea rows="' . ( 'body' === $k ? 6 : 2 ) . '" ' . $na . '="' . esc_attr( $nm ) . '">' . esc_textarea( $v ) . '</textarea>'; // phpcs:ignore
+					} elseif ( 'select' === $kind ) {
+						echo '<select ' . $na . '="' . esc_attr( $nm ) . '">'; // phpcs:ignore
+						foreach ( $c[2] as $ov => $ol ) {
+							echo '<option value="' . esc_attr( $ov ) . '"' . selected( $v, $ov, false ) . '>' . esc_html( $ol ) . '</option>';
+						}
+						echo '</select>';
+					} elseif ( 'check' === $kind ) {
+						echo '<input type="checkbox" value="1" ' . $na . '="' . esc_attr( $nm ) . '"' . checked( ! empty( $v ), true, false ) . '>'; // phpcs:ignore
+					} elseif ( 'image' === $kind ) {
+						echo '</label><div class="dck-col dck-col--img"><span class="dck-col__lbl">' . esc_html( $c[0] ) . '</span><div class="dck-image">';
+						echo '<img class="dck-image__preview" src="' . esc_url( $v ) . '" alt=""' . ( $v ? '' : ' hidden' ) . '>';
+						echo '<input type="hidden" ' . $na . '="' . esc_attr( $nm ) . '" value="' . esc_attr( $v ) . '">'; // phpcs:ignore
+						echo '<button type="button" class="button dck-image__pick">' . esc_html__( 'Choose photo', 'dck-core' ) . '</button> ';
+						echo '<button type="button" class="button-link dck-image__clear"' . ( $v ? '' : ' hidden' ) . '>' . esc_html__( 'Use default', 'dck-core' ) . '</button>';
+						echo '</div></div>';
+						continue;
 					} else {
-						echo '<input type="text" ' . ( $is_tpl ? 'data-' : '' ) . 'name="' . esc_attr( $nm ) . '" value="' . esc_attr( $v ) . '">';
+						echo '<input type="text" ' . $na . '="' . esc_attr( $nm ) . '" value="' . esc_attr( $v ) . '">'; // phpcs:ignore
 					}
 					echo '</label>';
 				}
@@ -233,6 +263,27 @@ if ( ! function_exists( 'dck_core_sanitize' ) ) {
 			case 'date':
 				$raw = sanitize_text_field( (string) $raw );
 				return preg_match( '/^\d{4}-\d{2}-\d{2}$/', $raw ) ? $raw : '';
+			case 'gatherings':
+				$out = array();
+				if ( is_array( $raw ) ) {
+					unset( $raw['__present'], $raw['__i__'] );
+					foreach ( $raw as $row ) {
+						if ( ! is_array( $row ) || empty( $row['name'] ) ) {
+							continue;
+						}
+						$t     = isset( $row['type'] ) && in_array( $row['type'], array( 'sunday', 'weekly', 'monthly' ), true ) ? $row['type'] : 'sunday';
+						$out[] = array(
+							'name' => sanitize_text_field( $row['name'] ),
+							'type' => $t,
+							'when' => isset( $row['when'] ) ? sanitize_text_field( $row['when'] ) : '',
+							'time' => isset( $row['time'] ) ? sanitize_text_field( $row['time'] ) : '',
+							'desc' => isset( $row['desc'] ) ? sanitize_textarea_field( $row['desc'] ) : '',
+							'img'  => isset( $row['img'] ) ? esc_url_raw( $row['img'] ) : '',
+							'live' => empty( $row['live'] ) ? '' : '1',
+						);
+					}
+				}
+				return $out;
 			case 'services':
 			case 'sections':
 				$out = array();
@@ -283,7 +334,7 @@ add_action(
 					continue;
 				}
 				$val = dck_core_sanitize( $field, $in[ $field['id'] ] );
-				if ( '' === $val || ( is_array( $val ) && empty( $val ) && 'sections' !== $field['type'] && 'services' !== $field['type'] ) ) {
+				if ( '' === $val || ( is_array( $val ) && empty( $val ) && ! in_array( $field['type'], array( 'sections', 'services', 'gatherings' ), true ) ) ) {
 					remove_theme_mod( $field['id'] );
 				} else {
 					set_theme_mod( $field['id'], $val );

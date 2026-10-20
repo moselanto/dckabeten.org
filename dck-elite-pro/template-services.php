@@ -11,21 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 get_header();
+dck_edit_bar( 'gatherings', __( 'Edit services & times', 'dck-elite' ) );
 $dck_sd   = dck_services_defaults();
-$dck_sun  = dck_elite_service_times();
-$dck_desc = array_values( array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', (string) dck_home_val( 'dck_services_sunday_desc', $dck_sd['sunday_desc'] ) ) ) ) );
-$dck_week = dck_lines( 'dck_services_week', $dck_sd['week'], 3 );
+$dck_sun  = dck_gatherings( array( 'sunday', 'monthly' ) );
+$dck_wkly = dck_gatherings( 'weekly' );
 $dck_exp  = dck_lines( 'dck_services_expect', $dck_sd['expect'], 2 );
 $dck_dir  = function_exists( 'dck_home_directions' ) ? dck_home_directions() : dck_home_val( 'dck_directions_url', '' );
-$dck_base = get_template_directory_uri() . '/assets/images/';
-$dck_imgs = array_values( array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', (string) dck_home_val( 'dck_services_images', '' ) ) ) ) );
-if ( ! $dck_imgs ) {
-	$dck_imgs = array( $dck_base . 'home/church-slide-4.webp', $dck_base . 'blog/study.webp', $dck_base . 'home/joy.webp', $dck_base . 'home/church-slide-3.webp' );
-}
 $dck_main = isset( $dck_sun[0] ) ? $dck_sun[0] : null;
 foreach ( $dck_sun as $s ) {
-	if ( false !== stripos( $s['name'], 'glorious' ) ) {
+	if ( ! empty( $s['live'] ) ) {
 		$dck_main = $s;
+		break;
 	}
 }
 
@@ -72,15 +68,15 @@ dck_photo_hero(
 		</div>
 		<div class="dck-sun4__grid">
 			<?php foreach ( $dck_sun as $i => $s ) : ?>
-				<article class="dck-scard2 dck-reveal<?php echo ( $dck_main && $s['name'] === $dck_main['name'] ) ? ' is-main' : ''; ?>">
-					<div class="dck-scard2__img" style="background-image:url(<?php echo esc_url( $dck_imgs[ $i % count( $dck_imgs ) ] ); ?>)">
+				<article class="dck-scard2 dck-reveal<?php echo ! empty( $s['live'] ) ? ' is-main' : ''; ?>">
+					<div class="dck-scard2__img" style="background-image:url(<?php echo esc_url( $s['img'] ); ?>)">
 						<span class="dck-scard2__step"><?php echo esc_html( str_pad( (string) ( $i + 1 ), 2, '0', STR_PAD_LEFT ) ); ?></span>
-						<?php if ( $dck_main && $s['name'] === $dck_main['name'] ) : ?><span class="dck-scard2__live"><?php esc_html_e( 'Streamed live', 'dck-elite' ); ?></span><?php endif; ?>
+						<?php if ( ! empty( $s['live'] ) ) : ?><span class="dck-scard2__live"><?php esc_html_e( 'Streamed live', 'dck-elite' ); ?></span><?php endif; ?>
 					</div>
 					<div class="dck-scard2__body">
 						<span class="dck-scard2__time"><?php echo esc_html( $s['time'] ); ?></span>
 						<h3><?php echo esc_html( $s['name'] ); ?></h3>
-						<?php if ( ! empty( $dck_desc[ $i ] ) ) : ?><p><?php echo esc_html( $dck_desc[ $i ] ); ?></p><?php endif; ?>
+						<?php if ( $s['desc'] ) : ?><p><?php echo esc_html( $s['desc'] ); ?></p><?php endif; ?>
 					</div>
 				</article>
 			<?php endforeach; ?>
@@ -100,18 +96,18 @@ dck_photo_hero(
 		</div>
 		<?php
 		$dck_items = array();
-		foreach ( $dck_week as $w ) {
-			$dck_items[] = array( 'days' => dck_label_days( $w[0] ), 'title' => $w[2], 'time' => $w[1], 'note' => ( count( dck_label_days( $w[0] ) ) ? '' : $w[0] ) );
-		}
-		foreach ( $dck_sun as $s ) {
-			if ( preg_match( '/week|month|kesha/i', $s['time'] . ' ' . $s['name'] ) ) {
+		foreach ( array_merge( $dck_sun, $dck_wkly ) as $g ) {
+			$days = 'sunday' === $g['type'] ? array( 0 ) : dck_label_days( $g['when'] );
+			if ( ! $days ) {
 				continue;
 			}
-			$dck_items[] = array( 'days' => array( 0 ), 'title' => $s['name'], 'time' => $s['time'] );
+			$dck_items[] = array( 'days' => $days, 'title' => $g['name'], 'time' => $g['time'], 'note' => $g['desc'] && 'weekly' === $g['type'] ? $g['desc'] : '' );
 		}
 		dck_week_calendar( $dck_items );
 		?>
-		<p class="dck-weeksec__note"><?php esc_html_e( 'Keshas (overnight prayer) are held on the 1st and 3rd week of every month.', 'dck-elite' ); ?></p>
+		<?php foreach ( dck_gatherings( 'monthly' ) as $m ) : ?>
+			<p class="dck-weeksec__note"><strong><?php echo esc_html( $m['name'] ); ?>:</strong> <?php echo esc_html( $m['desc'] ? $m['desc'] : $m['when'] ); ?></p>
+		<?php endforeach; ?>
 	</div>
 </section>
 

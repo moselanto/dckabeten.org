@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.10.0' );
+	define( 'DCK_ELITE_VERSION', '4.11.0' );
 }
 
 /**
@@ -110,6 +110,15 @@ if ( ! function_exists( 'dck_elite_service_times' ) ) {
 	 * Weekly gatherings. Editable in DCK Church > Service Times; defaults live in inc/content.php.
 	 */
 	function dck_elite_service_times() {
+		if ( function_exists( 'dck_gatherings_saved' ) && dck_gatherings_saved() ) {
+			$g = array();
+			foreach ( dck_gatherings( array( 'sunday', 'monthly' ) ) as $r ) {
+				$g[] = array( 'name' => $r['name'], 'time' => $r['time'] );
+			}
+			if ( $g ) {
+				return $g;
+			}
+		}
 		$rows = get_theme_mod( 'dck_service_times', array() );
 		$out  = array();
 		if ( is_array( $rows ) ) {

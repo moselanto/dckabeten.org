@@ -248,3 +248,91 @@ add_action(
 		}
 	}
 );
+
+
+/* ---------------- Gatherings: one editable list for the Services page ---------------- */
+
+if ( ! function_exists( 'dck_gatherings_defaults' ) ) {
+	function dck_gatherings_defaults() {
+		$img = get_template_directory_uri() . '/assets/images/';
+		return array(
+			array( 'name' => 'Intensive Prayers', 'type' => 'sunday', 'when' => 'Sunday', 'time' => '8:00 - 9:00 AM', 'desc' => 'Starting the day seeking God together in fervent prayer.', 'img' => $img . 'home/church-slide-4.webp', 'live' => '' ),
+			array( 'name' => 'Intensive Bible Study', 'type' => 'sunday', 'when' => 'Sunday', 'time' => '9:30 - 10:30 AM', 'desc' => 'Digging deep into the Word for understanding and growth.', 'img' => $img . 'blog/study.webp', 'live' => '' ),
+			array( 'name' => 'Glorious Service', 'type' => 'sunday', 'when' => 'Sunday', 'time' => '10:40 AM - 1:00 PM', 'desc' => 'Joyful worship, Spirit-filled preaching, and celebration.', 'img' => $img . 'home/joy.webp', 'live' => '1' ),
+			array( 'name' => 'Keshas (Overnight)', 'type' => 'monthly', 'when' => '1st & 3rd Week', 'time' => '1st & 3rd Week', 'desc' => 'Overnight prayer on the first and third week of each month.', 'img' => $img . 'home/church-slide-3.webp', 'live' => '' ),
+			array( 'name' => 'Prayers in the Church', 'type' => 'weekly', 'when' => 'Tuesday', 'time' => '6:00 - 7:00 PM', 'desc' => '', 'img' => '', 'live' => '' ),
+			array( 'name' => 'Midweek Service in Church', 'type' => 'weekly', 'when' => 'Thursday', 'time' => '6:00 - 7:00 PM', 'desc' => '', 'img' => '', 'live' => '' ),
+			array( 'name' => 'Home-Based Church Services', 'type' => 'weekly', 'when' => 'Friday & Saturday', 'time' => '6:00 - 7:00 PM', 'desc' => '', 'img' => '', 'live' => '' ),
+			array( 'name' => 'Worship Team Practice in Church', 'type' => 'weekly', 'when' => 'Saturday', 'time' => 'From 4:00 PM', 'desc' => '', 'img' => '', 'live' => '' ),
+		);
+	}
+}
+
+if ( ! function_exists( 'dck_gatherings_saved' ) ) {
+	/** True once the church has saved its own list in DCK Church > Gatherings. */
+	function dck_gatherings_saved() {
+		$g = get_theme_mod( 'dck_gatherings', array() );
+		return is_array( $g ) && ! empty( $g );
+	}
+}
+
+if ( ! function_exists( 'dck_gatherings' ) ) {
+	/**
+	 * All gatherings. Before the list is saved, builds it from the older
+	 * Service Times / weekly schedule settings so nothing changes visually.
+	 */
+	function dck_gatherings( $type = '' ) {
+		if ( dck_gatherings_saved() ) {
+			$all = get_theme_mod( 'dck_gatherings' );
+		} else {
+			$all  = dck_gatherings_defaults();
+			$sd   = dck_services_defaults();
+			$desc = array_values( array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', (string) dck_home_val( 'dck_services_sunday_desc', $sd['sunday_desc'] ) ) ) ) );
+			$imgs = array_values( array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', (string) dck_home_val( 'dck_services_images', '' ) ) ) ) );
+			$old  = get_theme_mod( 'dck_service_times', array() );
+			if ( is_array( $old ) && $old ) {
+				$sun = array();
+				foreach ( array_values( $old ) as $i => $r ) {
+					if ( empty( $r['name'] ) ) {
+						continue;
+					}
+					$monthly = (bool) preg_match( '/week|month/i', (string) $r['time'] );
+					$def     = isset( $all[ $i ] ) ? $all[ $i ] : array( 'img' => '' );
+					$sun[]   = array( 'name' => $r['name'], 'type' => $monthly ? 'monthly' : 'sunday', 'when' => $monthly ? $r['time'] : 'Sunday', 'time' => $r['time'], 'desc' => isset( $desc[ $i ] ) ? $desc[ $i ] : '', 'img' => isset( $imgs[ $i ] ) ? $imgs[ $i ] : $def['img'], 'live' => false !== stripos( $r['name'], 'glorious' ) ? '1' : '' );
+				}
+				$all = array_merge( $sun, array_values( array_filter( $all, function ( $g ) { return 'weekly' === $g['type']; } ) ) );
+			}
+			if ( '' !== (string) get_theme_mod( 'dck_services_week', '' ) ) {
+				$all = array_values( array_filter( $all, function ( $g ) { return 'weekly' !== $g['type']; } ) );
+				foreach ( dck_lines( 'dck_services_week', $sd['week'], 3 ) as $w ) {
+					$all[] = array( 'name' => $w[2], 'type' => 'weekly', 'when' => $w[0], 'time' => $w[1], 'desc' => '', 'img' => '', 'live' => '' );
+				}
+			}
+		}
+		$fallback = get_template_directory_uri() . '/assets/images/home/joy.webp';
+		$out      = array();
+		foreach ( $all as $g ) {
+			if ( empty( $g['name'] ) ) {
+				continue;
+			}
+			$g = wp_parse_args( $g, array( 'type' => 'sunday', 'when' => '', 'time' => '', 'desc' => '', 'img' => '', 'live' => '' ) );
+			if ( '' === $g['img'] ) {
+				$g['img'] = $fallback;
+			}
+			if ( '' === $type || $type === $g['type'] || ( is_array( $type ) && in_array( $g['type'], $type, true ) ) ) {
+				$out[] = $g;
+			}
+		}
+		return $out;
+	}
+}
+
+/* Front-end "Edit this page" shortcut for editors. */
+if ( ! function_exists( 'dck_edit_bar' ) ) {
+	function dck_edit_bar( $tab, $label ) {
+		if ( ! current_user_can( 'edit_theme_options' ) || ! defined( 'DCK_CORE_VERSION' ) ) {
+			return;
+		}
+		echo '<a class="dck-editbar" href="' . esc_url( admin_url( 'admin.php?page=dck-church&tab=' . $tab ) ) . '"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>' . esc_html( $label ) . '</a>';
+	}
+}
