@@ -77,6 +77,8 @@ $dck_dir    = function_exists( 'dck_home_directions' ) ? dck_home_directions() :
 </section>
 
 <!-- STATS (real numbers are server-rendered so search engines, AI tools and no-JS visitors see them; JS only animates) -->
+<?php if ( function_exists( 'dck_newhere_band' ) ) { dck_newhere_band(); } ?>
+
 <section class="dck-section dck-stats">
 	<div class="dck-container">
 		<div class="dck-grid">

@@ -348,13 +348,18 @@ add_action(
 			'dck-visitor-qr',
 			function () {
 				$url = dck_elite_page_url( 'new-here' );
-				$qr  = 'https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=20&data=' . rawurlencode( $url );
+				$qr  = get_template_directory_uri() . '/assets/images/app/qr-new-here.svg';
+				$png = get_template_directory_uri() . '/assets/images/app/qr-new-here.png';
 				echo '<div class="wrap"><h1>' . esc_html__( "I'm New - QR code", 'dck-elite' ) . '</h1>';
-				echo '<p>' . esc_html__( 'Print this and place it on seats, the welcome desk or the screen during announcements. Scanning opens the I\'m New card on the website.', 'dck-elite' ) . '</p>';
-				echo '<div style="background:#fff;display:inline-block;padding:24px;border-radius:16px;text-align:center;border:1px solid #ddd">';
-				echo '<p style="font-size:22px;font-weight:700;margin:0 0 6px">' . esc_html__( 'New here? Welcome home!', 'dck-elite' ) . '</p><p style="margin:0 0 12px">' . esc_html__( 'Scan to let us know you visited', 'dck-elite' ) . '</p>';
-				echo '<img src="' . esc_url( $qr ) . '" width="300" height="300" alt="QR code"><p style="margin:10px 0 0;font-size:13px">' . esc_html( $url ) . '</p></div>';
-				echo '<p><a class="button button-primary" href="' . esc_url( $qr ) . '" download="im-new-qr.png" target="_blank" rel="noopener">' . esc_html__( 'Open large QR image', 'dck-elite' ) . '</a> <button class="button" onclick="window.print()">' . esc_html__( 'Print', 'dck-elite' ) . '</button></p></div>';
+				echo '<p>' . esc_html__( 'Print this and place it on seats, the welcome desk, bulletins or the screen during announcements. Scanning opens the I\'m New card on the website. It is also shown on the homepage.', 'dck-elite' ) . '</p>';
+				echo '<div style="background:#fff;display:inline-block;padding:28px 32px;border-radius:18px;text-align:center;border:1px solid #ddd;max-width:360px">';
+				echo '<p style="font-size:24px;font-weight:700;margin:0 0 4px;color:#0E1C4D">' . esc_html__( 'New here? Karibu!', 'dck-elite' ) . '</p><p style="margin:0 0 14px;color:#555">' . esc_html__( 'Scan to let us know you visited', 'dck-elite' ) . '</p>';
+				echo '<img src="' . esc_url( $qr ) . '" width="280" height="280" alt="QR code"><p style="margin:10px 0 0;font-size:13px;color:#555">' . esc_html( $url ) . '</p></div>';
+				echo '<p><a class="button button-primary" href="' . esc_url( $png ) . '" download="dck-im-new-qr.png">' . esc_html__( 'Download for printing (PNG)', 'dck-elite' ) . '</a> <a class="button" href="' . esc_url( $qr ) . '" download="dck-im-new-qr.svg">' . esc_html__( 'Download for designers (SVG)', 'dck-elite' ) . '</a> <button class="button" onclick="window.print()">' . esc_html__( 'Print', 'dck-elite' ) . '</button></p>';
+				if ( false === strpos( $url, '/new-here' ) ) {
+					echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'The I\'m New page address has changed. The QR code points to dckabeten.org/new-here/ - keep that address or ask your developer to regenerate the code.', 'dck-elite' ) . '</p></div>';
+				}
+				echo '</div>';
 			}
 		);
 	}
@@ -376,3 +381,30 @@ add_action(
 		update_option( 'dck_newhere_page_v1', 1, false );
 	}
 );
+
+/* "New here?" band with the branded QR code (homepage). QR shows on larger screens; phones get a button. */
+if ( ! function_exists( 'dck_newhere_band' ) ) {
+	function dck_newhere_band() {
+		$url = dck_elite_page_url( 'new-here' );
+		$qr  = get_template_directory_uri() . '/assets/images/app/qr-new-here.svg';
+		?>
+		<section class="dck-newband" aria-labelledby="dck-newband-title">
+			<div class="dck-container dck-newband__inner">
+				<div class="dck-newband__copy">
+					<p class="dck-eyebrow"><?php esc_html_e( 'First Time With Us?', 'dck-elite' ); ?></p>
+					<h2 id="dck-newband-title"><?php echo esc_html( dck_home_val( 'dck_newband_title', __( 'Karibu! Let us know you visited', 'dck-elite' ) ) ); ?></h2>
+					<p><?php echo esc_html( dck_home_val( 'dck_newband_text', __( 'Fill our one-minute welcome card and someone from our welcome team will reach out to you this week. No pressure, just a warm hello.', 'dck-elite' ) ) ); ?></p>
+					<div class="dck-newband__actions">
+						<a class="dck-btn dck-btn--gold" href="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'Fill the welcome card', 'dck-elite' ); ?></a>
+						<a class="dck-btn dck-btn--ghost" href="<?php echo esc_url( dck_elite_page_url( 'services' ) ); ?>"><?php esc_html_e( 'Service times', 'dck-elite' ); ?></a>
+					</div>
+				</div>
+				<figure class="dck-newband__qr">
+					<div class="dck-newband__qrbox"><img src="<?php echo esc_url( $qr ); ?>" width="220" height="220" alt="<?php esc_attr_e( 'QR code that opens the welcome card', 'dck-elite' ); ?>" loading="lazy" decoding="async"></div>
+					<figcaption><strong><?php esc_html_e( 'Scan with your phone camera', 'dck-elite' ); ?></strong><span><?php echo esc_html( preg_replace( '#^https?://#', '', untrailingslashit( $url ) ) ); ?></span></figcaption>
+				</figure>
+			</div>
+		</section>
+		<?php
+	}
+}
