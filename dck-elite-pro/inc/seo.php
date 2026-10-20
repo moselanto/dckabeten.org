@@ -118,62 +118,185 @@ if ( ! function_exists( 'dck_seo_canonical' ) ) {
 	}
 }
 
-/* ---------------- JSON-LD ---------------- */
+/* ---------------- JSON-LD: one @graph with stable @ids ---------------- */
+if ( ! function_exists( 'dck_seo_id' ) ) {
+	function dck_seo_id( $frag ) {
+		return home_url( '/' ) . '#' . $frag;
+	}
+}
+
+/* Official social profiles only - generic homepages (facebook.com/, youtube.com/) are ignored. */
+if ( ! function_exists( 'dck_seo_same_as' ) ) {
+	function dck_seo_same_as() {
+		$out = array();
+		foreach ( array( 'dck_fb_url', 'dck_yt_url', 'dck_ig_url', 'dck_tiktok_url', 'dck_x_url' ) as $k ) {
+			$u = trim( (string) get_theme_mod( $k, '' ) );
+			if ( ! $u || ! wp_http_validate_url( $u ) ) {
+				continue;
+			}
+			$path = trim( (string) wp_parse_url( $u, PHP_URL_PATH ), '/' );
+			$q    = (string) wp_parse_url( $u, PHP_URL_QUERY );
+			if ( '' === $path && '' === $q ) {
+				continue; // Placeholder like https://www.facebook.com/.
+			}
+			$out[] = esc_url_raw( $u );
+		}
+		return array_values( array_unique( $out ) );
+	}
+}
+
+/* "8:00 - 9:00 AM" / "10:40 AM - 1:00 PM" -> array( '08:00', '09:00' ) or null. */
+if ( ! function_exists( 'dck_seo_parse_span' ) ) {
+	function dck_seo_parse_span( $t ) {
+		if ( ! preg_match( '/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*[-\x{2013}to]+\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)/iu', (string) $t, $m ) ) {
+			return null;
+		}
+		$ap2 = strtolower( $m[6] );
+		$ap1 = $m[3] ? strtolower( $m[3] ) : $ap2;
+		$h1  = (int) $m[1] % 12 + ( 'pm' === $ap1 ? 12 : 0 );
+		$h2  = (int) $m[4] % 12 + ( 'pm' === $ap2 ? 12 : 0 );
+		if ( ! $m[3] && $h1 > $h2 ) {
+			$h1 -= 12; // "11:00 - 1:00 PM" means 11 AM.
+		}
+		return array( sprintf( '%02d:%02d', $h1, (int) $m[2] ), sprintf( '%02d:%02d', $h2, (int) $m[5] ) );
+	}
+}
+
+/* Opening hours built from the editable Gatherings list (weekly/Sunday only; monthly Keshas skipped). */
+if ( ! function_exists( 'dck_seo_hours' ) ) {
+	function dck_seo_hours() {
+		if ( ! function_exists( 'dck_gatherings' ) ) {
+			return array();
+		}
+		$days = array( 'monday' => 'Monday', 'tuesday' => 'Tuesday', 'wednesday' => 'Wednesday', 'thursday' => 'Thursday', 'friday' => 'Friday', 'saturday' => 'Saturday', 'sunday' => 'Sunday' );
+		$span = array();
+		foreach ( (array) dck_gatherings() as $g ) {
+			if ( empty( $g['type'] ) || 'monthly' === $g['type'] ) {
+				continue;
+			}
+			$se = dck_seo_parse_span( isset( $g['time'] ) ? $g['time'] : '' );
+			if ( ! $se ) {
+				continue;
+			}
+			$when = strtolower( 'sunday' === $g['type'] ? 'sunday' : (string) $g['when'] );
+			foreach ( $days as $k => $d ) {
+				if ( false !== strpos( $when, $k ) ) {
+					if ( ! isset( $span[ $d ] ) ) {
+						$span[ $d ] = $se;
+					} else {
+						$span[ $d ][0] = min( $span[ $d ][0], $se[0] );
+						$span[ $d ][1] = max( $span[ $d ][1], $se[1] );
+					}
+				}
+			}
+		}
+		$out = array();
+		foreach ( $span as $d => $se ) {
+			$out[] = array( '@type' => 'OpeningHoursSpecification', 'dayOfWeek' => 'https://schema.org/' . $d, 'opens' => $se[0], 'closes' => $se[1] );
+		}
+		return $out;
+	}
+}
+
+if ( ! function_exists( 'dck_seo_address' ) ) {
+	function dck_seo_address() {
+		return array(
+			'@type'           => 'PostalAddress',
+			'streetAddress'   => get_theme_mod( 'dck_top_address', 'Behind N Market, Uthiru, Kabete' ),
+			'addressLocality' => get_theme_mod( 'dck_seo_locality', 'Uthiru' ),
+			'addressRegion'   => get_theme_mod( 'dck_seo_region', 'Nairobi' ),
+			'addressCountry'  => 'KE',
+		);
+	}
+}
+
 if ( ! function_exists( 'dck_seo_jsonld' ) ) {
 	function dck_seo_jsonld( $meta ) {
-		$name = get_bloginfo( 'name' );
-		$home = home_url( '/' );
-		$same = array();
-		$fb   = get_theme_mod( 'dck_fb_url', '' );
-		$yt   = get_theme_mod( 'dck_yt_url', '' );
-		if ( $fb ) {
-			$same[] = $fb;
-		}
-		if ( $yt ) {
-			$same[] = $yt;
-		}
-		$church = array(
-			'@context'    => 'https://schema.org',
-			'@type'       => 'Church',
-			'name'        => $name,
-			'url'         => $home,
-			'logo'        => dck_seo_image_default(),
-			'image'       => $meta['image'],
-			'description' => dck_seo_desc_default(),
-			'telephone'   => get_theme_mod( 'dck_top_phone', '+254 110 304521' ),
-			'email'       => get_theme_mod( 'dck_top_email', 'info@dckabeten.org' ),
-			'address'     => array(
-				'@type'           => 'PostalAddress',
-				'streetAddress'   => get_theme_mod( 'dck_top_address', 'Behind N Market, Uthiru, Kabete' ),
-				'addressLocality' => get_theme_mod( 'dck_seo_locality', 'Uthiru' ),
-				'addressRegion'   => get_theme_mod( 'dck_seo_region', 'Nairobi' ),
-				'addressCountry'  => 'KE',
-			),
-			'sameAs'                    => $same,
-			'openingHoursSpecification' => array(
-				'@type'     => 'OpeningHoursSpecification',
-				'dayOfWeek' => 'Sunday',
-				'opens'     => '08:00',
-				'closes'    => '13:00',
-			),
+		$name   = get_bloginfo( 'name' );
+		$home   = home_url( '/' );
+		$url    = dck_seo_canonical();
+		$church = array_filter(
+			array(
+				'@type'                     => 'Church',
+				'@id'                       => dck_seo_id( 'church' ),
+				'name'                      => $name,
+				'alternateName'             => array( 'Cistern of Hope Center', 'DCK Kabete' ),
+				'url'                       => $home,
+				'logo'                      => array( '@type' => 'ImageObject', '@id' => dck_seo_id( 'logo' ), 'url' => get_template_directory_uri() . '/assets/images/logo.png' ),
+				'image'                     => dck_seo_image_default(),
+				'description'               => dck_seo_desc_default(),
+				'telephone'                 => get_theme_mod( 'dck_top_phone', '+254 110 304521' ),
+				'email'                     => get_theme_mod( 'dck_top_email', 'info@dckabeten.org' ),
+				'address'                   => dck_seo_address(),
+				'hasMap'                    => get_theme_mod( 'dck_directions_url', '' ),
+				'areaServed'                => array( '@type' => 'Country', 'name' => 'Kenya' ),
+				'sameAs'                    => dck_seo_same_as(),
+				'openingHoursSpecification' => dck_seo_hours(),
+			)
 		);
+		$lat = get_theme_mod( 'dck_seo_lat', '' );
+		$lng = get_theme_mod( 'dck_seo_lng', '' );
+		if ( is_numeric( $lat ) && is_numeric( $lng ) ) {
+			$church['geo'] = array( '@type' => 'GeoCoordinates', 'latitude' => (float) $lat, 'longitude' => (float) $lng );
+		}
 		$website = array(
-			'@context'        => 'https://schema.org',
-			'@type'           => 'WebSite',
-			'name'            => $name,
-			'url'             => $home,
-			'inLanguage'      => 'en',
-			'potentialAction' => array(
-				'@type'       => 'SearchAction',
-				'target'      => $home . '?s={search_term_string}',
-				'query-input' => 'required name=search_term_string',
-			),
+			'@type'      => 'WebSite',
+			'@id'        => dck_seo_id( 'website' ),
+			'name'       => $name,
+			'url'        => $home,
+			'inLanguage' => 'en-KE',
+			'publisher'  => array( '@id' => dck_seo_id( 'church' ) ),
 		);
+		$page = array(
+			'@type'      => is_singular( 'post' ) || is_singular( 'dck_sermon' ) ? 'WebPage' : ( is_page_template( 'template-faq.php' ) ? 'FAQPage' : ( is_page_template( 'template-contact.php' ) ? 'ContactPage' : ( is_page_template( 'template-about.php' ) ? 'AboutPage' : ( is_post_type_archive() || is_home() || is_category() || is_tag() ? 'CollectionPage' : 'WebPage' ) ) ) ),
+			'@id'        => $url . '#webpage',
+			'url'        => $url,
+			'name'       => wp_get_document_title(),
+			'description'=> $meta['desc'],
+			'isPartOf'   => array( '@id' => dck_seo_id( 'website' ) ),
+			'about'      => array( '@id' => dck_seo_id( 'church' ) ),
+			'inLanguage' => 'en-KE',
+		);
+		if ( 'FAQPage' === $page['@type'] ) {
+			$page['@type'] = 'WebPage'; // The FAQ entity itself is emitted by inc/faq.php from the visible Q&As.
+		}
 		$graph = array( $church, $website );
-		$json  = wp_json_encode( $graph, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+		$nodes = function_exists( 'dck_seo_extra_nodes' ) ? dck_seo_extra_nodes( $url ) : array();
+		foreach ( $nodes as $n ) {
+			if ( 'BreadcrumbList' === $n['@type'] ) {
+				$page['breadcrumb'] = array( '@id' => $n['@id'] );
+			}
+			if ( isset( $n['mainEntityOfPage'] ) ) {
+				$page['mainEntity'] = array( '@id' => $n['@id'] );
+			}
+		}
+		$graph[] = $page;
+		$graph   = array_merge( $graph, $nodes );
+		$json    = wp_json_encode( array( '@context' => 'https://schema.org', '@graph' => $graph ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG );
 		return '<script type="application/ld+json">' . $json . '</script>' . chr( 10 );
 	}
 }
+
+/* ---------------- One provider rule ---------------- */
+if ( ! function_exists( 'dck_seo_external' ) ) {
+	/* True when an SEO plugin is active. It then owns meta/canonical/sitemap; the theme keeps the schema graph. */
+	function dck_seo_external() {
+		return (bool) apply_filters( 'dck_seo_external', defined( 'RANK_MATH_VERSION' ) || defined( 'WPSEO_VERSION' ) );
+	}
+}
+/* Remove the plugin's own JSON-LD so there is exactly one Church/WebSite graph (the theme's, with real hours and address). */
+add_filter( 'rank_math/json_ld', function ( $data ) { return apply_filters( 'dck_keep_plugin_schema', false ) ? $data : array(); }, 999 );
+add_filter( 'wpseo_json_ld_output', function ( $data ) { return apply_filters( 'dck_keep_plugin_schema', false ) ? $data : false; }, 999 );
+add_action(
+	'wp',
+	function () {
+		if ( dck_seo_external() ) {
+			remove_filter( 'wp_robots', 'dck_seo_robots' );
+			remove_filter( 'document_title_parts', 'dck_seo_title_parts' );
+			remove_filter( 'document_title_parts', 'dck_pg_seo_title_filter', 20 );
+		}
+	}
+);
 
 /* ---------------- Head output ---------------- */
 remove_action( 'wp_head', 'rel_canonical' );
@@ -190,8 +313,13 @@ if ( ! function_exists( 'dck_seo_head' ) ) {
 		$img   = $m['image'];
 
 		echo $nl . '<!-- DCK SEO -->' . $nl;
+		if ( dck_seo_external() ) {
+			// Rank Math / Yoast owns title, description, canonical, robots, OG and sitemap; the theme owns the single JSON-LD graph.
+			echo dck_seo_jsonld( $m );
+			echo '<!-- /DCK SEO -->' . $nl;
+			return;
+		}
 		echo '<meta name="description" content="' . esc_attr( $m['desc'] ) . '">' . $nl;
-		echo '<meta name="keywords" content="' . esc_attr( $m['keywords'] ) . '">' . $nl;
 		echo '<link rel="canonical" href="' . esc_url( $url ) . '">' . $nl;
 
 		echo '<meta property="og:type" content="' . esc_attr( $m['type'] ) . '">' . $nl;

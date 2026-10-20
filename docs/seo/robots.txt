@@ -1,0 +1,47 @@
+# Deliverance Church Kabete N Market - robots.txt (upload to public_html/robots.txt)
+# Replaces the old file that pointed at /test/ paths and a wrong sitemap.
+# Search engines and AI *search* crawlers (which link back to the site) are welcome.
+# AI *training* crawlers stay blocked (church decision; edit the bottom block to change).
+
+User-agent: *
+Allow: /
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+Disallow: /wp-json/dck/
+Disallow: /*?s=
+Disallow: /*?author=
+Disallow: /*&preview=
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /wp-admin/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /wp-admin/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /wp-admin/
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /wp-admin/
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+# --- AI model-training crawlers (blocked) ---
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: CCBot
+User-agent: Google-Extended
+User-agent: Bytespider
+User-agent: meta-externalagent
+User-agent: PetalBot
+Disallow: /
+
+Sitemap: https://dckabeten.org/sitemap_index.xml

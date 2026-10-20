@@ -22,7 +22,7 @@ if ( ! function_exists( 'dck_pg_seo_data' ) ) {
 	function dck_pg_seo_data() {
 		return array(
 			'home'            => array(
-				'title' => 'Deliverance Church Kabete N Market | Christian Church in Nairobi, Kenya',
+				'title' => 'Deliverance Church Kabete N Market | Church in Uthiru, Kabete, Nairobi',
 				'desc'  => 'Welcome to Deliverance Church Kabete N Market (Cistern of Hope Center), a Christ-centred church in Nairobi. Join us for worship, Bible study, prayer, sermons, and online services.',
 			),
 			'about'           => array(
@@ -34,8 +34,8 @@ if ( ! function_exists( 'dck_pg_seo_data' ) ) {
 				'desc'  => 'Meet Pastor Justus Kubai, Pastor Clare Kubai, and the pastoral leadership team serving Deliverance Church Kabete with biblical teaching and community outreach.',
 			),
 			'services'        => array(
-				'title' => 'Church Services & Worship Times | Deliverance Church Kabete',
-				'desc'  => 'Join our Sunday worship services, Bible study, prayer meetings, Kesha, and weekly fellowships at Deliverance Church Kabete N Market in Nairobi.',
+				'title' => 'Sunday Service Times in Uthiru, Kabete | Deliverance Church Kabete',
+				'desc'  => 'Sunday at Deliverance Church Kabete N Market, behind N Market, Uthiru: Intensive Prayers 8:00 AM, Bible Study 9:30 AM, Glorious Service 10:40 AM. Midweek prayers and service too.',
 			),
 			'ministries'      => array(
 				'title' => 'Church Ministries | Youth, Children, Men, Women & Worship Teams',
@@ -66,8 +66,8 @@ if ( ! function_exists( 'dck_pg_seo_data' ) ) {
 				'desc'  => 'Support the work of God through secure online giving. Give tithes, offerings, missions, and donations via M-PESA, bank transfer, and other supported methods.',
 			),
 			'contact'         => array(
-				'title' => 'Contact Deliverance Church Kabete | Visit Our Church in Nairobi',
-				'desc'  => 'Contact Deliverance Church Kabete N Market for prayer, counselling, worship services, directions, ministry enquiries, and church information.',
+				'title' => 'Contact & Directions | Deliverance Church Kabete, Behind N Market Uthiru',
+				'desc'  => 'Find Deliverance Church Kabete N Market behind N Market, Uthiru, Kabete. Call +254 110 304521, WhatsApp or email info@dckabeten.org, and get directions on Google Maps.',
 			),
 			'faq'             => array(
 				'title' => 'Church FAQs | Worship, Membership, Giving & Bible Questions',
