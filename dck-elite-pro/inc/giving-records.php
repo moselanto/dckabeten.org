@@ -420,6 +420,8 @@ if ( ! function_exists( 'dck_gift_form' ) ) {
 			if(t.name==='channel'){var c=document.querySelector('.dck-gift__code');if(c){c.hidden=t.value!=='mpesa';}}
 			if(t.name==='purpose'){var o=document.querySelector('.dck-purpose__other');if(o){o.hidden=t.value!=='other';if(!o.hidden){o.focus();}}}
 		});
+		document.addEventListener('click',function(e){var c=e.target.closest&&e.target.closest('[data-purpose]');if(!c){return;}var r=document.querySelectorAll('.dck-purpose input[name="purpose"]');for(var i=0;i<r.length;i++){if(r[i].value===c.getAttribute('data-purpose')){r[i].checked=true;r[i].dispatchEvent(new Event('change',{bubbles:true}));}}});
+		if(location.hash.indexOf('#give-')===0){var want=decodeURIComponent(location.hash.slice(6)).toLowerCase();var rr=document.querySelectorAll('.dck-purpose input[name="purpose"]');for(var j=0;j<rr.length;j++){if(rr[j].value.toLowerCase()===want){rr[j].checked=true;}}}
 		document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-amt]');if(!b){return;}var i=document.querySelector('.dck-gift input[name="amount"]');if(i){i.value=b.getAttribute('data-amt');}var all=document.querySelectorAll('.dck-amounts .dck-chip');for(var k=0;k<all.length;k++){all[k].classList.toggle('is-active',all[k]===b);}});
 		</script>
 		<?php

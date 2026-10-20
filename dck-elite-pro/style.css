@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.23.0
+Version: 4.24.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -2473,3 +2473,14 @@ html.dck-focus .dck-tabbar{display:none!important}
   .dck-tabbar__item--call .dck-tabbar__ic svg{width:22px;height:22px}
   .dck-tabbar__item--call:active .dck-tabbar__ic{background:#1f8f4e!important;color:#fff!important}
 }
+
+/* v4.24 Where your gift goes: tappable purpose cards */
+.dck-gp__item--link{display:flex;flex-direction:column;text-decoration:none;color:inherit;cursor:pointer;transition:transform .2s var(--dck-ease),box-shadow .2s,border-color .2s}
+.dck-gp__item--link:hover,.dck-gp__item--link:focus-visible{transform:translateY(-3px);border-color:var(--dck-gold);box-shadow:0 18px 40px -24px rgba(14,28,77,.45)}
+.dck-gp__top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.dck-gp__ic{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--dck-blue-100);color:var(--dck-blue)}
+.dck-gp__item--link:hover .dck-gp__ic{background:var(--dck-blue);color:#fff}
+.dck-gp__go{margin-top:auto;padding-top:12px;font-weight:700;font-size:.88rem;color:var(--dck-blue)}
+.dck-give-purpose .dck-muted{max-width:60ch;margin:8px auto 0}
+@media (max-width:700px){.dck-gp{grid-template-columns:1fr 1fr!important;gap:12px}.dck-gp__item--link{padding:16px}}
+@media (max-width:420px){.dck-gp{grid-template-columns:1fr!important}}

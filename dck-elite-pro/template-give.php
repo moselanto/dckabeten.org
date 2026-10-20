@@ -166,14 +166,25 @@ if ( ! function_exists( 'dck_give_row' ) ) {
 		<div class="dck-center">
 			<p class="dck-eyebrow"><?php esc_html_e( 'Where Your Gift Goes', 'dck-elite' ); ?></p>
 			<h2><?php esc_html_e( 'Every Gift Makes A Difference', 'dck-elite' ); ?></h2>
+			<p class="dck-muted"><?php esc_html_e( 'Choose where your gift goes, pay with M-Pesa or the bank, then tell us so we can record it under the right purpose and thank you.', 'dck-elite' ); ?></p>
 		</div>
 		<div class="dck-gp">
 			<?php foreach ( $dck_purposes as $i => $p ) : ?>
-				<div class="dck-gp__item dck-reveal">
-					<span class="dck-gp__n"><?php echo esc_html( str_pad( (string) ( $i + 1 ), 2, '0', STR_PAD_LEFT ) ); ?></span>
+				<?php
+				$dck_ic = array(
+					'<path d="M12 3v18M5 10h14"/>',
+					'<path d="M12 21s-7.5-4.6-9.3-9.2C1.4 8.4 3.6 5 7 5c2 0 3.4 1.1 5 3 1.6-1.9 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8C19.5 16.4 12 21 12 21z"/>',
+					'<path d="M3 21h18M5 21V10l7-6 7 6v11M10 21v-6h4v6"/>',
+					'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"/>',
+					'<path d="M7 11V7a5 5 0 0 1 10 0v4"/><path d="M4 11h16v4a8 8 0 0 1-16 0z"/>',
+				);
+				?>
+				<a class="dck-gp__item dck-gp__item--link dck-reveal" href="#confirm-gift" data-purpose="<?php echo esc_attr( $p['t'] ); ?>">
+					<span class="dck-gp__top"><span class="dck-gp__ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><?php echo $dck_ic[ $i % count( $dck_ic ) ]; // phpcs:ignore WordPress.Security.EscapeOutput -- static SVG. ?></svg></span><span class="dck-gp__n"><?php echo esc_html( str_pad( (string) ( $i + 1 ), 2, '0', STR_PAD_LEFT ) ); ?></span></span>
 					<h3><?php echo esc_html( $p['t'] ); ?></h3>
 					<p><?php echo esc_html( $p['d'] ); ?></p>
-				</div>
+					<span class="dck-gp__go"><?php echo esc_html( sprintf( __( 'Give to %s', 'dck-elite' ), $p['t'] ) ); ?> &rarr;</span>
+				</a>
 			<?php endforeach; ?>
 		</div>
 	</div>
