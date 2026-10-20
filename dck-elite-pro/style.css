@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.25.0
+Version: 4.26.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -2506,3 +2506,68 @@ html.dck-focus .dck-tabbar{display:none!important}
   .dck-newband__actions .dck-btn{flex:1 1 auto;justify-content:center}
 }
 @media print{.dck-newband__qr{display:flex!important}}
+
+/* ============ v4.26 Floating WhatsApp chat widget (above Ask Hope) ============ */
+.dck-hcall,.dck-hwa{display:none!important}
+.dckw[hidden],.dckw [hidden]{display:none!important}
+.dckw{--dckw-b:84px;font-family:var(--dck-font-body)}
+.dckw__launcher{position:fixed;z-index:9999;right:24px;bottom:var(--dckw-b);width:58px;height:58px;border:0;border-radius:50%;background:#25D366;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(37,211,102,.45),0 4px 10px rgba(0,0,0,.15);transition:transform .2s,background .2s}
+.dckw__launcher:hover{transform:scale(1.06);background:#1EBE5A}
+.dckw__launcher::before{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #25D366;animation:dckwPulse 2.4s ease-out infinite}
+.dckw.is-open .dckw__launcher::before{display:none}
+.dckw__ico{display:inline-flex;transition:transform .25s,opacity .2s}
+.dckw__ico--x{position:absolute;font-size:2rem;line-height:1;opacity:0;transform:rotate(-90deg)}
+.dckw.is-open .dckw__ico--wa{opacity:0;transform:rotate(90deg)}
+.dckw.is-open .dckw__ico--x{opacity:1;transform:none}
+.dckw__badge{position:absolute;top:-2px;right:-2px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#E5383B;color:#fff;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.dckw__teaser{position:fixed;z-index:9998;right:24px;bottom:calc(var(--dckw-b) + 72px);width:min(280px,calc(100vw - 40px));background:#fff;border-radius:16px 16px 4px 16px;box-shadow:0 14px 40px rgba(0,0,0,.18);animation:dckwUp .3s ease}
+.dckw__teaser-body{display:flex;flex-direction:column;gap:4px;width:100%;padding:14px 32px 14px 16px;border:0;background:none;text-align:left;cursor:pointer;font:inherit;color:#141414}
+.dckw__teaser-body strong{font-size:.95rem;color:var(--dck-blue-900)}
+.dckw__teaser-body span{font-size:.84rem;color:#4a525c;line-height:1.45}
+.dckw__teaser-x{position:absolute;top:6px;right:6px;width:24px;height:24px;border:0;border-radius:50%;background:#F1F3F5;color:#4a525c;cursor:pointer;line-height:1;font-size:1rem}
+.dckw__panel{position:fixed;z-index:10002;right:24px;bottom:calc(var(--dckw-b) + 72px);width:380px;max-width:calc(100vw - 32px);height:560px;max-height:calc(100vh - var(--dckw-b) - 100px);max-height:calc(100dvh - var(--dckw-b) - 100px);display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.28);animation:dckwUp .25s cubic-bezier(.2,.8,.2,1)}
+.dckw__head{display:flex;align-items:center;gap:12px;padding:16px;background:linear-gradient(135deg,#075E54,#128C7E);color:#fff}
+.dckw__avatar{position:relative;width:46px;height:46px;border-radius:50%;background:#fff;flex:0 0 auto}
+.dckw__avatar img{width:46px;height:46px;border-radius:50%;object-fit:cover;display:block}
+.dckw__dot{position:absolute;right:0;bottom:1px;width:12px;height:12px;border-radius:50%;background:#4ADE80;border:2px solid #128C7E}
+.dckw__dot.is-away{background:#F5B740}
+.dckw__head-text{flex:1 1 auto;display:flex;flex-direction:column;min-width:0}
+.dckw__head-text strong{font:700 1.02rem var(--dck-font-display);color:#fff}
+.dckw__head-text small{font-size:.78rem;opacity:.92}
+.dckw__x{width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-size:1.4rem;line-height:1;cursor:pointer}
+.dckw__body{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:16px;display:flex;flex-direction:column;gap:10px;background-color:#EFEAE2;background-image:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1px);background-size:14px 14px}
+.dckw__msg{position:relative;max-width:88%;padding:9px 12px 18px;border-radius:12px;font-size:.92rem;line-height:1.45;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.dckw__msg p{margin:0;white-space:pre-wrap}
+.dckw__msg time{position:absolute;right:9px;bottom:4px;font-size:.66rem;color:#8a929c}
+.dckw__msg--bot{align-self:flex-start;background:#fff;border-top-left-radius:2px}
+.dckw__topics{display:grid;gap:8px;margin-top:2px}
+.dckw__topic{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-radius:12px;background:#fff;color:#141414;text-decoration:none;border:1px solid rgba(0,0,0,.05);box-shadow:0 1px 2px rgba(0,0,0,.05);transition:transform .12s,border-color .15s}
+.dckw__topic:hover{border-color:#25D366;transform:translateX(2px);color:#141414}
+.dckw__topic span{display:flex;flex-direction:column}
+.dckw__topic strong{font-size:.9rem;color:var(--dck-blue-900)}
+.dckw__topic small{font-size:.76rem;color:#6b7480}
+.dckw__topic i{font-style:normal;font-size:1.4rem;color:#128C7E}
+.dckw__form{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#F0F2F5}
+.dckw__input{flex:1 1 auto;min-width:0;padding:12px 16px;border:0;border-radius:999px;background:#fff;font:.95rem var(--dck-font-body)}
+.dckw__input:focus{outline:2px solid rgba(18,140,126,.35)}
+.dckw__send{width:44px;height:44px;border:0;border-radius:50%;background:#128C7E;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.dckw__send:hover{background:#075E54}
+.dckw__foot{margin:0;padding:6px 12px 10px;background:#F0F2F5;text-align:center;font-size:.7rem;color:#6b7480}
+@keyframes dckwPulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.5);opacity:0}}
+@keyframes dckwUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (max-width:480px){.dckw{--dckw-b:70px}.dckw__launcher{right:14px}.dckw__teaser,.dckw__panel{right:12px}}
+@media (max-width:1024px){
+  body.has-tabbar .dckw{--dckw-b:calc(158px + env(safe-area-inset-bottom))}
+  body.has-tabbar .dckw__launcher{right:14px;width:54px;height:54px}
+  body.has-tabbar .dckw__panel{right:10px;left:10px;width:auto;max-width:none;bottom:calc(98px + env(safe-area-inset-bottom));height:auto;top:calc(var(--dck-hdr-b,76px) + 12px);max-height:none}
+  html.dckw-open .dckw__launcher,html.dck-menu-open .dckw{display:none}
+}
+@media (prefers-reduced-motion:reduce){.dckw__launcher::before{animation:none}}
+@media print{.dckw{display:none!important}}
+
+/* v4.26 gift amount + currency row */
+.dck-amountrow{display:flex;gap:8px}
+.dck-amountrow select{flex:0 0 96px;width:96px!important}
+.dck-amountrow select:disabled{opacity:1;background:var(--dck-blue-100);color:var(--dck-blue-900);font-weight:700}
+.dck-amountrow input{flex:1 1 auto;min-width:0}
+.dck-amounts[hidden],.dck-gift__ref[hidden]{display:none!important}

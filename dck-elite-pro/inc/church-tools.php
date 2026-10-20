@@ -16,7 +16,9 @@ if ( ! function_exists( 'dck_ct_wa_number' ) ) {
 		if ( '' === $d ) {
 			return '';
 		}
-		if ( 0 === strpos( $d, '0' ) && 10 === strlen( $d ) ) {
+		if ( 0 === strpos( $d, '00' ) ) {
+			$d = substr( $d, 2 ); // International 00 prefix.
+		} elseif ( 0 === strpos( $d, '0' ) && 10 === strlen( $d ) ) {
 			$d = '254' . substr( $d, 1 );
 		} elseif ( 9 === strlen( $d ) && in_array( $d[0], array( '7', '1' ), true ) ) {
 			$d = '254' . $d;
@@ -29,6 +31,20 @@ if ( ! function_exists( 'dck_ct_wa_link' ) ) {
 	function dck_ct_wa_link( $phone, $text ) {
 		$n = dck_ct_wa_number( $phone );
 		return $n ? 'https://wa.me/' . $n . '?text=' . rawurlencode( (string) $text ) : '';
+	}
+}
+
+/* Currencies accepted on giving records (international givers). */
+if ( ! function_exists( 'dck_ct_currencies' ) ) {
+	function dck_ct_currencies() {
+		return apply_filters( 'dck_currencies', array( 'KES' => 'KES - Kenyan Shilling', 'USD' => 'USD - US Dollar', 'GBP' => 'GBP - British Pound', 'EUR' => 'EUR - Euro', 'CAD' => 'CAD - Canadian Dollar', 'AUD' => 'AUD - Australian Dollar', 'UGX' => 'UGX - Ugandan Shilling', 'TZS' => 'TZS - Tanzanian Shilling', 'RWF' => 'RWF - Rwandan Franc', 'ZAR' => 'ZAR - South African Rand', 'AED' => 'AED - UAE Dirham' ) );
+	}
+}
+if ( ! function_exists( 'dck_ct_money' ) ) {
+	function dck_ct_money( $amount, $cur = 'KES' ) {
+		$dec = in_array( $cur, array( 'KES', 'UGX', 'TZS', 'RWF' ), true ) ? 0 : 2;
+		$amt = (float) $amount;
+		return $cur . ' ' . number_format_i18n( $amt, ( $dec && floor( $amt ) != $amt ) ? 2 : 0 ); // phpcs:ignore Universal.Operators.StrictComparisons
 	}
 }
 

@@ -463,6 +463,7 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 				array( __( 'Pastoral Requests', 'dck-core' ), admin_url( 'edit.php?post_type=dck_care' ), 1 ),
 				array( __( 'Fellowship Groups', 'dck-core' ), admin_url( 'edit.php?post_type=dck_fellowship' ), 1 ),
 				array( __( 'Volunteers', 'dck-core' ), admin_url( 'edit.php?post_type=dck_volunteer' ), 1 ),
+				array( __( 'Overview', 'dck-core' ), admin_url( 'admin.php?page=dck-overview' ), 1 ),
 				array( __( 'Visitor QR code', 'dck-core' ), admin_url( 'edit.php?post_type=dck_visitor&page=dck-visitor-qr' ) ),
 				array( __( "View I'm New page", 'dck-core' ), $dck_pu( 'new-here' ) ),
 				array( __( 'View Give page', 'dck-core' ), $dck_pu( 'give' ) ),
@@ -475,7 +476,7 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 						$f( 'dck_give_finance_email', __( 'Finance team email', 'dck-core' ), 'email', 'info@dckabeten.org', __( 'Gets an email for every gift recorded. Use the treasurer\'s email if different.', 'dck-core' ) ),
 						$f( 'dck_give_confirm_title', __( 'Form heading', 'dck-core' ), 'text', 'Let us know so we can thank you' ),
 						$f( 'dck_give_confirm_text', __( 'Form intro', 'dck-core' ), 'textarea', 'Paid through M-Pesa or the bank? Share the details below. Our finance team confirms every gift against the church statement and sends you a thank-you receipt.' ),
-						$f( 'dck_give_thanks_wa', __( 'Thank-you message (WhatsApp and email)', 'dck-core' ), 'textarea', 'Dear {name}, thank you for your gift of KES {amount} towards {purpose}. We have received it with gratitude. "Each of you should give what you have decided in your heart to give... for God loves a cheerful giver" (2 Corinthians 9:7). God bless you abundantly! - Deliverance Church Kabete N, Cistern of Hope Center' ),
+						$f( 'dck_give_thanks_wa', __( 'Thank-you message (WhatsApp and email)', 'dck-core' ), 'textarea', 'Dear {name}, thank you for your gift of {amount} towards {purpose}. We have received it with gratitude. "Each of you should give what you have decided in your heart to give... for God loves a cheerful giver" (2 Corinthians 9:7). God bless you abundantly! - Deliverance Church Kabete N, Cistern of Hope Center' ),
 					),
 				),
 				array(
@@ -510,6 +511,19 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 					'fields' => array(
 						$f( 'dck_volunteer_email', __( 'Volunteer coordinator email', 'dck-core' ), 'email', 'info@dckabeten.org', __( 'Gets an email when someone signs up to serve or join a fellowship.', 'dck-core' ) ),
 						$f( 'dck_volunteer_ministries', __( 'Ministries people can serve in (one per line)', 'dck-core' ), 'textarea', "Praise and Worship\nUshering and Protocol\nMedia and Sound\nChildren's Ministry (Sunday School)\nYouth Ministry\nIntercessory Prayer\nCare and Welfare\nHospitality\nEvangelism and Outreach\nCleaning and Maintenance" ),
+					),
+				),
+				array(
+					'title'  => __( 'WhatsApp chat (floating button)', 'dck-core' ),
+					'desc'   => __( 'The green WhatsApp button above "Ask Hope". Messages go to the WhatsApp number in Church & Contact.', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_waw_name', __( 'Chat title', 'dck-core' ), 'text', 'DCK Church Team' ),
+						$f( 'dck_waw_intro', __( 'Welcome message', 'dck-core' ), 'textarea', 'Karibu! How can we help you today? Choose a topic or type your message and we will reply on WhatsApp.' ),
+						$f( 'dck_waw_teaser_title', __( 'Pop-up title (shown once per visit)', 'dck-core' ), 'text', 'Need prayer or have a question?' ),
+						$f( 'dck_waw_teaser_text', __( 'Pop-up text', 'dck-core' ), 'text', 'Chat with our church team on WhatsApp. A real person will reply.' ),
+						$f( 'dck_waw_open', __( 'Replies from (hour, 0-23)', 'dck-core' ), 'text', '8' ),
+						$f( 'dck_waw_close', __( 'Replies until (hour, 0-23)', 'dck-core' ), 'text', '20' ),
+						$f( 'dck_waw_hours_text', __( 'Hours note under the chat', 'dck-core' ), 'text', 'We reply daily 8am - 8pm (East Africa Time). Emergencies: please call.' ),
 					),
 				),
 				array(

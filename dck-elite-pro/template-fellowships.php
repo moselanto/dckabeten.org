@@ -65,7 +65,7 @@ dck_photo_hero(
 			</label>
 			<div class="dck-cform__row">
 				<label class="dck-cform__field"><span><?php esc_html_e( 'Your name', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="text" name="name" autocomplete="name" required></label>
-				<label class="dck-cform__field"><span><?php esc_html_e( 'Phone / WhatsApp', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="tel" name="phone" autocomplete="tel" required placeholder="07XX XXX XXX"></label>
+				<label class="dck-cform__field"><span><?php esc_html_e( 'Phone / WhatsApp', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="tel" name="phone" autocomplete="tel" required placeholder="+254 7XX XXX XXX"></label>
 			</div>
 			<label class="dck-cform__field"><span><?php esc_html_e( 'Where do you live?', 'dck-elite' ); ?></span><input type="text" name="area" placeholder="<?php esc_attr_e( 'e.g. Uthiru, Kabete, Kangemi', 'dck-elite' ); ?>"></label>
 			<div class="dck-hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>

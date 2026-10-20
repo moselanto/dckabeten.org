@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.25.0' );
+	define( 'DCK_ELITE_VERSION', '4.26.0' );
 }
 
 /**
@@ -911,6 +911,12 @@ if ( file_exists( get_template_directory() . '/inc/pastoral-care.php' ) ) {
 }
 if ( file_exists( get_template_directory() . '/inc/serve.php' ) ) {
 	require_once get_template_directory() . '/inc/serve.php';
+}
+if ( file_exists( get_template_directory() . '/inc/tools-overview.php' ) ) {
+	require_once get_template_directory() . '/inc/tools-overview.php';
+}
+if ( file_exists( get_template_directory() . '/inc/whatsapp-widget.php' ) ) {
+	require_once get_template_directory() . '/inc/whatsapp-widget.php';
 }
 if ( file_exists( get_template_directory() . '/inc/pwa.php' ) ) {
 	require_once get_template_directory() . '/inc/pwa.php';

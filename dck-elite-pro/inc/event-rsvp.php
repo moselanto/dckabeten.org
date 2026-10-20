@@ -214,7 +214,7 @@ add_filter(
 				<input type="hidden" name="event" value="<?php echo esc_attr( $eid ); ?>">
 				<div class="dck-cform__row">
 					<label class="dck-cform__field"><span><?php esc_html_e( 'Your name', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="text" name="name" autocomplete="name" required></label>
-					<label class="dck-cform__field"><span><?php esc_html_e( 'Phone / WhatsApp', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="tel" name="phone" autocomplete="tel" required placeholder="07XX XXX XXX"></label>
+					<label class="dck-cform__field"><span><?php esc_html_e( 'Phone / WhatsApp', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="tel" name="phone" autocomplete="tel" required placeholder="+254 7XX XXX XXX"></label>
 				</div>
 				<div class="dck-cform__row">
 					<label class="dck-cform__field"><span><?php esc_html_e( 'Email', 'dck-elite' ); ?> <small class="dck-opt"><?php esc_html_e( 'For your reminder', 'dck-elite' ); ?></small></span><input type="email" name="email" autocomplete="email"></label>

@@ -81,16 +81,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<div class="dck-header__cta">
 			<a class="dck-btn dck-btn--primary" href="<?php echo esc_url( dck_elite_page_url( 'prayer-requests' ) ); ?>"><?php esc_html_e( 'Prayer Request', 'dck-elite' ); ?></a>
-			<?php
-			$dck_htel = function_exists( 'dck_home_tel' ) ? dck_home_tel() : '';
-			$dck_hwa  = function_exists( 'dck_prayer_whatsapp' ) ? dck_prayer_whatsapp() : '';
-			if ( $dck_htel ) :
-				?>
-				<a class="dck-hcall" href="tel:<?php echo esc_attr( $dck_htel ); ?>" aria-label="<?php esc_attr_e( 'Call the church', 'dck-elite' ); ?>"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.5.56 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .56 3.5 1 1 0 0 1-.24 1Z"/></svg><span><?php esc_html_e( 'Call', 'dck-elite' ); ?></span></a>
-			<?php endif; ?>
-			<?php if ( $dck_hwa ) : ?>
-				<a class="dck-hwa" href="https://wa.me/<?php echo esc_attr( $dck_hwa ); ?>?text=<?php echo rawurlencode( __( 'Hello DCK, I would like to talk to someone.', 'dck-elite' ) ); ?>" target="_blank" rel="noopener" aria-label="<?php esc_attr_e( 'Chat on WhatsApp', 'dck-elite' ); ?>"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4a.5.5 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg></a>
-			<?php endif; ?>
 			<button class="dck-burger" type="button" aria-label="<?php esc_attr_e( 'Open menu', 'dck-elite' ); ?>" aria-expanded="false" aria-controls="dck-nav"><span class="dck-burger__bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
 		</div>
 	</div>

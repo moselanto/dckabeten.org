@@ -32,7 +32,7 @@ dck_photo_hero(
 			</label>
 			<div class="dck-cform__row">
 				<label class="dck-cform__field"><span><?php esc_html_e( 'Your name', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="text" name="name" autocomplete="name" required></label>
-				<label class="dck-cform__field"><span><?php esc_html_e( 'Phone / WhatsApp', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="tel" name="phone" autocomplete="tel" required placeholder="07XX XXX XXX"></label>
+				<label class="dck-cform__field"><span><?php esc_html_e( 'Phone / WhatsApp', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="tel" name="phone" autocomplete="tel" required placeholder="+254 7XX XXX XXX"></label>
 			</div>
 			<div class="dck-cform__field"><span><?php esc_html_e( 'When are you available?', 'dck-elite' ); ?></span>
 				<div class="dck-checks"><?php foreach ( array( 'Sunday mornings', 'Weekday evenings', 'Saturdays', 'Special events' ) as $a ) : ?><label><input type="checkbox" name="avail[]" value="<?php echo esc_attr( $a ); ?>"><span><?php echo esc_html( $a ); ?></span></label><?php endforeach; ?></div>

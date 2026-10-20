@@ -78,13 +78,16 @@ if ( ! function_exists( 'dck_gift_purposes' ) ) {
 
 if ( ! function_exists( 'dck_gift_meta' ) ) {
 	function dck_gift_meta( $id ) {
-		$k = array( 'name', 'phone', 'email', 'purpose', 'amount', 'code', 'channel', 'status', 'note' );
+		$k = array( 'name', 'phone', 'email', 'purpose', 'amount', 'currency', 'code', 'channel', 'status', 'note' );
 		$m = array();
 		foreach ( $k as $key ) {
 			$m[ $key ] = (string) get_post_meta( $id, '_dck_gift_' . $key, true );
 		}
 		if ( '' === $m['status'] ) {
 			$m['status'] = 'pending';
+		}
+		if ( '' === $m['currency'] ) {
+			$m['currency'] = 'KES';
 		}
 		return $m;
 	}
@@ -125,19 +128,27 @@ if ( ! function_exists( 'dck_gift_rest' ) ) {
 		$note    = dck_sec_cap( sanitize_textarea_field( isset( $p['note'] ) ? $p['note'] : '' ), 500 );
 
 		if ( '' === $name || ! dck_ct_wa_number( $phone ) || $amount <= 0 ) {
-			return new WP_REST_Response( array( 'ok' => false, 'message' => __( 'Please enter your name, a valid phone number and the amount.', 'dck-elite' ) ), 200 );
+			return new WP_REST_Response( array( 'ok' => false, 'message' => __( 'Please enter your name, a valid phone number (with country code if outside Kenya) and the amount.', 'dck-elite' ) ), 200 );
 		}
 		if ( $amount > 10000000 ) {
 			return new WP_REST_Response( array( 'ok' => false, 'message' => __( 'Please check the amount.', 'dck-elite' ) ), 200 );
 		}
-		if ( ! in_array( $channel, array( 'mpesa', 'bank' ), true ) ) {
+		if ( ! in_array( $channel, array( 'mpesa', 'bank', 'abroad' ), true ) ) {
 			$channel = 'mpesa';
 		}
+		$currency = strtoupper( sanitize_key( isset( $p['currency'] ) ? $p['currency'] : 'KES' ) );
+		if ( 'mpesa' === $channel || ! isset( dck_ct_currencies()[ $currency ] ) ) {
+			$currency = 'KES';
+		}
+		$ref = dck_sec_cap( sanitize_text_field( isset( $p['ref'] ) ? $p['ref'] : '' ), 60 );
 		if ( 'mpesa' === $channel && ! preg_match( '/^[A-Z0-9]{10}$/', $code ) ) {
 			return new WP_REST_Response( array( 'ok' => false, 'message' => __( 'Please enter the 10-character M-Pesa code from your confirmation SMS (for example SJK4ABC12D).', 'dck-elite' ) ), 200 );
 		}
 		if ( $email && ! is_email( $email ) ) {
 			$email = '';
+		}
+		if ( 'mpesa' !== $channel ) {
+			$code = $ref ? strtoupper( preg_replace( '/[^A-Za-z0-9\-]/', '', $ref ) ) : '';
 		}
 		if ( 'other' === $purpose ) {
 			$other   = dck_sec_cap( sanitize_text_field( isset( $p['purpose_other'] ) ? $p['purpose_other'] : '' ), 80 );
@@ -165,20 +176,20 @@ if ( ! function_exists( 'dck_gift_rest' ) ) {
 			array(
 				'post_type'   => 'dck_gift',
 				'post_status' => 'private',
-				'post_title'  => sprintf( '%s - KES %s - %s', $name, number_format_i18n( $amount ), $purpose ),
+				'post_title'  => sprintf( '%s - %s - %s', $name, dck_ct_money( $amount, $currency ), $purpose ),
 			)
 		);
 		if ( ! $id || is_wp_error( $id ) ) {
 			return new WP_REST_Response( array( 'ok' => false, 'message' => __( 'We could not save your record. Please try again.', 'dck-elite' ) ), 200 );
 		}
-		foreach ( array( 'name' => $name, 'phone' => $phone, 'email' => $email, 'purpose' => $purpose, 'amount' => $amount, 'code' => $code, 'channel' => $channel, 'status' => 'pending', 'note' => $note ) as $k => $v ) {
+		foreach ( array( 'name' => $name, 'phone' => $phone, 'email' => $email, 'purpose' => $purpose, 'amount' => $amount, 'currency' => $currency, 'code' => $code, 'channel' => $channel, 'status' => 'pending', 'note' => $note ) as $k => $v ) {
 			update_post_meta( $id, '_dck_gift_' . $k, $v );
 		}
 
 		$body  = "A new gift was recorded on the website. Please verify it against the Equity statement.\n\n";
-		$body .= "Name: $name\nPhone: $phone\nEmail: $email\nPurpose: $purpose\nAmount: KES " . number_format_i18n( $amount ) . "\nChannel: " . strtoupper( $channel ) . "\nM-Pesa code: $code\n" . ( $note ? "Note: $note\n" : '' );
+		$body .= "Name: $name\nPhone: $phone\nEmail: $email\nPurpose: $purpose\nAmount: " . dck_ct_money( $amount, $currency ) . "\nChannel: " . strtoupper( $channel ) . "\nReference / M-Pesa code: $code\n" . ( $note ? "Note: $note\n" : '' );
 		$body .= "\nReview: " . admin_url( 'edit.php?post_type=dck_gift' );
-		wp_mail( dck_ct_email_to( 'dck_give_finance_email' ), 'New giving record - KES ' . number_format_i18n( $amount ) . ' (' . $purpose . ')', $body );
+		wp_mail( dck_ct_email_to( 'dck_give_finance_email' ), 'New giving record - ' . dck_ct_money( $amount, $currency ) . ' (' . $purpose . ')', $body );
 
 		return new WP_REST_Response(
 			array(
@@ -197,9 +208,9 @@ add_filter(
 		return array(
 			'cb'          => '<input type="checkbox">',
 			'title'       => __( 'Giver', 'dck-elite' ),
-			'dck_amount'  => __( 'Amount (KES)', 'dck-elite' ),
+			'dck_amount'  => __( 'Amount', 'dck-elite' ),
 			'dck_purpose' => __( 'Purpose', 'dck-elite' ),
-			'dck_code'    => __( 'M-Pesa code', 'dck-elite' ),
+			'dck_code'    => __( 'Reference', 'dck-elite' ),
 			'dck_phone'   => __( 'Phone', 'dck-elite' ),
 			'dck_status'  => __( 'Status', 'dck-elite' ),
 			'dck_thanks'  => __( 'Thank-you', 'dck-elite' ),
@@ -215,7 +226,7 @@ add_action(
 		$st = dck_gift_statuses();
 		switch ( $col ) {
 			case 'dck_amount':
-				echo '<strong>' . esc_html( number_format_i18n( (float) $m['amount'] ) ) . '</strong>';
+				echo '<strong>' . esc_html( dck_ct_money( $m['amount'], $m['currency'] ) ) . '</strong>';
 				break;
 			case 'dck_purpose':
 				echo esc_html( $m['purpose'] );
@@ -239,8 +250,8 @@ add_action(
 			case 'dck_thanks':
 				if ( 'verified' === $m['status'] ) {
 					$txt = dck_ct_fill(
-						dck_home_val( 'dck_give_thanks_wa', "Dear {name}, thank you for your gift of KES {amount} towards {purpose}. We have received it with gratitude. God bless you abundantly! - Deliverance Church Kabete N" ),
-						array( 'name' => $m['name'], 'amount' => number_format_i18n( (float) $m['amount'] ), 'purpose' => $m['purpose'] )
+						dck_home_val( 'dck_give_thanks_wa', "Dear {name}, thank you for your gift of {amount} towards {purpose}. We have received it with gratitude. God bless you abundantly! - Deliverance Church Kabete N" ),
+						array( 'name' => $m['name'], 'amount' => dck_ct_money( $m['amount'], $m['currency'] ), 'purpose' => $m['purpose'] )
 					);
 					$wa = dck_ct_wa_link( $m['phone'], $txt );
 					if ( $wa ) {
@@ -312,8 +323,8 @@ add_action(
 		update_post_meta( $id, '_dck_gift_by', get_current_user_id() );
 		if ( 'verified' === $to && $m['email'] && ! get_post_meta( $id, '_dck_gift_thanked', true ) ) {
 			$msg = dck_ct_fill(
-				dck_home_val( 'dck_give_thanks_wa', "Dear {name}, thank you for your gift of KES {amount} towards {purpose}. We have received it with gratitude. God bless you abundantly! - Deliverance Church Kabete N" ),
-				array( 'name' => $m['name'], 'amount' => number_format_i18n( (float) $m['amount'] ), 'purpose' => $m['purpose'] )
+				dck_home_val( 'dck_give_thanks_wa', "Dear {name}, thank you for your gift of {amount} towards {purpose}. We have received it with gratitude. God bless you abundantly! - Deliverance Church Kabete N" ),
+				array( 'name' => $m['name'], 'amount' => dck_ct_money( $m['amount'], $m['currency'] ), 'purpose' => $m['purpose'] )
 			);
 			$msg .= "\n\n" . sprintf( 'Receipt reference: %s | Date: %s', $m['code'] ? $m['code'] : '#' . $id, get_the_date( 'j M Y', $id ) );
 			wp_mail( $m['email'], __( 'Thank you for your gift', 'dck-elite' ) . ' - ' . get_bloginfo( 'name' ), $msg );
@@ -336,9 +347,9 @@ add_action(
 		$rows = array();
 		foreach ( $ids as $id ) {
 			$m      = dck_gift_meta( $id );
-			$rows[] = array( get_the_date( 'Y-m-d H:i', $id ), $m['name'], $m['phone'], $m['email'], $m['purpose'], $m['amount'], strtoupper( $m['channel'] ), $m['code'], $m['status'], $m['note'] );
+			$rows[] = array( get_the_date( 'Y-m-d H:i', $id ), $m['name'], $m['phone'], $m['email'], $m['purpose'], $m['amount'], $m['currency'], strtoupper( $m['channel'] ), $m['code'], $m['status'], $m['note'] );
 		}
-		dck_ct_csv( 'giving-records-' . gmdate( 'Y-m-d' ) . '.csv', array( 'Date', 'Name', 'Phone', 'Email', 'Purpose', 'Amount KES', 'Channel', 'M-Pesa code', 'Status', 'Note' ), $rows );
+		dck_ct_csv( 'giving-records-' . gmdate( 'Y-m-d' ) . '.csv', array( 'Date', 'Name', 'Phone', 'Email', 'Purpose', 'Amount', 'Currency', 'Channel', 'Reference / M-Pesa code', 'Status', 'Note' ), $rows );
 	}
 );
 
@@ -352,7 +363,7 @@ add_action(
 			function ( $post ) {
 				$m = dck_gift_meta( $post->ID );
 				echo '<table class="widefat striped"><tbody>';
-				foreach ( array( 'name' => 'Name', 'phone' => 'Phone', 'email' => 'Email', 'purpose' => 'Purpose', 'amount' => 'Amount (KES)', 'channel' => 'Channel', 'code' => 'M-Pesa code', 'status' => 'Status', 'note' => 'Note' ) as $k => $l ) {
+				foreach ( array( 'name' => 'Name', 'phone' => 'Phone', 'email' => 'Email', 'purpose' => 'Purpose', 'amount' => 'Amount', 'currency' => 'Currency', 'channel' => 'Channel', 'code' => 'Reference / M-Pesa code', 'status' => 'Status', 'note' => 'Note' ) as $k => $l ) {
 					echo '<tr><th style="width:160px">' . esc_html( $l ) . '</th><td>' . esc_html( $m[ $k ] ) . '</td></tr>';
 				}
 				echo '</tbody></table>';
@@ -387,6 +398,7 @@ if ( ! function_exists( 'dck_gift_form' ) ) {
 						<div class="dck-seg">
 							<label><input type="radio" name="channel" value="mpesa" checked><span><?php esc_html_e( 'M-Pesa', 'dck-elite' ); ?></span></label>
 							<label><input type="radio" name="channel" value="bank"><span><?php esc_html_e( 'Bank', 'dck-elite' ); ?></span></label>
+							<label><input type="radio" name="channel" value="abroad"><span><?php esc_html_e( 'From abroad', 'dck-elite' ); ?></span></label>
 						</div>
 					</div>
 					<div class="dck-cform__field">
@@ -399,14 +411,20 @@ if ( ! function_exists( 'dck_gift_form' ) ) {
 						</div>
 						<input type="text" name="purpose_other" class="dck-purpose__other" maxlength="80" hidden placeholder="<?php esc_attr_e( 'e.g. Building pledge, Youth camp, Thanksgiving', 'dck-elite' ); ?>">
 					</div>
-					<label class="dck-cform__field"><span><?php esc_html_e( 'Amount (KES)', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
-						<input type="number" name="amount" min="1" step="1" inputmode="numeric" required>
+					<div class="dck-cform__field"><span><?php esc_html_e( 'Amount', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
+						<div class="dck-amountrow">
+							<select name="currency" class="dck-gift__cur" aria-label="<?php esc_attr_e( 'Currency', 'dck-elite' ); ?>" disabled>
+								<?php foreach ( dck_ct_currencies() as $ck => $cl ) : ?><option value="<?php echo esc_attr( $ck ); ?>" title="<?php echo esc_attr( $cl ); ?>"><?php echo esc_html( $ck ); ?></option><?php endforeach; ?>
+							</select>
+							<input type="number" name="amount" min="1" step="any" inputmode="decimal" required aria-label="<?php esc_attr_e( 'Amount', 'dck-elite' ); ?>">
+						</div>
 						<span class="dck-amounts"><?php foreach ( array( 500, 1000, 2000, 5000, 10000 ) as $amt ) : ?><button type="button" class="dck-chip" data-amt="<?php echo esc_attr( $amt ); ?>"><?php echo esc_html( number_format_i18n( $amt ) ); ?></button><?php endforeach; ?></span>
-					</label>
+					</div>
+					<label class="dck-cform__field dck-gift__ref" hidden><span><?php esc_html_e( 'Transfer reference', 'dck-elite' ); ?> <small class="dck-opt"><?php esc_html_e( 'Optional - bank, Wise, WorldRemit, Remitly, PayPal...', 'dck-elite' ); ?></small></span><input type="text" name="ref" maxlength="60"></label>
 					<label class="dck-cform__field dck-gift__code"><span><?php esc_html_e( 'M-Pesa code', 'dck-elite' ); ?></span><input type="text" name="code" maxlength="12" autocapitalize="characters" placeholder="<?php esc_attr_e( 'From your M-Pesa SMS, e.g. SJK4ABC12D', 'dck-elite' ); ?>"></label>
 					<div class="dck-cform__row">
 						<label class="dck-cform__field"><span><?php esc_html_e( 'Your name', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="text" name="name" autocomplete="name" required></label>
-						<label class="dck-cform__field"><span><?php esc_html_e( 'Phone number', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="tel" name="phone" autocomplete="tel" required placeholder="07XX XXX XXX"></label>
+						<label class="dck-cform__field"><span><?php esc_html_e( 'Phone number', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="tel" name="phone" autocomplete="tel" required placeholder="+254 7XX XXX XXX"></label>
 					</div>
 					<label class="dck-cform__field"><span><?php esc_html_e( 'Email', 'dck-elite' ); ?> <small class="dck-opt"><?php esc_html_e( 'Optional, for an emailed receipt', 'dck-elite' ); ?></small></span><input type="email" name="email" autocomplete="email"></label>
 					<div class="dck-hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
@@ -417,7 +435,8 @@ if ( ! function_exists( 'dck_gift_form' ) ) {
 		</section>
 		<script>
 		document.addEventListener('change',function(e){var t=e.target;if(!t){return;}
-			if(t.name==='channel'){var c=document.querySelector('.dck-gift__code');if(c){c.hidden=t.value!=='mpesa';}}
+			if(t.name==='channel'){var mp=t.value==='mpesa';var c=document.querySelector('.dck-gift__code');if(c){c.hidden=!mp;}var rf=document.querySelector('.dck-gift__ref');if(rf){rf.hidden=mp;}var cu=document.querySelector('.dck-gift__cur');if(cu){cu.disabled=mp;if(mp){cu.value='KES';}else if(t.value==='abroad'&&cu.value==='KES'){cu.value='USD';}}var am=document.querySelector('.dck-amounts');if(am){am.hidden=!mp&&cu&&cu.value!=='KES';}}
+			if(t.name==='currency'){var am2=document.querySelector('.dck-amounts');if(am2){am2.hidden=t.value!=='KES';}}
 			if(t.name==='purpose'){var o=document.querySelector('.dck-purpose__other');if(o){o.hidden=t.value!=='other';if(!o.hidden){o.focus();}}}
 		});
 		document.addEventListener('click',function(e){var c=e.target.closest&&e.target.closest('[data-purpose]');if(!c){return;}var r=document.querySelectorAll('.dck-purpose input[name="purpose"]');for(var i=0;i<r.length;i++){if(r[i].value===c.getAttribute('data-purpose')){r[i].checked=true;r[i].dispatchEvent(new Event('change',{bubbles:true}));}}});
