@@ -129,114 +129,132 @@ if ( ! function_exists( 'dck_faq_from_post' ) ) {
 	}
 }
 
-/* Extra JSON-LD graphs in the head. */
-add_action( 'wp_head', 'dck_seo_extra', 2 );
-if ( ! function_exists( 'dck_seo_extra' ) ) {
-	function dck_seo_extra() {
-		if ( is_admin() ) {
-			return;
+/* Page-specific nodes for the single @graph built in inc/seo.php (no separate <script> output). */
+if ( ! function_exists( 'dck_seo_youtube_id' ) ) {
+	function dck_seo_youtube_id( $url ) {
+		if ( preg_match( '~(?:youtube\.com/(?:watch\?(?:.*&)?v=|embed/|live/|shorts/)|youtu\.be/)([A-Za-z0-9_-]{11})~', (string) $url, $m ) ) {
+			return $m[1];
 		}
-		$graphs = array();
+		return '';
+	}
+}
+
+if ( ! function_exists( 'dck_seo_extra_nodes' ) ) {
+	function dck_seo_extra_nodes( $page_url ) {
+		$church = array( '@id' => dck_seo_id( 'church' ) );
+		$nodes  = array();
 
 		if ( ! is_front_page() ) {
 			$items = dck_bc_items();
 			if ( count( $items ) >= 2 ) {
 				$el = array();
 				foreach ( $items as $i => $it ) {
-					$el[] = array( '@type' => 'ListItem', 'position' => $i + 1, 'name' => $it['name'], 'item' => $it['url'] );
+					$el[] = array( '@type' => 'ListItem', 'position' => $i + 1, 'name' => wp_strip_all_tags( $it['name'] ), 'item' => $it['url'] );
 				}
-				$graphs[] = array( '@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => $el );
+				$nodes[] = array( '@type' => 'BreadcrumbList', '@id' => $page_url . '#breadcrumb', 'itemListElement' => $el );
 			}
 		}
 
 		if ( is_singular( 'dck_sermon' ) ) {
 			$id    = get_queried_object_id();
-			$video = get_post_meta( $id, '_dck_video_url', true );
+			$video = (string) get_post_meta( $id, '_dck_video_url', true );
 			$thumb = function_exists( 'dck_sermon_image_url' ) ? dck_sermon_image_url( $id ) : get_post_meta( $id, '_dck_sermon_image', true );
-			if ( ! $thumb && function_exists( 'dck_seo_image_default' ) ) {
-				$thumb = dck_seo_image_default();
-			}
-			$desc = wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 40 );
-			$base = array(
-				'@context'    => 'https://schema.org',
-				'name'        => get_the_title( $id ),
-				'description' => $desc,
-				'url'         => get_permalink( $id ),
-				'thumbnailUrl' => $thumb,
-			);
-			if ( $video ) {
-				$base['@type']      = 'VideoObject';
-				$base['embedUrl']   = $video;
-				$base['contentUrl'] = $video;
-				$base['uploadDate'] = get_the_date( 'c', $id );
+			$desc  = wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 40 );
+			$scr   = (string) get_post_meta( $id, '_dck_scripture', true );
+			$yt    = dck_seo_youtube_id( $video );
+			if ( $yt ) {
+				// Playable on the page through the YouTube player: embedUrl only (no third-party contentUrl).
+				$nodes[] = array_filter(
+					array(
+						'@type'            => 'VideoObject',
+						'@id'              => $page_url . '#video',
+						'name'             => get_the_title( $id ),
+						'description'      => $desc ? $desc : get_the_title( $id ),
+						'thumbnailUrl'     => array( 'https://i.ytimg.com/vi/' . $yt . '/hqdefault.jpg' ),
+						'uploadDate'       => get_the_date( 'c', $id ),
+						'embedUrl'         => 'https://www.youtube.com/embed/' . $yt,
+						'url'              => get_permalink( $id ),
+						'publisher'        => $church,
+						'mainEntityOfPage' => array( '@id' => $page_url . '#webpage' ),
+					)
+				);
 			} else {
-				$base['@type']         = 'Article';
-				$base['image']         = $thumb;
-				$base['datePublished'] = get_the_date( 'c', $id );
-				$base['author']        = array( '@type' => 'Organization', 'name' => get_bloginfo( 'name' ) );
+				$nodes[] = array_filter(
+					array(
+						'@type'            => 'Article',
+						'@id'              => $page_url . '#article',
+						'headline'         => get_the_title( $id ),
+						'description'      => $desc,
+						'image'            => $thumb ? $thumb : dck_seo_image_default(),
+						'datePublished'    => get_the_date( 'c', $id ),
+						'dateModified'     => get_the_modified_date( 'c', $id ),
+						'author'           => $church,
+						'publisher'        => $church,
+						'about'            => $scr ? array( '@type' => 'Thing', 'name' => $scr ) : null,
+						'isPartOf'         => array( '@id' => dck_seo_id( 'website' ) ),
+						'mainEntityOfPage' => array( '@id' => $page_url . '#webpage' ),
+					)
+				);
 			}
-			$graphs[] = $base;
 		} elseif ( is_singular( 'dck_event' ) ) {
 			$id    = get_queried_object_id();
-			$date  = get_post_meta( $id, '_dck_event_date', true );
-			$start = get_post_meta( $id, '_dck_event_start', true );
-			$end   = get_post_meta( $id, '_dck_event_end', true );
-			$loc   = get_post_meta( $id, '_dck_event_location', true );
-			$ev    = array(
-				'@context'            => 'https://schema.org',
-				'@type'               => 'Event',
-				'name'                => get_the_title( $id ),
-				'url'                 => get_permalink( $id ),
-				'description'         => wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 40 ),
-				'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
-				'eventStatus'         => 'https://schema.org/EventScheduled',
-			);
-			if ( $date ) {
-				$ev['startDate'] = $start ? ( $date . 'T' . dck_seo_time24( $start ) . '+03:00' ) : $date;
-				if ( $end ) {
-					$ev['endDate'] = $date . 'T' . dck_seo_time24( $end ) . '+03:00';
+			$date  = (string) get_post_meta( $id, '_dck_event_date', true );
+			$rec   = (string) get_post_meta( $id, '_dck_event_recurring', true );
+			$start = (string) get_post_meta( $id, '_dck_event_start', true );
+			$end   = (string) get_post_meta( $id, '_dck_event_end', true );
+			$loc   = (string) get_post_meta( $id, '_dck_event_location', true );
+			// Only real, dated one-off events become Event entities (weekly gatherings are covered by opening hours).
+			if ( $date && '1' !== $rec && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
+				$ev = array(
+					'@type'               => 'Event',
+					'@id'                 => $page_url . '#event',
+					'name'                => get_the_title( $id ),
+					'url'                 => get_permalink( $id ),
+					'description'         => wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 40 ),
+					'startDate'           => $start ? $date . 'T' . substr( dck_seo_time24( $start ), 0, 5 ) . '+03:00' : $date,
+					'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+					'eventStatus'         => 'https://schema.org/EventScheduled',
+					'location'            => array( '@type' => 'Place', 'name' => $loc ? $loc : get_bloginfo( 'name' ), 'address' => dck_seo_address() ),
+					'organizer'           => $church,
+					'mainEntityOfPage'    => array( '@id' => $page_url . '#webpage' ),
+				);
+				if ( $end && $start ) {
+					$ev['endDate'] = $date . 'T' . substr( dck_seo_time24( $end ), 0, 5 ) . '+03:00';
 				}
+				$img = get_the_post_thumbnail_url( $id, 'large' );
+				if ( $img ) {
+					$ev['image'] = $img;
+				}
+				$nodes[] = $ev;
 			}
-			$ev['location']  = array(
-				'@type'   => 'Place',
-				'name'    => $loc ? $loc : get_bloginfo( 'name' ),
-				'address' => array(
-					'@type'           => 'PostalAddress',
-					'streetAddress'   => get_theme_mod( 'dck_top_address', 'Behind N Market, Uthiru, Kabete' ),
-					'addressLocality' => get_theme_mod( 'dck_seo_locality', 'Uthiru' ),
-					'addressRegion'   => get_theme_mod( 'dck_seo_region', 'Nairobi' ),
-					'addressCountry'  => 'KE',
-				),
-			);
-			$ev['organizer'] = array( '@type' => 'Organization', 'name' => get_bloginfo( 'name' ), 'url' => home_url( '/' ) );
-			$graphs[]        = $ev;
 		} elseif ( is_singular( 'post' ) ) {
-			$id  = get_queried_object_id();
-			$img = function_exists( 'dck_post_image_url' ) ? dck_post_image_url( $id ) : ( has_post_thumbnail( $id ) ? get_the_post_thumbnail_url( $id, 'large' ) : '' );
-			$graphs[] = array(
-				'@context'         => 'https://schema.org',
-				'@type'            => 'BlogPosting',
-				'headline'         => get_the_title( $id ),
-				'description'      => wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 40 ),
-				'image'            => $img,
-				'datePublished'    => get_the_date( 'c', $id ),
-				'dateModified'     => get_the_modified_date( 'c', $id ),
-				'author'           => array( '@type' => 'Organization', 'name' => get_bloginfo( 'name' ) ),
-				'publisher'        => array( '@type' => 'Organization', 'name' => get_bloginfo( 'name' ), 'logo' => array( '@type' => 'ImageObject', 'url' => function_exists( 'dck_seo_image_default' ) ? dck_seo_image_default() : '' ) ),
-				'mainEntityOfPage' => get_permalink( $id ),
-				'url'              => get_permalink( $id ),
+			$id      = get_queried_object_id();
+			$img     = function_exists( 'dck_post_image_url' ) ? dck_post_image_url( $id ) : ( has_post_thumbnail( $id ) ? get_the_post_thumbnail_url( $id, 'large' ) : '' );
+			$nodes[] = array_filter(
+				array(
+					'@type'            => 'BlogPosting',
+					'@id'              => $page_url . '#article',
+					'headline'         => get_the_title( $id ),
+					'description'      => wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $id ) ), 40 ),
+					'image'            => $img ? $img : dck_seo_image_default(),
+					'datePublished'    => get_the_date( 'c', $id ),
+					'dateModified'     => get_the_modified_date( 'c', $id ),
+					'author'           => $church,
+					'publisher'        => $church,
+					'isPartOf'         => array( '@id' => dck_seo_id( 'website' ) ),
+					'mainEntityOfPage' => array( '@id' => $page_url . '#webpage' ),
+				)
 			);
 		}
 
-		if ( is_singular() ) {
+		if ( is_singular() && ! is_page_template( 'template-faq.php' ) ) {
 			$faq = dck_faq_from_post( get_queried_object_id() );
 			if ( $faq ) {
-				$graphs[] = $faq;
+				unset( $faq['@context'] );
+				$faq['@id'] = $page_url . '#faq';
+				$nodes[]    = $faq;
 			}
 		}
-
-		foreach ( $graphs as $g ) {
-			echo '<script type="application/ld+json">' . wp_json_encode( $g, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . chr( 10 );
-		}
+		return $nodes;
 	}
 }

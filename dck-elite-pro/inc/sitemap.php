@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /* Make sure core sitemaps stay on. */
-add_filter( 'wp_sitemaps_enabled', '__return_true' );
+add_filter( 'wp_sitemaps_enabled', function () { return ! ( function_exists( 'dck_seo_external' ) && dck_seo_external() ); } ); /* One sitemap system: the SEO plugin's when active. */
 
 /* Remove the users (authors) sitemap provider. */
 add_filter( 'wp_sitemaps_add_provider', 'dck_sitemap_drop_users', 10, 2 );
@@ -54,6 +54,19 @@ if ( ! function_exists( 'dck_sitemap_robots' ) ) {
 		}
 		$output .= 'Disallow: /?s=' . chr( 10 );
 		$output .= 'Disallow: /search/' . chr( 10 );
+		$output .= 'Disallow: /wp-json/dck/' . chr( 10 );
+		/*
+		 * Search/answer engines that cite and link back to the site (ChatGPT search, Perplexity,
+		 * Claude search) are explicitly welcome on public pages. Model-training crawlers
+		 * (GPTBot, Google-Extended, CCBot) are a separate church decision - filter 'dck_ai_training_bots'.
+		 */
+		$nl      = chr( 10 );
+		$output .= $nl . 'User-agent: OAI-SearchBot' . $nl . 'Allow: /' . $nl . 'Disallow: /wp-admin/' . $nl . 'Disallow: /wp-json/dck/' . $nl;
+		$output .= $nl . 'User-agent: PerplexityBot' . $nl . 'Allow: /' . $nl . 'Disallow: /wp-admin/' . $nl . 'Disallow: /wp-json/dck/' . $nl;
+		$output .= $nl . 'User-agent: Claude-SearchBot' . $nl . 'Allow: /' . $nl . 'Disallow: /wp-admin/' . $nl . 'Disallow: /wp-json/dck/' . $nl;
+		foreach ( (array) apply_filters( 'dck_ai_training_bots', array() ) as $bot ) {
+			$output .= $nl . 'User-agent: ' . sanitize_text_field( $bot ) . $nl . 'Disallow: /' . $nl;
+		}
 		return $output;
 	}
 }
