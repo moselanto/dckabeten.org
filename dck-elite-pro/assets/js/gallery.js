@@ -37,6 +37,10 @@
     lbImg.alt = el.dataset.caption || '';
     lbImg.src = el.dataset.full;
     if (lbCap) { lbCap.textContent = el.dataset.caption || ''; }
+    var cnt = document.getElementById('dck-lb-count');
+    if (cnt) { cnt.textContent = (lbIdx + 1) + ' / ' + all.length; }
+    var dl = document.getElementById('dck-lb-dl');
+    if (dl) { dl.href = el.dataset.full; }
     if (lbPrev) { lbPrev.style.visibility = (lbIdx === 0) ? 'hidden' : ''; }
     if (lbNext) { lbNext.style.visibility = (lbIdx === all.length - 1) ? 'hidden' : ''; }
   }
@@ -66,6 +70,15 @@
   }
 
   if (lbClose) { lbClose.addEventListener('click', lbDismiss); }
+  var lbShare = document.getElementById('dck-lb-share');
+  if (lbShare) {
+    lbShare.addEventListener('click', function () {
+      var el = items()[lbIdx]; if (!el) { return; }
+      var url = el.dataset.full, title = el.dataset.caption || document.title;
+      if (navigator.share) { navigator.share({ title: title, url: url }).catch(function () {}); return; }
+      window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(title + ' ' + url), '_blank', 'noopener');
+    });
+  }
   if (lbBack)  { lbBack.addEventListener('click', lbDismiss); }
   if (lbPrev)  { lbPrev.addEventListener('click', function () { lbStep(-1); }); }
   if (lbNext)  { lbNext.addEventListener('click', function () { lbStep(1); }); }
@@ -130,7 +143,7 @@
   /* ── Build a gallery card element ────────────────────────────────────── */
   function buildCard(p) {
     var el = document.createElement('div');
-    el.className = 'dck-gal-item';
+    el.className = 'dck-gal-item' + (p.shape ? ' is-' + p.shape : '');
     el.dataset.full    = p.full;
     el.dataset.caption = p.caption || '';
     el.setAttribute('tabindex', '0');

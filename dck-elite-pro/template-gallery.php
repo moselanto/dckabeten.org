@@ -30,27 +30,39 @@ $dck_total   = (int) $dck_total_q->found_posts;
 $dck_hasmor  = $dck_total > 20;
 ?>
 
-<section class="dck-page-hero">
-	<div class="dck-container dck-center">
-		<p class="dck-eyebrow dck-eyebrow--light"><?php echo esc_html( dck_home_val( 'dck_gallery_eyebrow', 'Moments of Grace' ) ); ?></p>
-		<h1><?php echo esc_html( dck_home_val( 'dck_gallery_title', 'Our Photo Gallery' ) ); ?></h1>
-		<p class="dck-lead dck-center dck-lead--light"><?php echo esc_html( dck_home_val( 'dck_gallery_lead', 'A window into the life of our church family: worship, fellowship, and the goodness of God.' ) ); ?></p>
-		<?php if ( $dck_total ) : ?>
-			<div class="dck-legal-hero__meta">
-				<span class="dck-pill"><?php echo esc_html( sprintf( _n( '%d photo', '%d photos', $dck_total, 'dck-elite' ), $dck_total ) ); ?></span>
-				<span class="dck-pill"><?php esc_html_e( 'Tap any photo to view full size', 'dck-elite' ); ?></span>
-			</div>
-		<?php endif; ?>
-	</div>
-</section>
+<?php
+$dck_hero_img = '';
+if ( ! empty( $dck_posts ) ) {
+	$dck_hero_img = get_the_post_thumbnail_url( $dck_posts[0]->ID, 'full' );
+}
+if ( ! $dck_hero_img ) {
+	$dck_hero_img = get_template_directory_uri() . '/assets/images/gallery/g-121255.webp';
+}
+ob_start();
+?>
+<div class="dck-galstats">
+	<div><strong><?php echo esc_html( number_format_i18n( $dck_total ) ); ?></strong><span><?php esc_html_e( 'Photos', 'dck-elite' ); ?></span></div>
+	<div><strong><?php echo esc_html( count( $dck_cats ) ); ?></strong><span><?php esc_html_e( 'Albums', 'dck-elite' ); ?></span></div>
+	<a class="dck-btn dck-btn--gold dck-btn--block" href="#dck-gal-grid"><?php esc_html_e( 'View the gallery', 'dck-elite' ); ?></a>
+</div>
+<?php
+$dck_aside = ob_get_clean();
+dck_photo_hero(
+	dck_theme_image( 'dck_gallery_hero_img', '' ) && '' !== trim( (string) get_theme_mod( 'dck_gallery_hero_img', '' ) ) ? dck_theme_image( 'dck_gallery_hero_img', '' ) : $dck_hero_img,
+	dck_home_val( 'dck_gallery_eyebrow', __( 'Moments of Grace', 'dck-elite' ) ),
+	dck_home_val( 'dck_gallery_title', __( 'Our Photo Gallery', 'dck-elite' ) ),
+	dck_home_val( 'dck_gallery_lead', __( 'A window into the life of our church family: worship, fellowship, and the goodness of God.', 'dck-elite' ) ),
+	$dck_aside
+);
+?>
 
 <?php if ( ! empty( $dck_cats ) ) : ?>
 <div class="dck-gal-filter-wrap dck-gal-filter-wrap--sticky">
 	<div class="dck-container">
 		<nav class="dck-gal-filter" role="tablist" aria-label="<?php esc_attr_e( 'Filter photos by category', 'dck-elite' ); ?>">
-			<button class="dck-gf-btn is-active" type="button" data-cat="" role="tab" aria-selected="true"><?php esc_html_e( 'All', 'dck-elite' ); ?></button>
+			<button class="dck-gf-btn is-active" type="button" data-cat="" role="tab" aria-selected="true"><?php esc_html_e( 'All', 'dck-elite' ); ?> <em><?php echo esc_html( $dck_total ); ?></em></button>
 			<?php foreach ( $dck_cats as $c ) : ?>
-			<button class="dck-gf-btn" type="button" data-cat="<?php echo esc_attr( $c->slug ); ?>" role="tab" aria-selected="false"><?php echo esc_html( $c->name ); ?></button>
+			<button class="dck-gf-btn" type="button" data-cat="<?php echo esc_attr( $c->slug ); ?>" role="tab" aria-selected="false"><?php echo esc_html( $c->name ); ?> <em><?php echo esc_html( $c->count ); ?></em></button>
 			<?php endforeach; ?>
 		</nav>
 	</div>
@@ -73,8 +85,9 @@ $dck_hasmor  = $dck_total > 20;
 				}
 				if ( ! $dck_thumb || ! $dck_full ) { continue; }
 				$dck_cap = esc_attr( $dck_ph->post_title );
+				$dck_shape = function_exists( 'dck_gallery_shape' ) ? dck_gallery_shape( wp_get_attachment_image_src( get_post_thumbnail_id( $dck_ph->ID ), 'medium_large' ) ) : '';
 			?>
-			<div class="dck-gal-item dck-gal-visible"
+			<div class="dck-gal-item dck-gal-visible<?php echo $dck_shape ? ' is-' . esc_attr( $dck_shape ) : ''; ?>"
 			     data-full="<?php echo esc_url( $dck_full ); ?>"
 			     data-caption="<?php echo $dck_cap; ?>"
 			     tabindex="0" role="button"
@@ -137,7 +150,14 @@ $dck_hasmor  = $dck_total > 20;
 			<div class="dck-lb__img-wrap">
 				<img class="dck-lb__img" id="dck-lb-img" src="" alt="">
 			</div>
-			<p class="dck-lb__cap" id="dck-lb-cap"></p>
+			<div class="dck-lb__bar">
+				<p class="dck-lb__cap" id="dck-lb-cap"></p>
+				<span class="dck-lb__count" id="dck-lb-count"></span>
+				<span class="dck-lb__acts">
+					<button type="button" class="dck-lb__act" id="dck-lb-share"><?php esc_html_e( 'Share', 'dck-elite' ); ?></button>
+					<a class="dck-lb__act" id="dck-lb-dl" href="#" download><?php esc_html_e( 'Download', 'dck-elite' ); ?></a>
+				</span>
+			</div>
 		</div>
 		<button class="dck-lb__nav dck-lb__next" id="dck-lb-next" type="button"
 		        aria-label="<?php esc_attr_e( 'Next photo', 'dck-elite' ); ?>">

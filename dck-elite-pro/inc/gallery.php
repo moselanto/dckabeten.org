@@ -168,7 +168,9 @@ if ( ! function_exists( 'dck_gallery_rest' ) ) {
 			if ( ! $thumb || ! $full ) {
 				continue;
 			}
+			$src      = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'medium_large' );
 			$photos[] = array(
+				'shape'   => function_exists( 'dck_gallery_shape' ) ? dck_gallery_shape( $src ) : '',
 				'id'      => $post->ID,
 				'thumb'   => esc_url_raw( $thumb ),
 				'full'    => esc_url_raw( $full ),
@@ -244,5 +246,17 @@ if ( ! function_exists( 'dck_gallery_images' ) ) {
 			$imgs[] = $uri . basename( $f );
 		}
 		return $imgs;
+	}
+}
+
+
+if ( ! function_exists( 'dck_gallery_shape' ) ) {
+	/** 'wide', 'tall' or '' from an image src array (url, w, h). */
+	function dck_gallery_shape( $src ) {
+		if ( ! is_array( $src ) || empty( $src[1] ) || empty( $src[2] ) ) {
+			return '';
+		}
+		$r = $src[1] / $src[2];
+		return $r >= 1.6 ? 'wide' : ( $r <= 0.8 ? 'tall' : '' );
 	}
 }

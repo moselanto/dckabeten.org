@@ -345,6 +345,7 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 						$f( 'dck_services_hero_img', __( 'Services header photo', 'dck-core' ), 'image' ),
 						$f( 'dck_services_images', __( 'Sunday card photos (one image URL per line, same order as Service Times)', 'dck-core' ), 'textarea' ),
 						$f( 'dck_events_hero_img', __( 'Events header photo', 'dck-core' ), 'image' ),
+						$f( 'dck_gallery_hero_img', __( 'Gallery header photo (blank = newest gallery photo)', 'dck-core' ), 'image' ),
 						$f( 'dck_services_expect', __( 'What to expect (one per line: Title|Description)', 'dck-core' ), 'textarea', $sd['expect'] ),
 					),
 				),

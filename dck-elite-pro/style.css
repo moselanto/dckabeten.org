@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.12.0
+Version: 4.13.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -2189,3 +2189,35 @@ html.dck-noscroll{overflow:hidden}
 .dck-reader .dck-votd__f{grid-column:2/4;gap:10px;font-size:.82rem}
 .dck-reader .dck-votd__f .dck-tool{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
 @media (max-width:640px){.dck-reader .dck-votd{grid-template-columns:1fr}.dck-reader .dck-votd__k{grid-row:auto;max-width:none;justify-self:start}.dck-reader .dck-votd__f{grid-column:auto}}
+
+
+/* v4.13.0 - Gallery */
+.dck-galstats{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:20px;padding:22px}
+.dck-galstats div{text-align:center;background:rgba(255,255,255,.08);border-radius:14px;padding:14px 8px}
+.dck-galstats strong{display:block;font-family:var(--dck-font-display);font-size:2.2rem;line-height:1;color:var(--dck-gold-300)}
+.dck-galstats span{font-size:.8rem;color:#c9d3f5;text-transform:uppercase;letter-spacing:.08em}
+.dck-galstats .dck-btn{grid-column:1/-1;justify-content:center}
+.dck-gal-filter-wrap--sticky{top:var(--dck-hh,84px);border-bottom:1px solid var(--dck-line)}
+.dck-gf-btn{display:inline-flex;align-items:center;gap:8px;border-width:1px;padding:8px 18px;font-size:.9rem}
+.dck-gf-btn em{font-style:normal;font-size:.72rem;font-weight:700;background:rgba(14,28,77,.08);border-radius:999px;padding:2px 8px}
+.dck-gf-btn.is-active em{background:rgba(255,255,255,.25)}
+.dck-gal-section{padding-top:36px}
+.dck-gal-grid{columns:auto!important;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));grid-auto-rows:220px;grid-auto-flow:dense;gap:12px}
+.dck-gal-item{margin:0!important;break-inside:auto;border-radius:16px;overflow:hidden;position:relative;background:var(--dck-blue-100);cursor:zoom-in;box-shadow:0 10px 30px -22px rgba(14,28,77,.6)}
+.dck-gal-item img{width:100%;height:100%!important;object-fit:cover}
+.dck-gal-item.is-wide{grid-column:span 2}
+.dck-gal-item.is-tall{grid-row:span 2}
+.dck-gal-item:nth-child(7n+1):not(.is-tall){grid-row:span 2;grid-column:span 2}
+.dck-gal-caption{left:0;right:0;bottom:0;padding:28px 14px 12px;background:linear-gradient(180deg,transparent,rgba(7,12,38,.8));color:#fff;font-weight:600;font-size:.9rem}
+.dck-gal-empty{grid-column:1/-1}
+.dck-lb__bar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;width:min(92vw,1100px);margin:12px auto 0;color:#fff}
+.dck-lb__bar .dck-lb__cap{margin:0;flex:1;min-width:0;text-align:left}
+.dck-lb__count{font-size:.85rem;color:#c9d3f5;font-variant-numeric:tabular-nums}
+.dck-lb__acts{display:flex;gap:8px}
+.dck-lb__act{font:inherit;font-size:.82rem;font-weight:600;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:7px 14px;text-decoration:none;cursor:pointer}
+.dck-lb__act:hover{background:rgba(255,255,255,.24);color:#fff}
+@media (max-width:700px){
+  .dck-gal-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:160px;gap:8px}
+  .dck-gal-item.is-wide,.dck-gal-item:nth-child(7n+1):not(.is-tall){grid-column:span 2;grid-row:span 1}
+  .dck-galstats{padding:16px}
+}

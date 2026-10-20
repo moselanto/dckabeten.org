@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.12.0' );
+	define( 'DCK_ELITE_VERSION', '4.13.0' );
 }
 
 /**
