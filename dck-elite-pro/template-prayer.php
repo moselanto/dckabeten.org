@@ -109,7 +109,7 @@ $dck_tel   = function_exists( 'dck_home_tel' ) ? dck_home_tel() : '+254110304521
 			btn.disabled = false;
 			btn.textContent = prev;
 		}).catch(function(){
-			status.textContent = "Something went wrong. Please call us on +254 110 304 521.";
+			status.textContent = "Something went wrong. Please call us on <?php echo esc_js( dck_phone_display() ); ?>.";
 			status.className = "dck-prayer__status is-err";
 			btn.disabled = false;
 			btn.textContent = prev;

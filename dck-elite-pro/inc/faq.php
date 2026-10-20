@@ -24,7 +24,7 @@ DCKA
 					array(
 						'q' => 'What time are your Sunday services?',
 						'a' => <<<'DCKA'
-We gather for worship every Sunday at our sanctuary in Uthiru. For current service times, please call or WhatsApp us on +254 110 304 521 and we will gladly help you plan your visit.
+We gather for worship every Sunday at our sanctuary in Uthiru (%SERVICES%). For any questions, please call or WhatsApp us on %PHONE% and we will gladly help you plan your visit.
 DCKA
 					),
 					array(
@@ -42,7 +42,7 @@ DCKA
 					array(
 						'q' => 'How can I contact the church?',
 						'a' => <<<'DCKA'
-You can call or WhatsApp us on +254 110 304 521, email info@dckabeten.org, or use our <a href='%HOME%contact/'>Contact page</a>. We would love to hear from you.
+You can call or WhatsApp us on %PHONE%, email %EMAIL%, or use our <a href='%HOME%contact/'>Contact page</a>. We would love to hear from you.
 DCKA
 					),
 				),
@@ -88,7 +88,7 @@ DCKA
 					array(
 						'q' => 'How can I give my tithes and offerings?',
 						'a' => <<<'DCKA'
-You can give through M-Pesa Paybill 247247, Account 403263; M-Pesa Till 9900619; or Equity Bank Account 1370274104398. See our <a href='%HOME%give/'>Giving page</a> for full details.
+You can give through %GIVING%. See our <a href='%HOME%give/'>Giving page</a> for full details.
 DCKA
 					),
 					array(
@@ -188,7 +188,7 @@ if ( ! function_exists( 'dck_faq_render' ) ) {
 			echo '<h2>' . esc_html( $g['heading'] ) . '</h2>';
 			echo '<div class="dck-faq-list">';
 			foreach ( $g['items'] as $it ) {
-				$ans = str_replace( '%HOME%', $home, $it['a'] );
+				$ans = function_exists( 'dck_tokens' ) ? dck_tokens( $it['a'] ) : str_replace( '%HOME%', $home, $it['a'] );
 				echo '<details class="dck-faq-item">';
 				echo '<summary>' . esc_html( $it['q'] ) . '</summary>';
 				echo '<div class="dck-faq-answer">' . wp_kses_post( wpautop( $ans ) ) . '</div>';
@@ -210,7 +210,7 @@ if ( ! function_exists( 'dck_faq_schema' ) ) {
 		$q    = array();
 		foreach ( dck_elite_faq_groups() as $g ) {
 			foreach ( $g['items'] as $it ) {
-				$ans = wp_strip_all_tags( str_replace( '%HOME%', $home, $it['a'] ) );
+				$ans = wp_strip_all_tags( function_exists( 'dck_tokens' ) ? dck_tokens( $it['a'] ) : str_replace( '%HOME%', $home, $it['a'] ) );
 				$q[] = array(
 					'@type'          => 'Question',
 					'name'           => $it['q'],

@@ -1,0 +1,33 @@
+/* DCK Core - Church Settings screen */
+.dck-wrap{max-width:1100px}
+.dck-head{display:flex;gap:20px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin:14px 0 18px}
+.dck-head h1{font-size:26px;font-weight:700;margin:0 0 4px;color:#0E1C4D}
+.dck-head p{margin:0;color:#50575e}
+.dck-head__actions{display:flex;gap:8px;align-items:center}
+.dck-search{min-width:260px}
+.dck-tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid #dcdcde;margin-bottom:18px}
+.dck-tab{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border:1px solid transparent;border-bottom:0;border-radius:8px 8px 0 0;text-decoration:none;color:#1d2327;font-weight:500}
+.dck-tab .dashicons{font-size:17px;width:17px;height:17px;color:#24409A}
+.dck-tab:hover{background:#f0f3fb;color:#24409A}
+.dck-tab.is-active{background:#fff;border-color:#dcdcde;color:#24409A;margin-bottom:-1px}
+.dck-intro{font-size:14px;color:#50575e;margin:0 0 16px}
+.dck-card{background:#fff;border:1px solid #e2e4e7;border-radius:12px;padding:20px 22px;margin:0 0 16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.dck-card h2{margin:0 0 14px;font-size:16px;color:#0E1C4D}
+.dck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px 22px}
+.dck-field__label{display:block;font-weight:600;margin-bottom:6px}
+.dck-field input[type=text],.dck-field input[type=url],.dck-field input[type=email],.dck-field input[type=date],.dck-field textarea{width:100%;max-width:none}
+.dck-field textarea{min-height:76px}
+.dck-field .description{margin-top:6px}
+.dck-field--services,.dck-field--sections{grid-column:1/-1}
+.dck-image__preview{display:block;max-width:220px;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px;border:1px solid #e2e4e7}
+.dck-row{display:flex;gap:12px;align-items:flex-start;background:#f8f9fc;border:1px solid #e2e4e7;border-radius:10px;padding:12px;margin-bottom:10px}
+.dck-row__handle{display:flex;flex-direction:column;gap:2px;padding-top:22px}
+.dck-row__handle .button-link{color:#787c82;text-decoration:none;line-height:1}
+.dck-row__cols{flex:1;display:grid;gap:10px}
+.dck-field--services .dck-row__cols{grid-template-columns:1fr 1fr}
+.dck-row__cols label span{display:block;font-weight:600;font-size:12px;margin-bottom:4px;color:#50575e}
+.dck-row__cols input,.dck-row__cols textarea{width:100%}
+.dck-row__del{color:#b32d2e!important;padding-top:22px}
+.dck-savebar{position:sticky;bottom:0;background:rgba(240,240,241,.92);backdrop-filter:blur(4px);padding:12px 0;border-top:1px solid #dcdcde;margin-top:8px;z-index:5}
+.dck-field.is-hidden{display:none}
+@media (max-width:782px){.dck-field--services .dck-row__cols{grid-template-columns:1fr}.dck-search{min-width:0;width:100%}}

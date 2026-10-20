@@ -13,29 +13,45 @@ if ( ! defined( 'ABSPATH' ) ) {
    1. Terms + Privacy + Photography page content
    ============================================================ */
 if ( ! function_exists( 'dck_elite_terms_content' ) ) {
+	/**
+	 * Full legal text as HTML (built from the editable sections).
+	 */
 	function dck_elite_terms_content() {
-		$h  = '<h2>Terms of Use</h2>';
-		$h .= '<p>By using this website you agree to these Terms of Use. This site serves Deliverance Church Kabete N Market (Cistern of Hope Center), Uthiru, Nairobi, Kenya.</p>';
-		$h .= '<h3>Online tools</h3>';
-		$h .= '<p>Our AI assistant and Bible study tools are for encouragement and information only. They are not a substitute for pastoral counsel or professional advice. In an emergency contact local emergency services or call us on +254 110 304 521.</p>';
-		$h .= '<h3>Giving</h3>';
-		$h .= '<p>Always confirm giving details on our Giving page before sending a gift. Contact us on +254 110 304 521 with any questions.</p>';
-		$h .= '<h3>Content</h3>';
-		$h .= '<p>Sermons, teachings, and other materials are for personal encouragement. Please do not reproduce or distribute them commercially without our permission.</p>';
-		$h .= '<h2>Privacy Notice</h2>';
-		$h .= '<p>We only collect information we need to serve you.</p>';
-		$h .= '<ul>';
-		$h .= '<li><strong>Contact form</strong> — your name, email, phone, and message.</li>';
-		$h .= '<li><strong>Prayer request form</strong> — your name, phone, email, and prayer request.</li>';
-		$h .= '<li><strong>Photography preference form</strong> — your name, phone, email, and signature.</li>';
-		$h .= '</ul>';
-		$h .= '<p>We use your details to reply, pray for you, and honour your preferences. We do not sell your information.</p>';
-		$h .= '<h2>Photography and Video at Church</h2>';
-		$h .= '<p>We sometimes photograph and record video during services and events to share what God is doing. Only authorised media team members may do this on behalf of the church.</p>';
-		$h .= '<p>By attending you may appear in photos or video. If you prefer not to be photographed or recorded, please complete the form below or speak to an usher when you arrive.</p>';
+		$h = '';
+		if ( function_exists( 'dck_legal_sections' ) ) {
+			foreach ( dck_legal_sections() as $sec ) {
+				$h .= '<h2>' . esc_html( $sec['title'] ) . '</h2>' . $sec['body'];
+			}
+		}
 		return $h;
 	}
 }
+
+/* Front-end script for the Terms page (signature pad + preference form). */
+add_action(
+	'wp_enqueue_scripts',
+	function () {
+		if ( ! is_page_template( 'template-terms.php' ) ) {
+			return;
+		}
+		wp_enqueue_script( 'dck-terms', get_template_directory_uri() . '/assets/js/terms.js', array(), DCK_ELITE_VERSION, true );
+		wp_localize_script(
+			'dck-terms',
+			'DCK_TERMS',
+			array(
+				'phone'    => function_exists( 'dck_phone_display' ) ? dck_phone_display() : '',
+				'sending'  => __( 'Sending...', 'dck-elite' ),
+				'thanks'   => __( 'Thank you.', 'dck-elite' ),
+				'errName'  => __( 'Please enter your full name.', 'dck-elite' ),
+				'errPhone' => __( 'Phone number is required.', 'dck-elite' ),
+				'errEmail' => __( 'A valid email address is required.', 'dck-elite' ),
+				'errSig'   => __( 'Please draw your signature before submitting.', 'dck-elite' ),
+				'errTick'  => __( 'Please tick the confirmation box.', 'dck-elite' ),
+				'errNet'   => __( 'Something went wrong. Please speak to an usher or call', 'dck-elite' ),
+			)
+		);
+	}
+);
 
 /* ============================================================
    2. CPT for storing opt-out records
@@ -145,7 +161,7 @@ if ( ! function_exists( 'dck_optout_rest_handler' ) ) {
 		}
 
 		/* Email admin */
-		$admin = get_option( 'admin_email' );
+		$admin = function_exists( 'dck_notify_email' ) ? dck_notify_email() : get_option( 'admin_email' );
 		if ( $admin ) {
 			wp_mail( $admin, 'Photo Opt-Out: ' . $name, $body );
 		}

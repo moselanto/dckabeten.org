@@ -2,6 +2,7 @@
 (function () {
   "use strict";
   if (typeof DCK_AI === "undefined") { return; }
+  var PHONE = DCK_AI.phone || "+254 110 304521";
 
   function lang() { var l = window.DCK_LANG; return l ? l : "auto"; }
   function isSw() { return lang() === "sw"; }
@@ -24,8 +25,8 @@
     prSend: { en: "Send to prayer team", sw: "Tuma kwa timu ya maombi" },
     sending: { en: "Sending...", sw: "Inatuma..." },
     thanks: { en: "Thank you, your request has been received.", sw: "Asante, ombi lako limepokelewa." },
-    errConn: { en: "I could not connect right now. Please call us on +254 110 304 521.", sw: "Sikuweza kuunganika sasa. Tafadhali tupigie +254 110 304 521." },
-    errSend: { en: "I could not send that. Please call +254 110 304 521.", sw: "Sikuweza kutuma. Tafadhali piga +254 110 304 521." }
+    errConn: { en: "I could not connect right now. Please call us on " + PHONE + ".", sw: "Sikuweza kuunganika sasa. Tafadhali tupigie " + PHONE + "." },
+    errSend: { en: "I could not send that. Please call " + PHONE + ".", sw: "Sikuweza kutuma. Tafadhali piga " + PHONE + "." }
   };
   var CHIPS = {
     en: ["Plan a visit", "Service times", "Prayer request", "I want to know Christ"],

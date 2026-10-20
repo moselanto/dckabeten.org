@@ -40,7 +40,7 @@ if ( ! function_exists( 'dck_ai_rest_bible' ) ) {
 			return new WP_REST_Response( array( 'reply' => 'Ask me about a verse, for example Romans 8:28, or a topic, for example anxiety or forgiveness.', 'sermons' => array() ), 200 );
 		}
 		if ( ! function_exists( 'dck_ai_get_key' ) || ! dck_ai_get_key() ) {
-			return new WP_REST_Response( array( 'reply' => 'The Bible assistant is being set up. Please check back soon, or reach us on +254 110 304 521.', 'sermons' => array() ), 200 );
+			return new WP_REST_Response( array( 'reply' => 'The Bible assistant is being set up. Please check back soon, or reach us on ' . ( function_exists( 'dck_phone_display' ) ? dck_phone_display() : '+254 110 304521' ) . '.', 'sermons' => array() ), 200 );
 		}
 
 		$dck_lang = isset( $p['lang'] ) ? sanitize_key( $p['lang'] ) : '';
@@ -59,7 +59,7 @@ if ( ! function_exists( 'dck_ai_rest_bible' ) ) {
 			if ( current_user_can( 'manage_options' ) ) {
 					return new WP_REST_Response( array( 'reply' => '[admin diagnostic] ' . $reply->get_error_message() . ' - open Appearance > Customize > AI Assistant and confirm the API key, Model, and API Base URL match your provider.', 'sermons' => array() ), 200 );
 				}
-				return new WP_REST_Response( array( 'reply' => 'I had trouble responding just now. Please try again shortly, or reach us on +254 110 304 521.', 'sermons' => array() ), 200 );
+				return new WP_REST_Response( array( 'reply' => 'I had trouble responding just now. Please try again shortly, or reach us on ' . ( function_exists( 'dck_phone_display' ) ? dck_phone_display() : '+254 110 304521' ) . '.', 'sermons' => array() ), 200 );
 		}
 
 		set_transient( $dck_ck, $reply, 12 * HOUR_IN_SECONDS );

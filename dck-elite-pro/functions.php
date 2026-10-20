@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.2.4' );
+	define( 'DCK_ELITE_VERSION', '4.3.0' );
 }
 
 /**
@@ -106,13 +106,23 @@ if ( ! defined( 'DCK_ELITE_SETUP_VERSION' ) ) {
 }
 
 if ( ! function_exists( 'dck_elite_service_times' ) ) {
+	/**
+	 * Weekly gatherings. Editable in DCK Church > Service Times; defaults live in inc/content.php.
+	 */
 	function dck_elite_service_times() {
-		return array(
-			array( 'name' => __( 'Intensive Prayers', 'dck-elite' ),    'time' => '8:00 - 9:00 AM' ),
-			array( 'name' => __( 'Intensive Bible Study', 'dck-elite' ), 'time' => '9:30 - 10:30 AM' ),
-			array( 'name' => __( 'Glorious Service', 'dck-elite' ),     'time' => '10:40 AM - 1:00 PM' ),
-			array( 'name' => __( 'Keshas (Overnight)', 'dck-elite' ),   'time' => '1st & 3rd Week' ),
-		);
+		$rows = get_theme_mod( 'dck_service_times', array() );
+		$out  = array();
+		if ( is_array( $rows ) ) {
+			foreach ( $rows as $r ) {
+				if ( ! empty( $r['name'] ) ) {
+					$out[] = array( 'name' => (string) $r['name'], 'time' => isset( $r['time'] ) ? (string) $r['time'] : '' );
+				}
+			}
+		}
+		if ( empty( $out ) && function_exists( 'dck_elite_default_service_times' ) ) {
+			$out = dck_elite_default_service_times();
+		}
+		return $out;
 	}
 }
 
@@ -591,13 +601,13 @@ if ( ! function_exists( 'dck_elite_about_content' ) ) {
 
 if ( ! function_exists( 'dck_elite_visit_content' ) ) {
 	function dck_elite_visit_content() {
-		return "<p>We would love to welcome you this Sunday. Whatever your story, you belong here.</p><p><strong>When:</strong> Every Sunday. Intensive Prayers 8:00 AM, Bible Study 9:30 AM, Glorious Service 10:40 AM to 1:00 PM. Keshas on the 1st and 3rd week of the month.</p><p><strong>Where:</strong> Behind N Market, Uthiru, Nairobi.</p><p><strong>What to expect:</strong> A warm welcome, joyful worship, Bible-based teaching, and a place for your whole family. Children and youth are well cared for. Come as you are.</p><p><strong>Questions?</strong> Call us on +254 110 304 521.</p>";
+		return "<p>We would love to welcome you this Sunday. Whatever your story, you belong here.</p><p><strong>When:</strong> Every Sunday. Intensive Prayers 8:00 AM, Bible Study 9:30 AM, Glorious Service 10:40 AM to 1:00 PM. Keshas on the 1st and 3rd week of the month.</p><p><strong>Where:</strong> Behind N Market, Uthiru, Nairobi.</p><p><strong>What to expect:</strong> A warm welcome, joyful worship, Bible-based teaching, and a place for your whole family. Children and youth are well cared for. Come as you are.</p><p><strong>Questions?</strong> Call us on " . ( function_exists( 'dck_phone_display' ) ? dck_phone_display() : '+254 110 304521' ) . ".</p>";
 	}
 }
 
 if ( ! function_exists( 'dck_elite_contact_content' ) ) {
 	function dck_elite_contact_content() {
-		return "<p><strong>Deliverance Church Kabete N Market</strong> (Cistern of Hope Center)</p><p>Behind N Market, Uthiru, Nairobi, Kenya</p><p>Phone: +254 110 304 521</p><p>Sunday: Intensive Prayers 8:00 AM, Bible Study 9:30 AM, Glorious Service 10:40 AM to 1:00 PM.</p>";
+		return "<p><strong>Deliverance Church Kabete N Market</strong> (Cistern of Hope Center)</p><p>Behind N Market, Uthiru, Nairobi, Kenya</p><p>Phone: " . ( function_exists( 'dck_phone_display' ) ? dck_phone_display() : '+254 110 304521' ) . "</p><p>Sunday: Intensive Prayers 8:00 AM, Bible Study 9:30 AM, Glorious Service 10:40 AM to 1:00 PM.</p>";
 	}
 }
 
@@ -772,6 +782,11 @@ if ( ! function_exists( 'dck_elite_setup_site' ) ) {
 add_action( 'admin_init', 'dck_elite_setup_site' );
 add_action( 'after_switch_theme', 'dck_elite_setup_site' );
 
+
+/* Editable content layer (defaults + helpers). Loaded first. */
+if ( file_exists( get_template_directory() . '/inc/content.php' ) ) {
+	require_once get_template_directory() . '/inc/content.php';
+}
 
 /* Shared AI layer (Church Assistant). */
 if ( file_exists( get_template_directory() . '/inc/ai.php' ) ) {

@@ -11,6 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 get_header();
 $dck_wa = function_exists( 'dck_prayer_whatsapp' ) ? dck_prayer_whatsapp() : '254110304521';
+$g_pb   = dck_give_val( 'dck_give_paybill' );
+$g_acc  = dck_give_val( 'dck_give_paybill_account' );
+$g_till = dck_give_val( 'dck_give_till' );
+$g_bank = dck_give_val( 'dck_give_bank_name' );
+$g_name = dck_give_val( 'dck_give_bank_account_name' );
+$g_num  = dck_give_val( 'dck_give_bank_account' );
+$g_sw   = dck_give_val( 'dck_give_bank_swift' );
+$g_br   = dck_give_val( 'dck_give_bank_branch' );
 ?>
 
 <section class="dck-page-hero">
@@ -74,13 +82,13 @@ $dck_wa = function_exists( 'dck_prayer_whatsapp' ) ? dck_prayer_whatsapp() : '25
 				<span class="dck-card__tag"><?php esc_html_e( 'Tithes &amp; Offerings', 'dck-elite' ); ?></span>
 				<h3><?php esc_html_e( 'M-Pesa Paybill', 'dck-elite' ); ?></h3>
 				<p class="dck-give-lbl"><?php esc_html_e( 'Paybill Number', 'dck-elite' ); ?></p>
-				<div class="dck-give-row"><span class="dck-give-num">247247</span><button type="button" class="dck-copy" data-copy="247247"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></div>
+				<div class="dck-give-row"><span class="dck-give-num"><?php echo esc_html( $g_pb ); ?></span><button type="button" class="dck-copy" data-copy="<?php echo esc_attr( $g_pb ); ?>"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></div>
 				<p class="dck-give-lbl"><?php esc_html_e( 'Account Number', 'dck-elite' ); ?></p>
-				<div class="dck-give-row"><span class="dck-give-num">403263</span><button type="button" class="dck-copy" data-copy="403263"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></div>
+				<div class="dck-give-row"><span class="dck-give-num"><?php echo esc_html( $g_acc ); ?></span><button type="button" class="dck-copy" data-copy="<?php echo esc_attr( $g_acc ); ?>"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></div>
 				<ol class="dck-give-steps">
 					<li><?php esc_html_e( 'Go to M-Pesa, then Lipa na M-Pesa, then Pay Bill.', 'dck-elite' ); ?></li>
-					<li><?php esc_html_e( 'Enter Business Number 247247.', 'dck-elite' ); ?></li>
-					<li><?php esc_html_e( 'Enter Account Number 403263.', 'dck-elite' ); ?></li>
+					<li><?php echo esc_html( sprintf( __( 'Enter Business Number %s.', 'dck-elite' ), $g_pb ) ); ?></li>
+					<li><?php echo esc_html( sprintf( __( 'Enter Account Number %s.', 'dck-elite' ), $g_acc ) ); ?></li>
 					<li><?php esc_html_e( 'Enter amount, your PIN, and confirm.', 'dck-elite' ); ?></li>
 				</ol>
 			</div>
@@ -89,10 +97,10 @@ $dck_wa = function_exists( 'dck_prayer_whatsapp' ) ? dck_prayer_whatsapp() : '25
 				<span class="dck-card__tag"><?php esc_html_e( 'Give To A Project', 'dck-elite' ); ?></span>
 				<h3><?php esc_html_e( 'M-Pesa Buy Goods (Till)', 'dck-elite' ); ?></h3>
 				<p class="dck-give-lbl"><?php esc_html_e( 'Till Number', 'dck-elite' ); ?></p>
-				<div class="dck-give-row"><span class="dck-give-num">9900619</span><button type="button" class="dck-copy" data-copy="9900619"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></div>
+				<div class="dck-give-row"><span class="dck-give-num"><?php echo esc_html( $g_till ); ?></span><button type="button" class="dck-copy" data-copy="<?php echo esc_attr( $g_till ); ?>"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></div>
 				<ol class="dck-give-steps">
 					<li><?php esc_html_e( 'Go to M-Pesa, then Lipa na M-Pesa, then Buy Goods and Services.', 'dck-elite' ); ?></li>
-					<li><?php esc_html_e( 'Enter Till Number 9900619.', 'dck-elite' ); ?></li>
+					<li><?php echo esc_html( sprintf( __( 'Enter Till Number %s.', 'dck-elite' ), $g_till ) ); ?></li>
 					<li><?php esc_html_e( 'Enter amount, your PIN, and confirm.', 'dck-elite' ); ?></li>
 				</ol>
 			</div>
@@ -109,13 +117,13 @@ $dck_wa = function_exists( 'dck_prayer_whatsapp' ) ? dck_prayer_whatsapp() : '25
 		</div>
 		<div class="dck-card dck-reveal" style="max-width:640px;margin:36px auto 0">
 			<table class="dck-bank">
-				<tr><th><?php esc_html_e( 'Bank', 'dck-elite' ); ?></th><td>Equity Bank of Kenya</td></tr>
-				<tr><th><?php esc_html_e( 'Account Name', 'dck-elite' ); ?></th><td>Deliverance Church Kabete Technical</td></tr>
-				<tr><th><?php esc_html_e( 'Account Number', 'dck-elite' ); ?></th><td><span class="dck-give-row" style="justify-content:flex-start"><span>1370274104398</span><button type="button" class="dck-copy" data-copy="1370274104398"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></span></td></tr>
-				<tr><th><?php esc_html_e( 'SWIFT Code', 'dck-elite' ); ?></th><td>EQBLKENA</td></tr>
-				<tr><th><?php esc_html_e( 'Branch', 'dck-elite' ); ?></th><td>Kangemi</td></tr>
+				<tr><th><?php esc_html_e( 'Bank', 'dck-elite' ); ?></th><td><?php echo esc_html( $g_bank ); ?></td></tr>
+				<tr><th><?php esc_html_e( 'Account Name', 'dck-elite' ); ?></th><td><?php echo esc_html( $g_name ); ?></td></tr>
+				<tr><th><?php esc_html_e( 'Account Number', 'dck-elite' ); ?></th><td><span class="dck-give-row" style="justify-content:flex-start"><span><?php echo esc_html( $g_num ); ?></span><button type="button" class="dck-copy" data-copy="<?php echo esc_attr( $g_num ); ?>"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button></span></td></tr>
+				<tr><th><?php esc_html_e( 'SWIFT Code', 'dck-elite' ); ?></th><td><?php echo esc_html( $g_sw ); ?></td></tr>
+				<tr><th><?php esc_html_e( 'Branch', 'dck-elite' ); ?></th><td><?php echo esc_html( $g_br ); ?></td></tr>
 			</table>
-			<p style="margin-top:18px;color:var(--dck-gray)"><?php esc_html_e( 'Make cheques payable to: Deliverance Church Kabete Technical.', 'dck-elite' ); ?></p>
+			<p style="margin-top:18px;color:var(--dck-gray)"><?php echo esc_html( sprintf( __( 'Make cheques payable to: %s.', 'dck-elite' ), $g_name ) ); ?></p>
 		</div>
 	</div>
 </section>
@@ -126,7 +134,7 @@ $dck_wa = function_exists( 'dck_prayer_whatsapp' ) ? dck_prayer_whatsapp() : '25
 		<p class="dck-lead dck-center" style="color:#d7deff"><?php esc_html_e( 'Our team is glad to help. Reach us anytime.', 'dck-elite' ); ?></p>
 		<div class="dck-hero__cta" style="margin-top:24px">
 			<a class="dck-btn dck-btn--gold" href="https://wa.me/<?php echo esc_attr( $dck_wa ); ?>?text=<?php echo rawurlencode( 'Hello, I have a question about giving at DCK.' ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Chat on WhatsApp', 'dck-elite' ); ?></a>
-			<a class="dck-btn dck-btn--ghost" href="tel:+254110304521"><?php esc_html_e( 'Call +254 110 304 521', 'dck-elite' ); ?></a>
+			<a class="dck-btn dck-btn--ghost" href="tel:<?php echo esc_attr( dck_home_tel() ); ?>"><?php echo esc_html( sprintf( __( 'Call %s', 'dck-elite' ), dck_phone_display() ) ); ?></a>
 		</div>
 	</div>
 </section>

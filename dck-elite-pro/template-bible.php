@@ -9,64 +9,75 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 get_header();
 ?>
-<section class="dck-page-hero">
+<?php
+$dck_chips = array_filter( array_map( 'trim', explode( "\n", (string) dck_home_val( 'dck_bible_suggestions', "Romans 8:28\nPsalm 23\nPhilippians 4:6-7\nOvercoming anxiety\nForgiveness\nFinding hope in hard times\nGrowing in faith\nThe armor of God" ) ) ) );
+?>
+<section class="dck-page-hero dck-bible-hero">
 	<div class="dck-container">
-		<p class="dck-eyebrow" style="color:var(--dck-gold-300)"><?php esc_html_e( 'Grow in the Word', 'dck-elite' ); ?></p>
-		<h1 data-i18n="bible_title"><?php esc_html_e( 'Bible Study Assistant', 'dck-elite' ); ?></h1>
-		<p class="dck-lead dck-center" data-i18n="bible_lead" style="color:#e7ecff"><?php esc_html_e( 'Ask about any verse or topic and receive a clear, Scripture-grounded explanation with cross references, application, and prayer.', 'dck-elite' ); ?></p>
+		<p class="dck-eyebrow dck-eyebrow--light"><?php echo esc_html( dck_home_val( 'dck_bible_eyebrow', __( 'Grow in the Word', 'dck-elite' ) ) ); ?></p>
+		<h1 data-i18n="bible_title"><?php echo esc_html( dck_home_val( 'dck_bible_title', __( 'Bible Study Assistant', 'dck-elite' ) ) ); ?></h1>
+		<p class="dck-lead dck-center dck-lead--light" data-i18n="bible_lead"><?php echo esc_html( dck_home_val( 'dck_bible_lead', __( 'Ask about any verse or topic and receive a clear, Scripture-grounded explanation with cross references, application, and prayer.', 'dck-elite' ) ) ); ?></p>
 	</div>
 </section>
-<section class="dck-section">
+
+<section class="dck-section dck-bible-section">
 	<div class="dck-container dck-bible">
 		<?php
 		while ( have_posts() ) :
 			the_post();
 			if ( trim( wp_strip_all_tags( get_the_content() ) ) ) :
 				?>
-				<div class="dck-reveal" style="margin-bottom:24px"><?php the_content(); ?></div>
+				<div class="dck-bible-intro dck-reveal"><?php the_content(); ?></div>
 				<?php
 			endif;
 		endwhile;
 		?>
 
-		<div class="dck-bible-ask dck-reveal">
-			<textarea id="dck-bible-input" rows="2" data-i18n-ph="bible_ph" placeholder="<?php esc_attr_e( 'Ask about a verse (Romans 8:28) or a topic (anxiety, forgiveness, hope)...', 'dck-elite' ); ?>"></textarea>
-			<button type="button" id="dck-bible-go" class="dck-btn dck-btn--primary" data-i18n="ask"><?php esc_html_e( 'Ask', 'dck-elite' ); ?></button>
+		<div class="dck-studio dck-reveal">
+			<label class="screen-reader-text" for="dck-bible-input"><?php esc_html_e( 'Your Bible question', 'dck-elite' ); ?></label>
+			<div class="dck-bible-ask">
+				<span class="dck-studio__ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+				<textarea id="dck-bible-input" rows="2" data-i18n-ph="bible_ph" placeholder="<?php esc_attr_e( 'Ask about a verse (Romans 8:28) or a topic (anxiety, forgiveness, hope)...', 'dck-elite' ); ?>"></textarea>
+				<button type="button" id="dck-bible-go" class="dck-btn dck-btn--primary" data-i18n="ask"><?php esc_html_e( 'Ask', 'dck-elite' ); ?></button>
+			</div>
+			<p class="dck-studio__hint"><?php esc_html_e( 'Press Enter to ask. Shift + Enter for a new line.', 'dck-elite' ); ?></p>
+
+			<div class="dck-bible-levels" role="group" aria-label="<?php esc_attr_e( 'Explanation depth', 'dck-elite' ); ?>">
+				<span data-i18n="depth"><?php esc_html_e( 'Depth:', 'dck-elite' ); ?></span>
+				<button type="button" class="dck-level is-active" data-level="Balanced" data-i18n="lvl_balanced"><?php esc_html_e( 'Balanced', 'dck-elite' ); ?></button>
+				<button type="button" class="dck-level" data-level="Simple" data-i18n="lvl_simple"><?php esc_html_e( 'Simple', 'dck-elite' ); ?></button>
+				<button type="button" class="dck-level" data-level="Youth" data-i18n="lvl_youth"><?php esc_html_e( 'Youth', 'dck-elite' ); ?></button>
+				<button type="button" class="dck-level" data-level="Children" data-i18n="lvl_children"><?php esc_html_e( 'Children', 'dck-elite' ); ?></button>
+				<button type="button" class="dck-level" data-level="Theological" data-i18n="lvl_theological"><?php esc_html_e( 'Theological', 'dck-elite' ); ?></button>
+				<button type="button" class="dck-level" data-level="Original" data-i18n="lvl_original"><?php esc_html_e( 'Original Language', 'dck-elite' ); ?></button>
+			</div>
+
+			<div class="dck-bible-chips">
+				<span class="dck-bible-chips__label"><?php esc_html_e( 'Try asking about:', 'dck-elite' ); ?></span>
+				<?php foreach ( $dck_chips as $c ) : ?>
+					<button type="button" class="dck-chip" data-ask="<?php echo esc_attr( $c ); ?>"><?php echo esc_html( $c ); ?></button>
+				<?php endforeach; ?>
+			</div>
 		</div>
 
-		<div class="dck-bible-chips dck-reveal">
-			<span class="dck-bible-chips__label"><?php esc_html_e( 'Try asking about:', 'dck-elite' ); ?></span>
-			<button type="button" class="dck-chip" data-ask="Romans 8:28">Romans 8:28</button>
-			<button type="button" class="dck-chip" data-ask="Psalm 23">Psalm 23</button>
-			<button type="button" class="dck-chip" data-ask="Philippians 4:6-7">Philippians 4:6-7</button>
-			<button type="button" class="dck-chip" data-ask="Overcoming anxiety">Anxiety</button>
-			<button type="button" class="dck-chip" data-ask="Forgiveness"><?php esc_html_e( 'Forgiveness', 'dck-elite' ); ?></button>
-			<button type="button" class="dck-chip" data-ask="Finding hope in hard times"><?php esc_html_e( 'Hope', 'dck-elite' ); ?></button>
-			<button type="button" class="dck-chip" data-ask="Growing in faith"><?php esc_html_e( 'Faith', 'dck-elite' ); ?></button>
-			<button type="button" class="dck-chip" data-ask="The armor of God">The Armor of God</button>
-		</div>
-
-		<div class="dck-bible-levels dck-reveal">
-			<span data-i18n="depth"><?php esc_html_e( 'Depth:', 'dck-elite' ); ?></span>
-			<button type="button" class="dck-level is-active" data-level="Balanced" data-i18n="lvl_balanced"><?php esc_html_e( 'Balanced', 'dck-elite' ); ?></button>
-			<button type="button" class="dck-level" data-level="Simple" data-i18n="lvl_simple"><?php esc_html_e( 'Simple', 'dck-elite' ); ?></button>
-			<button type="button" class="dck-level" data-level="Youth" data-i18n="lvl_youth"><?php esc_html_e( 'Youth', 'dck-elite' ); ?></button>
-			<button type="button" class="dck-level" data-level="Children" data-i18n="lvl_children"><?php esc_html_e( 'Children', 'dck-elite' ); ?></button>
-			<button type="button" class="dck-level" data-level="Theological" data-i18n="lvl_theological"><?php esc_html_e( 'Theological', 'dck-elite' ); ?></button>
-			<button type="button" class="dck-level" data-level="Original" data-i18n="lvl_original"><?php esc_html_e( 'Original Language', 'dck-elite' ); ?></button>
-		</div>
-
-		<div id="dck-bible-out" class="dck-bible-out"></div>
-		<div class="dck-read dck-read--answer" data-read-scope hidden>
-			<button type="button" class="dck-read__btn dck-btn dck-btn--outline" data-target="#dck-bible-out" data-label-idle="<?php esc_attr_e( 'Listen to the answer', 'dck-elite' ); ?>">
-				<span class="dck-read__ic" aria-hidden="true">&#9654;</span>
-				<span class="dck-read__label"><?php esc_html_e( 'Listen to the answer', 'dck-elite' ); ?></span>
-			</button>
-			<button type="button" class="dck-read__stop dck-btn dck-btn--outline" hidden><?php esc_html_e( 'Stop', 'dck-elite' ); ?></button>
+		<div class="dck-answer" id="dck-answer" hidden>
+			<div class="dck-answer__bar">
+				<span class="dck-answer__q" id="dck-answer-q"></span>
+				<span class="dck-answer__tools">
+					<button type="button" class="dck-tool" id="dck-bible-copy"><?php esc_html_e( 'Copy', 'dck-elite' ); ?></button>
+					<button type="button" class="dck-tool" id="dck-bible-print"><?php esc_html_e( 'Print', 'dck-elite' ); ?></button>
+				</span>
+			</div>
+			<div id="dck-bible-out" class="dck-bible-out" aria-live="polite"></div>
+			<div class="dck-read dck-read--answer" data-read-scope hidden>
+				<button type="button" class="dck-read__btn dck-btn dck-btn--outline" data-target="#dck-bible-out" data-label-idle="<?php esc_attr_e( 'Listen to the answer', 'dck-elite' ); ?>">
+					<span class="dck-read__ic" aria-hidden="true">&#9654;</span>
+					<span class="dck-read__label"><?php esc_html_e( 'Listen to the answer', 'dck-elite' ); ?></span>
+				</button>
+				<button type="button" class="dck-read__stop dck-btn dck-btn--outline" hidden><?php esc_html_e( 'Stop', 'dck-elite' ); ?></button>
+			</div>
 		</div>
 		<div id="dck-bible-sermons" class="dck-bible-sermons"></div>
-
-		<p class="dck-bible-note"><?php esc_html_e( 'This assistant is a study aid to help you engage the Bible. Always read the full passage in context and grow with your local church. For pastoral care, reach us on +254 110 304 521.', 'dck-elite' ); ?></p>
 
 		<div class="dck-bible-ways">
 			<div class="dck-bway dck-reveal">
@@ -85,26 +96,9 @@ get_header();
 				<p><?php esc_html_e( 'Use the depth settings for simple, youth, or theological explanations to lead a home church or class.', 'dck-elite' ); ?></p>
 			</div>
 		</div>
+
+		<p class="dck-bible-note"><?php echo esc_html( sprintf( __( 'This assistant is a study aid to help you engage the Bible. It can make mistakes, so always read the full passage in context and grow with your local church. For pastoral care, reach us on %s.', 'dck-elite' ), dck_phone_display() ) ); ?></p>
 	</div>
 </section>
-
-<script>
-(function(){
-	var input = document.getElementById("dck-bible-input");
-	var go = document.getElementById("dck-bible-go");
-	if (input === null || go === null) { return; }
-	var chips = document.querySelectorAll(".dck-bible-chips .dck-chip");
-	for (var i = 0; i < chips.length; i++) {
-		chips[i].addEventListener("click", function(){
-			var q = this.getAttribute("data-ask") || this.textContent;
-			input.value = q;
-			input.focus();
-			go.click();
-			var box = document.getElementById("dck-bible-out");
-			if (box && box.scrollIntoView) { box.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
-		});
-	}
-})();
-</script>
 <?php
 get_footer();

@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.2.4
+Version: 4.3.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -1274,4 +1274,142 @@ html.dck-contrast .dck-sunday2__tag,html.dck-contrast .dck-cta2__copy p{color:#f
   .dck-lb__nav{width:38px;height:38px}
   .dck-lb__img{max-height:72vh;border-radius:6px}
   .dck-lb__close{transform:translate(30%,-30%);width:36px;height:36px}
+}
+
+
+/* =====================================================================
+   v4.3.0 - Professional polish + Terms, Contact and Bible redesign
+   ===================================================================== */
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+::selection{background:var(--dck-blue);color:#fff}
+:focus-visible{outline:3px solid var(--dck-gold);outline-offset:2px;border-radius:4px}
+[id]{scroll-margin-top:110px}
+.dck-eyebrow--light{color:var(--dck-gold-300)}
+.dck-lead--light{color:#e7ecff}
+.dck-muted{color:var(--dck-gray);margin:.2em 0 1.2em}
+.dck-opt{font-weight:500;color:var(--dck-gray);font-size:.8rem;margin-left:4px}
+.dck-btn--block{width:100%;justify-content:center}
+.dck-hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+.dck-cform select{width:100%;padding:12px 14px;border:1px solid var(--dck-line);border-radius:12px;font:inherit;background:#fff;color:var(--dck-ink);min-height:48px}
+.dck-cform select:focus{outline:2px solid var(--dck-blue-300);border-color:var(--dck-blue)}
+.dck-formcard{background:#fff;border:1px solid var(--dck-line);border-radius:var(--dck-radius);padding:clamp(22px,4vw,40px);box-shadow:var(--dck-shadow)}
+.dck-formcard h2{margin-top:0}
+.dck-form-privacy{font-size:.85rem;color:var(--dck-gray);margin:0}
+.dck-form-privacy a{color:var(--dck-blue);text-decoration:underline}
+
+/* Pills */
+.dck-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:.85rem;font-weight:500;font-family:inherit;line-height:1.2}
+.dck-pill--link{cursor:pointer;text-decoration:none;transition:background .2s var(--dck-ease)}
+.dck-pill--link:hover{background:rgba(255,255,255,.22);color:#fff}
+
+/* ---------- Terms & Privacy ---------- */
+.dck-legal-hero__meta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:22px}
+.dck-legal-glance{padding-top:0;margin-top:-40px;position:relative;z-index:2}
+.dck-glance{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.dck-glance__item{background:#fff;border:1px solid var(--dck-line);border-radius:var(--dck-radius);padding:22px;box-shadow:var(--dck-shadow)}
+.dck-glance__item h3{font-size:1.02rem;margin:12px 0 6px;color:var(--dck-blue-900);font-family:var(--dck-font-body);font-weight:700}
+.dck-glance__item p{margin:0;font-size:.92rem;color:var(--dck-gray);line-height:1.55}
+.dck-glance__ic{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--dck-blue-100);color:var(--dck-blue)}
+.dck-legal-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:start}
+.dck-legal-toc__inner{position:sticky;top:110px;background:var(--dck-warm);border:1px solid var(--dck-line);border-radius:var(--dck-radius);padding:20px 18px}
+.dck-legal-toc__title{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dck-gray);margin:0 0 10px}
+.dck-legal-toc ol{list-style:none;margin:0;padding:0;counter-reset:toc}
+.dck-legal-toc li{counter-increment:toc;margin:0}
+.dck-legal-toc a{display:flex;gap:10px;padding:7px 10px;border-radius:8px;color:var(--dck-ink);text-decoration:none;font-size:.9rem;line-height:1.35;transition:background .2s,color .2s}
+.dck-legal-toc a::before{content:counter(toc,decimal-leading-zero);color:var(--dck-blue-300);font-weight:700;font-size:.8rem;min-width:20px}
+.dck-legal-toc a:hover,.dck-legal-toc a.is-active{background:#fff;color:var(--dck-blue)}
+.dck-legal-toc a.is-active{box-shadow:inset 3px 0 0 var(--dck-gold)}
+.dck-legal-doc{max-width:760px}
+.dck-legal-sec{padding:0 0 30px;margin:0 0 30px;border-bottom:1px solid var(--dck-line)}
+.dck-legal-sec h2{display:flex;align-items:baseline;gap:14px;font-size:clamp(1.3rem,2.2vw,1.6rem);margin:0 0 12px;color:var(--dck-blue-900)}
+.dck-legal-sec__num{font-family:var(--dck-font-body);font-size:.85rem;font-weight:700;color:var(--dck-gold);letter-spacing:.04em}
+.dck-legal-sec__body{color:#2b2b2b;line-height:1.8}
+.dck-legal-sec__body p{margin:0 0 .9em}
+.dck-legal-sec__body ul{margin:.4em 0 1em;padding-left:1.25em;list-style:disc}
+.dck-legal-sec__body li{margin:.45em 0}
+.dck-legal-sec__body a{color:var(--dck-blue);text-decoration:underline}
+.dck-legal-help{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;background:linear-gradient(135deg,var(--dck-blue-900),var(--dck-blue-700));color:#fff;border-radius:var(--dck-radius);padding:26px 28px;margin-top:10px}
+.dck-legal-help h3{color:#fff;margin:0 0 4px;font-size:1.25rem}
+.dck-legal-help p{margin:0;color:#d7deff}
+.dck-legal-help__btns{display:flex;flex-wrap:wrap;gap:10px}
+.dck-legal-help .dck-btn--outline{color:#fff;border-color:rgba(255,255,255,.5)}
+.dck-optout{background:var(--dck-blue-100)}
+.dck-optout__wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,5vw,64px);align-items:start}
+.dck-checklist{list-style:none;padding:0;margin:18px 0 0}
+.dck-checklist li{position:relative;padding-left:30px;margin:10px 0;color:var(--dck-blue-900);font-weight:500}
+.dck-checklist li::before{content:"";position:absolute;left:0;top:3px;width:18px;height:18px;border-radius:50%;background:var(--dck-gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpath d='M6 12l4 4 8-8'/%3E%3C/svg%3E") center/12px no-repeat}
+.dck-sig__label{font-weight:600;color:var(--dck-blue-900);font-size:.92rem;margin:0 0 6px}
+.dck-sig__box{position:relative;border:1.5px dashed var(--dck-blue-300);border-radius:12px;background:#fff;overflow:hidden}
+.dck-sig__box canvas{display:block;width:100%;height:150px;cursor:crosshair;touch-action:none}
+.dck-sig__line{position:absolute;left:20px;right:20px;bottom:34px;border-bottom:1px solid var(--dck-line);pointer-events:none}
+.dck-sig__clear{position:absolute;top:8px;right:8px;font:inherit;font-size:.78rem;padding:4px 10px;border-radius:999px;border:1px solid var(--dck-line);background:#fff;cursor:pointer;color:var(--dck-gray)}
+.dck-sig__clear:hover{color:var(--dck-blue);border-color:var(--dck-blue-300)}
+.dck-sig__hint{font-size:.82rem;color:var(--dck-gray);margin:6px 0 0}
+.dck-sig__err{color:#b3261e;font-size:.85rem;margin:4px 0 0}
+@media (max-width:1000px){.dck-glance{grid-template-columns:repeat(2,1fr)}.dck-legal-layout{grid-template-columns:1fr}.dck-legal-toc__inner{position:static}.dck-optout__wrap{grid-template-columns:1fr}}
+@media (max-width:560px){.dck-glance{grid-template-columns:1fr}.dck-legal-glance{margin-top:-24px}.dck-legal-help{padding:22px}}
+
+/* ---------- Contact ---------- */
+.dck-contact-quick{padding-top:0;margin-top:-44px;position:relative;z-index:2}
+.dck-qc{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.dck-qc__card{display:flex;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--dck-line);border-radius:var(--dck-radius);padding:22px;box-shadow:var(--dck-shadow);text-decoration:none;color:var(--dck-ink);transition:transform .25s var(--dck-ease),border-color .25s}
+.dck-qc__card:hover{transform:translateY(-4px);border-color:var(--dck-gold)}
+.dck-qc__card strong{color:var(--dck-blue-900);font-size:1rem;line-height:1.35;overflow-wrap:anywhere}
+.dck-qc__ic{display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--dck-blue-100);color:var(--dck-blue);margin-bottom:8px}
+.dck-qc__ic--wa{background:#e7f8ee;color:#1c7a3f}
+.dck-qc__k{font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dck-gray)}
+.dck-qc__go{margin-top:auto;padding-top:10px;font-size:.85rem;font-weight:600;color:var(--dck-blue)}
+.dck-contact-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(24px,4vw,48px);align-items:start}
+.dck-visit{background:#fff;border:1px solid var(--dck-line);border-radius:var(--dck-radius);overflow:hidden;box-shadow:var(--dck-shadow);position:sticky;top:110px}
+.dck-visit__map{aspect-ratio:16/10;background:var(--dck-blue-100)}
+.dck-visit__map iframe{width:100%;height:100%;border:0;display:block}
+.dck-visit__body{padding:24px}
+.dck-visit__body h3{margin:0 0 4px;color:var(--dck-blue-900)}
+.dck-visit__addr{color:var(--dck-gray);margin:0 0 14px}
+.dck-times{list-style:none;margin:0 0 12px;padding:0;border-top:1px solid var(--dck-line)}
+.dck-times li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--dck-line);font-size:.94rem}
+.dck-times strong{color:var(--dck-blue-900);white-space:nowrap}
+.dck-visit__tz{font-size:.82rem;color:var(--dck-gray);margin:0 0 16px}
+.dck-localtime{display:block;margin-top:4px}
+.dck-localtime strong{color:var(--dck-blue)}
+.dck-visit__btns{display:flex;flex-wrap:wrap;gap:10px}
+.dck-visit__intl{font-size:.85rem;color:var(--dck-gray);margin:16px 0 0;padding-top:14px;border-top:1px solid var(--dck-line)}
+#dck-contact-wa{margin-top:12px}
+@media (max-width:1000px){.dck-qc{grid-template-columns:repeat(2,1fr)}.dck-contact-grid{grid-template-columns:1fr}.dck-visit{position:static}}
+@media (max-width:560px){.dck-qc{grid-template-columns:1fr}.dck-contact-quick{margin-top:-24px}}
+
+/* ---------- Bible ---------- */
+.dck-bible-section{padding-top:0}
+.dck-bible{max-width:920px}
+.dck-bible-intro{margin:28px 0 0}
+.dck-studio{background:#fff;border:1px solid var(--dck-line);border-radius:calc(var(--dck-radius) + 4px);padding:clamp(18px,3vw,30px);box-shadow:var(--dck-shadow);margin-top:-48px;position:relative;z-index:2}
+.dck-studio .dck-bible-ask{align-items:stretch;background:var(--dck-warm);border:1px solid var(--dck-line);border-radius:14px;padding:8px 8px 8px 14px;gap:10px;transition:border-color .2s,box-shadow .2s}
+.dck-studio .dck-bible-ask:focus-within{border-color:var(--dck-blue-300);box-shadow:0 0 0 4px rgba(36,64,154,.10)}
+.dck-studio .dck-bible-ask textarea{border:0;background:transparent;padding:10px 4px;min-height:52px;font-size:1.02rem;outline:none}
+.dck-studio .dck-bible-ask textarea:focus{outline:none}
+.dck-studio__ic{display:grid;place-items:center;color:var(--dck-blue);padding-top:12px}
+.dck-studio .dck-bible-ask .dck-btn{align-self:center;min-width:110px;justify-content:center}
+.dck-studio__hint{font-size:.8rem;color:var(--dck-gray);margin:8px 2px 0}
+.dck-studio .dck-bible-levels{padding-top:14px;margin-top:14px;border-top:1px solid var(--dck-line)}
+.dck-level{font:inherit;font-size:.86rem;padding:7px 14px;border-radius:999px;border:1px solid var(--dck-line);background:#fff;color:var(--dck-ink);cursor:pointer;transition:all .2s}
+.dck-level:hover{border-color:var(--dck-blue-300);color:var(--dck-blue)}
+.dck-level.is-active{background:var(--dck-blue);border-color:var(--dck-blue);color:#fff}
+.dck-answer{margin-top:28px;background:#fff;border:1px solid var(--dck-line);border-radius:var(--dck-radius);box-shadow:var(--dck-shadow);overflow:hidden}
+.dck-answer__bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px 22px;background:var(--dck-warm);border-bottom:1px solid var(--dck-line)}
+.dck-answer__q{font-weight:700;color:var(--dck-blue-900);overflow-wrap:anywhere}
+.dck-answer__tools{display:flex;gap:8px}
+.dck-tool{font:inherit;font-size:.82rem;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid var(--dck-line);background:#fff;color:var(--dck-blue);cursor:pointer}
+.dck-tool:hover{border-color:var(--dck-blue-300)}
+.dck-answer .dck-bible-out{margin:0;padding:8px clamp(18px,3vw,30px) 18px;font-size:1.02rem}
+.dck-answer .dck-read{padding:0 clamp(18px,3vw,30px) 22px}
+.dck-bible-loading::after{content:"";display:inline-block;width:14px;height:14px;margin-left:10px;border:2px solid var(--dck-blue-300);border-top-color:transparent;border-radius:50%;vertical-align:-2px;animation:dckspin .8s linear infinite}
+@keyframes dckspin{to{transform:rotate(360deg)}}
+.dck-bible-ways{margin-top:40px}
+@media (max-width:600px){.dck-studio{margin-top:-28px}.dck-studio .dck-bible-ask{flex-direction:column;padding:10px}.dck-studio__ic{display:none}.dck-studio .dck-bible-ask .dck-btn{width:100%}}
+@media print{
+  .dck-legal-toc,.dck-legal-glance,.dck-optout,.dck-legal-hero__meta,.dck-legal-help__btns{display:none!important}
+  .dck-legal-layout{display:block}
+  body.dck-print-answer .dck-studio,body.dck-print-answer .dck-bible-ways,body.dck-print-answer .dck-answer__tools,body.dck-print-answer .dck-read{display:none!important}
 }

@@ -2,6 +2,9 @@
 /**
  * Template Name: DCK Terms & Photography
  *
+ * Terms of use, privacy notice and photography preference form.
+ * All text is editable in DCK Church > Terms & Privacy (or Appearance > Customize).
+ *
  * @package DCK_Elite
  */
 
@@ -11,270 +14,177 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_header();
 
-$dck_ep    = esc_url( rest_url( 'dck/v1/photo-optout' ) );
-$dck_nonce = wp_create_nonce( 'wp_rest' );
+$dck_sections = function_exists( 'dck_legal_sections' ) ? dck_legal_sections() : array();
+$dck_updated  = get_theme_mod( 'dck_legal_updated', '2026-10-20' );
+$dck_upd_ts   = strtotime( (string) $dck_updated );
+$dck_title    = dck_home_val( 'dck_legal_title', __( 'Terms, Privacy & Photography', 'dck-elite' ) );
+$dck_intro    = dck_home_val( 'dck_legal_intro', __( 'How we care for your information, how you may use this website, and how we handle photos and video at church.', 'dck-elite' ) );
+$dck_email    = dck_church_email();
+$dck_wa       = function_exists( 'dck_prayer_whatsapp' ) ? dck_prayer_whatsapp() : '';
 ?>
 
-<section class="dck-page-hero">
+<section class="dck-page-hero dck-legal-hero">
 	<div class="dck-container">
-		<p class="dck-eyebrow" style="color:var(--dck-gold-300)"><?php esc_html_e( 'Transparency & Care', 'dck-elite' ); ?></p>
-		<h1><?php esc_html_e( 'Terms, Privacy &amp; Photography', 'dck-elite' ); ?></h1>
-		<p class="dck-lead dck-center" style="color:#e7ecff"><?php esc_html_e( 'How we care for your information, and how we handle photos and video at church.', 'dck-elite' ); ?></p>
+		<p class="dck-eyebrow dck-eyebrow--light"><?php esc_html_e( 'Transparency & Care', 'dck-elite' ); ?></p>
+		<h1><?php echo esc_html( $dck_title ); ?></h1>
+		<p class="dck-lead dck-center dck-lead--light"><?php echo esc_html( $dck_intro ); ?></p>
+		<div class="dck-legal-hero__meta">
+			<?php if ( $dck_upd_ts ) : ?>
+				<span class="dck-pill"><?php echo esc_html( sprintf( __( 'Last updated %s', 'dck-elite' ), date_i18n( get_option( 'date_format' ), $dck_upd_ts ) ) ); ?></span>
+			<?php endif; ?>
+			<a class="dck-pill dck-pill--link" href="#dck-optout"><?php esc_html_e( 'Photography preference form', 'dck-elite' ); ?></a>
+			<button type="button" class="dck-pill dck-pill--link" onclick="window.print()"><?php esc_html_e( 'Print this page', 'dck-elite' ); ?></button>
+		</div>
 	</div>
 </section>
 
-<section class="dck-section">
-	<div class="dck-container dck-content dck-legal">
-		<?php
-		if ( function_exists( 'dck_elite_terms_content' ) ) {
-			echo wp_kses_post( dck_elite_terms_content() );
-		}
-		while ( have_posts() ) :
-			the_post();
-			the_content();
-		endwhile;
-		?>
+<section class="dck-section dck-legal-glance">
+	<div class="dck-container">
+		<div class="dck-glance">
+			<div class="dck-glance__item dck-reveal">
+				<span class="dck-glance__ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg></span>
+				<h3><?php esc_html_e( 'We never sell your data', 'dck-elite' ); ?></h3>
+				<p><?php esc_html_e( 'Your details are used only to reply, pray and care for you.', 'dck-elite' ); ?></p>
+			</div>
+			<div class="dck-glance__item dck-reveal">
+				<span class="dck-glance__ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/></svg></span>
+				<h3><?php esc_html_e( 'You control photos', 'dck-elite' ); ?></h3>
+				<p><?php esc_html_e( 'Prefer not to be photographed? Tell us once and we will honour it.', 'dck-elite' ); ?></p>
+			</div>
+			<div class="dck-glance__item dck-reveal">
+				<span class="dck-glance__ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>
+				<h3><?php esc_html_e( 'Your rights respected', 'dck-elite' ); ?></h3>
+				<p><?php esc_html_e( 'Ask to see, correct or delete your information at any time.', 'dck-elite' ); ?></p>
+			</div>
+			<div class="dck-glance__item dck-reveal">
+				<span class="dck-glance__ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.2-5.3A8.5 8.5 0 1 1 21 11.5z"/></svg></span>
+				<h3><?php esc_html_e( 'Real people to talk to', 'dck-elite' ); ?></h3>
+				<p><?php esc_html_e( 'Questions? Our team is a call, WhatsApp or email away.', 'dck-elite' ); ?></p>
+			</div>
+		</div>
 	</div>
 </section>
 
-<section class="dck-section" style="background:var(--dck-blue-100)">
-	<div class="dck-container" style="max-width:680px">
+<section class="dck-section dck-legal-body">
+	<div class="dck-container dck-legal-layout">
+		<aside class="dck-legal-toc" aria-label="<?php esc_attr_e( 'On this page', 'dck-elite' ); ?>">
+			<div class="dck-legal-toc__inner">
+				<p class="dck-legal-toc__title"><?php esc_html_e( 'On this page', 'dck-elite' ); ?></p>
+				<ol>
+					<?php foreach ( $dck_sections as $i => $sec ) : ?>
+						<li><a href="#<?php echo esc_attr( $sec['id'] ); ?>"><?php echo esc_html( $sec['title'] ); ?></a></li>
+					<?php endforeach; ?>
+					<li><a href="#dck-optout"><?php esc_html_e( 'Photography preference form', 'dck-elite' ); ?></a></li>
+				</ol>
+			</div>
+		</aside>
 
-		<div class="dck-center">
+		<article class="dck-legal-doc">
+			<?php foreach ( $dck_sections as $i => $sec ) : ?>
+				<section class="dck-legal-sec" id="<?php echo esc_attr( $sec['id'] ); ?>">
+					<h2><span class="dck-legal-sec__num"><?php echo esc_html( str_pad( (string) ( $i + 1 ), 2, '0', STR_PAD_LEFT ) ); ?></span><?php echo esc_html( $sec['title'] ); ?></h2>
+					<div class="dck-legal-sec__body"><?php echo wp_kses_post( $sec['body'] ); ?></div>
+				</section>
+			<?php endforeach; ?>
+
+			<?php
+			/* Extra content added in the page editor (skips the old auto-generated copy). */
+			while ( have_posts() ) :
+				the_post();
+				$dck_pc = get_the_content();
+				if ( trim( wp_strip_all_tags( $dck_pc ) ) && false === strpos( $dck_pc, 'Terms of Use' ) ) :
+					?>
+					<section class="dck-legal-sec"><div class="dck-legal-sec__body"><?php the_content(); ?></div></section>
+					<?php
+				endif;
+			endwhile;
+			?>
+
+			<div class="dck-legal-help">
+				<div>
+					<h3><?php esc_html_e( 'Questions about your privacy?', 'dck-elite' ); ?></h3>
+					<p><?php esc_html_e( 'We are glad to help, in English or Kiswahili.', 'dck-elite' ); ?></p>
+				</div>
+				<div class="dck-legal-help__btns">
+					<a class="dck-btn dck-btn--primary" href="mailto:<?php echo esc_attr( $dck_email ); ?>"><?php esc_html_e( 'Email us', 'dck-elite' ); ?></a>
+					<a class="dck-btn dck-btn--outline" href="tel:<?php echo esc_attr( dck_home_tel() ); ?>"><?php echo esc_html( dck_phone_display() ); ?></a>
+					<?php if ( $dck_wa ) : ?>
+						<a class="dck-btn dck-btn--outline" href="https://wa.me/<?php echo esc_attr( $dck_wa ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'WhatsApp', 'dck-elite' ); ?></a>
+					<?php endif; ?>
+				</div>
+			</div>
+		</article>
+	</div>
+</section>
+
+<section id="dck-optout" class="dck-section dck-optout">
+	<div class="dck-container dck-optout__wrap">
+		<div class="dck-optout__intro">
 			<p class="dck-eyebrow"><?php esc_html_e( 'Photography Preference', 'dck-elite' ); ?></p>
-			<h2><?php esc_html_e( 'I Prefer Not To Be Photographed', 'dck-elite' ); ?></h2>
-			<p class="dck-lead dck-center"><?php esc_html_e( 'Complete all fields and sign below. Our media team will be notified and your preference kept on record.', 'dck-elite' ); ?></p>
+			<h2><?php echo esc_html( dck_home_val( 'dck_legal_optout_heading', __( 'I Prefer Not To Be Photographed', 'dck-elite' ) ) ); ?></h2>
+			<p class="dck-lead"><?php echo esc_html( dck_home_val( 'dck_legal_optout_text', __( 'Complete the form and sign below. Our media team will be notified and your preference kept on record.', 'dck-elite' ) ) ); ?></p>
+			<ul class="dck-checklist">
+				<li><?php esc_html_e( 'Takes less than a minute', 'dck-elite' ); ?></li>
+				<li><?php esc_html_e( 'Shared only with our media team', 'dck-elite' ); ?></li>
+				<li><?php esc_html_e( 'You can change your mind at any time', 'dck-elite' ); ?></li>
+			</ul>
 		</div>
 
-		<form id="dck-optout-form" class="dck-cform dck-reveal"
-		      data-ep="<?php echo esc_url( $dck_ep ); ?>"
-		      data-nc="<?php echo esc_attr( $dck_nonce ); ?>"
-		      style="margin-top:28px" novalidate>
+		<form id="dck-optout-form" class="dck-cform dck-formcard dck-reveal"
+			data-ep="<?php echo esc_url( rest_url( 'dck/v1/photo-optout' ) ); ?>"
+			data-nc="<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>" novalidate>
 
 			<div class="dck-cform__row">
 				<label class="dck-cform__field">
 					<span><?php esc_html_e( 'Full name', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
-					<input type="text" name="name" autocomplete="name" required
-					       placeholder="<?php esc_attr_e( 'Full name', 'dck-elite' ); ?>">
+					<input type="text" name="name" autocomplete="name" required>
 				</label>
 				<label class="dck-cform__field">
 					<span><?php esc_html_e( 'Phone number', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
-					<input type="tel" name="phone" autocomplete="tel" required
-					       placeholder="<?php esc_attr_e( 'e.g. 0712 345 678', 'dck-elite' ); ?>">
+					<input type="tel" name="phone" autocomplete="tel" required placeholder="<?php esc_attr_e( '+254 7XX XXX XXX', 'dck-elite' ); ?>">
 				</label>
 			</div>
 
 			<label class="dck-cform__field">
 				<span><?php esc_html_e( 'Email address', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
-				<input type="email" name="email" autocomplete="email" required
-				       placeholder="<?php esc_attr_e( 'your@email.com', 'dck-elite' ); ?>">
+				<input type="email" name="email" autocomplete="email" required placeholder="<?php esc_attr_e( 'you@example.com', 'dck-elite' ); ?>">
 			</label>
 
 			<label class="dck-cform__field">
-				<span><?php esc_html_e( 'Service you usually attend', 'dck-elite' ); ?></span>
-				<input type="text" name="service"
-				       placeholder="<?php esc_attr_e( 'Optional', 'dck-elite' ); ?>">
+				<span><?php esc_html_e( 'Service you usually attend', 'dck-elite' ); ?> <small class="dck-opt"><?php esc_html_e( 'Optional', 'dck-elite' ); ?></small></span>
+				<select name="service">
+					<option value=""><?php esc_html_e( 'Select a service', 'dck-elite' ); ?></option>
+					<?php foreach ( dck_elite_service_times() as $s ) : ?>
+						<option value="<?php echo esc_attr( $s['name'] ); ?>"><?php echo esc_html( $s['name'] . ' (' . $s['time'] . ')' ); ?></option>
+					<?php endforeach; ?>
+				</select>
 			</label>
 
-			<div class="dck-sig-wrap">
-				<p class="dck-sig-label"><?php esc_html_e( 'Signature', 'dck-elite' ); ?> <em class="dck-req">*</em></p>
-				<p class="dck-sig-hint" style="font-size:.85rem;color:#555;margin:2px 0 6px"><?php esc_html_e( 'Sign in the box below using your mouse, finger, or stylus.', 'dck-elite' ); ?></p>
-				<div class="dck-sig-box" style="position:relative;border:2px solid #c8d0e0;border-radius:6px;background:#fff;overflow:hidden">
-					<canvas id="dck-sig-canvas"
-					        style="display:block;width:100%;height:140px;cursor:crosshair;touch-action:none"></canvas>
-					<button type="button" id="dck-sig-clear"
-					        style="position:absolute;top:6px;right:6px;font-size:.75rem;padding:2px 8px;cursor:pointer">
-						<?php esc_html_e( 'Clear', 'dck-elite' ); ?>
-					</button>
+			<div class="dck-sig">
+				<p class="dck-sig__label"><?php esc_html_e( 'Signature', 'dck-elite' ); ?> <em class="dck-req">*</em></p>
+				<div class="dck-sig__box">
+					<canvas id="dck-sig-canvas" aria-label="<?php esc_attr_e( 'Signature area', 'dck-elite' ); ?>"></canvas>
+					<span class="dck-sig__line" aria-hidden="true"></span>
+					<button type="button" id="dck-sig-clear" class="dck-sig__clear"><?php esc_html_e( 'Clear', 'dck-elite' ); ?></button>
 				</div>
-				<p id="dck-sig-err" style="display:none;color:#c0392b;font-size:.85rem;margin-top:4px">
-					<?php esc_html_e( 'Please draw your signature before submitting.', 'dck-elite' ); ?>
-				</p>
+				<p class="dck-sig__hint"><?php esc_html_e( 'Sign with your mouse, finger or stylus.', 'dck-elite' ); ?></p>
+				<p id="dck-sig-err" class="dck-sig__err" hidden><?php esc_html_e( 'Please draw your signature before submitting.', 'dck-elite' ); ?></p>
 			</div>
 
-			<label class="dck-prayer__check" style="margin-top:16px">
+			<label class="dck-prayer__check">
 				<input type="checkbox" name="consent" value="1" required>
 				<span><?php esc_html_e( 'I prefer not to be photographed or recorded at church, and I would like the media team to be aware.', 'dck-elite' ); ?></span>
 			</label>
 
-			<div aria-hidden="true" style="display:none">
-				<input type="text" name="website" tabindex="-1" autocomplete="off">
-			</div>
+			<div class="dck-hp" aria-hidden="true"><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
 
-			<button type="submit" class="dck-btn dck-btn--primary" style="width:100%;margin-top:14px">
-				<?php esc_html_e( 'Submit My Preference', 'dck-elite' ); ?>
-			</button>
-
-			<p id="dck-optout-status" class="dck-prayer__status" role="status" aria-live="polite" style="margin-top:10px"></p>
-
+			<button type="submit" class="dck-btn dck-btn--primary dck-btn--block"><?php esc_html_e( 'Submit My Preference', 'dck-elite' ); ?></button>
+			<p id="dck-optout-status" class="dck-prayer__status" role="status" aria-live="polite"></p>
 		</form>
 	</div>
 </section>
 
 <?php get_template_part( 'template-parts/join-us' ); ?>
 
-<script>
-(function () {
-
-    /* ---- Signature pad ---- */
-    var canvas  = document.getElementById('dck-sig-canvas');
-    var sigErr  = document.getElementById('dck-sig-err');
-    var clrBtn  = document.getElementById('dck-sig-clear');
-    var signed  = false;
-    var ctx, drawing, lx, ly;
-
-    if (canvas) {
-        ctx     = canvas.getContext('2d');
-        drawing = false;
-        lx      = 0;
-        ly      = 0;
-
-        function initCanvas() {
-            var rect  = canvas.getBoundingClientRect();
-            canvas.width  = Math.round(rect.width);
-            canvas.height = Math.round(rect.height);
-            ctx.strokeStyle = '#0a1040';
-            ctx.lineWidth   = 2;
-            ctx.lineCap     = 'round';
-            ctx.lineJoin    = 'round';
-        }
-        initCanvas();
-
-        function getPos(e) {
-            var r   = canvas.getBoundingClientRect();
-            var src = e.touches ? e.touches[0] : e;
-            return { x: src.clientX - r.left, y: src.clientY - r.top };
-        }
-
-        canvas.addEventListener('mousedown', function (e) {
-            drawing = true;
-            var p = getPos(e);
-            lx = p.x; ly = p.y;
-        });
-
-        canvas.addEventListener('mousemove', function (e) {
-            if (!drawing) { return; }
-            var p = getPos(e);
-            ctx.beginPath();
-            ctx.moveTo(lx, ly);
-            ctx.lineTo(p.x, p.y);
-            ctx.stroke();
-            lx = p.x; ly = p.y;
-            signed = true;
-            if (sigErr) { sigErr.style.display = 'none'; }
-        });
-
-        canvas.addEventListener('mouseup',    function () { drawing = false; });
-        canvas.addEventListener('mouseleave', function () { drawing = false; });
-
-        canvas.addEventListener('touchstart', function (e) {
-            e.preventDefault();
-            drawing = true;
-            var p = getPos(e);
-            lx = p.x; ly = p.y;
-        }, { passive: false });
-
-        canvas.addEventListener('touchmove', function (e) {
-            e.preventDefault();
-            if (!drawing) { return; }
-            var p = getPos(e);
-            ctx.beginPath();
-            ctx.moveTo(lx, ly);
-            ctx.lineTo(p.x, p.y);
-            ctx.stroke();
-            lx = p.x; ly = p.y;
-            signed = true;
-            if (sigErr) { sigErr.style.display = 'none'; }
-        }, { passive: false });
-
-        canvas.addEventListener('touchend', function () { drawing = false; });
-
-        if (clrBtn) {
-            clrBtn.addEventListener('click', function () {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                signed = false;
-            });
-        }
-    }
-
-    /* ---- Form submission ---- */
-    var form   = document.getElementById('dck-optout-form');
-    var status = document.getElementById('dck-optout-status');
-    if (!form) { return; }
-    var T0 = Date.now();
-
-    function val(n) {
-        return form.elements[n] ? form.elements[n].value.trim() : '';
-    }
-
-    function showErr(msg) {
-        if (status) {
-            status.textContent = msg;
-            status.className   = 'dck-prayer__status is-err';
-        }
-    }
-
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        var name    = val('name');
-        var phone   = val('phone');
-        var email   = val('email');
-        var consent = form.elements['consent'] ? form.elements['consent'].checked : false;
-        var sigData = (canvas && signed) ? canvas.toDataURL('image/png') : '';
-
-        if (!name)  { showErr('Please enter your full name.'); return; }
-        if (!phone) { showErr('Phone number is required.'); return; }
-        if (!email || email.indexOf('@') < 0) { showErr('A valid email address is required.'); return; }
-        if (!signed || !sigData) {
-            if (sigErr) { sigErr.style.display = ''; }
-            showErr('Please draw your signature before submitting.');
-            return;
-        }
-        if (!consent) { showErr('Please tick the confirmation box.'); return; }
-
-        if (status) { status.textContent = ''; status.className = 'dck-prayer__status'; }
-
-        var btn  = form.querySelector('button[type=submit]');
-        var prev = btn ? btn.textContent : '';
-        if (btn) { btn.disabled = true; btn.textContent = 'Sending\u2026'; }
-
-        fetch(form.getAttribute('data-ep'), {
-            method:  'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-WP-Nonce':   form.getAttribute('data-nc')
-            },
-            body: JSON.stringify({
-                name:      name,
-                phone:     phone,
-                email:     email,
-                service:   val('service'),
-                signature: sigData,
-                website:   val('website'),
-                elapsed:   Date.now() - T0
-            })
-        })
-        .then(function (r) { return r.json(); })
-        .then(function (res) {
-            if (status) {
-                status.textContent = (res && res.message) ? res.message : 'Thank you.';
-                status.className   = 'dck-prayer__status ' + ((res && res.ok) ? 'is-ok' : 'is-err');
-            }
-            if (res && res.ok) {
-                form.reset();
-                signed = false;
-                if (canvas && ctx) { ctx.clearRect(0, 0, canvas.width, canvas.height); }
-            }
-            if (btn) { btn.disabled = false; btn.textContent = prev; }
-        })
-        .catch(function () {
-            showErr('Something went wrong. Please speak to an usher or call +254 110 304 521.');
-            if (btn) { btn.disabled = false; btn.textContent = prev; }
-        });
-    });
-
-}());
-</script>
-
-<?php get_footer(); ?>
+<?php
+get_footer();

@@ -82,10 +82,15 @@
     serm.appendChild(wrap);
   }
 
+  var panel = document.getElementById("dck-answer");
+  var qLabel = document.getElementById("dck-answer-q");
   function ask() {
     var q = input.value.trim();
     if (q.length === 0) { input.focus(); return; }
     lastQuery = q;
+    if (panel) { panel.hidden = false; }
+    if (qLabel) { qLabel.textContent = q + "  \u00b7  " + currentLevel; }
+    go.disabled = true;
     out.innerHTML = "";
     serm.innerHTML = "";
     var loading = document.createElement("p");
@@ -101,13 +106,35 @@
       renderSermons(d && d.sermons ? d.sermons : []);
       var rb = document.querySelector(".dck-read[data-read-scope]");
       if (rb) { rb.hidden = false; }
+      if (panel && panel.scrollIntoView) { panel.scrollIntoView({ behavior: "smooth", block: "start" }); }
     }).catch(function () {
       out.innerHTML = "";
       var e = document.createElement("p");
       e.textContent = "I could not respond right now. Please try again shortly.";
       out.appendChild(e);
+    }).then(function () { go.disabled = false; });
+  }
+
+  /* Suggestion chips */
+  var chips = document.querySelectorAll(".dck-bible-chips .dck-chip");
+  for (var c = 0; c < chips.length; c++) {
+    chips[c].addEventListener("click", function () {
+      input.value = this.getAttribute("data-ask") || this.textContent;
+      ask();
     });
   }
+
+  /* Copy and print the answer */
+  var copyBtn = document.getElementById("dck-bible-copy");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", function () {
+      var txt = lastQuery + NL + NL + out.innerText + NL + NL + window.location.href;
+      var done = function () { var o = copyBtn.textContent; copyBtn.textContent = "\u2713"; setTimeout(function () { copyBtn.textContent = o; }, 1400); };
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(done).catch(done); } else { done(); }
+    });
+  }
+  var printBtn = document.getElementById("dck-bible-print");
+  if (printBtn) { printBtn.addEventListener("click", function () { document.body.classList.add("dck-print-answer"); window.print(); setTimeout(function () { document.body.classList.remove("dck-print-answer"); }, 500); }); }
 
   go.addEventListener("click", ask);
   input.addEventListener("keydown", function (e) {

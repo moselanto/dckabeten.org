@@ -175,15 +175,26 @@ if ( ! function_exists( 'dck_ai_chat' ) ) {
  */
 if ( ! function_exists( 'dck_ai_knowledge' ) ) {
 	function dck_ai_knowledge( $query ) {
-		$facts = "Church: Deliverance Church Kabete N Market (Cistern of Hope Center), Uthiru, Nairobi, Kenya.
-Location: Behind N Market, Uthiru, Nairobi. Phone: +254 110 304 521.
-Lead Pastors: Pastor Justus Kubai and Mrs. Clare Kubai. Assistant Pastors: Mr. and Mrs. Henry Onzere.
-Sunday services: Intensive Prayers 8:00 to 9:00 AM; Intensive Bible Study 9:30 to 10:30 AM; Glorious Service 10:40 AM to 1:00 PM. Keshas (overnight prayer) on the 1st and 3rd week of the month.
-Ministries: Men of Faith (married men), Daughters of Faith (women), Youth on the Move (youth), Golden Gift or Double G (singles), Flames of Fire (worship team), Cistern of Hope Voices (choir), Dunamis (teens 13 to 19), Conquerors (children 7 to 12), Champions of Christ (children 3 to 6), Missions and Evangelism, Media Team, Shield Crew (security), Welfare, Care Ministry (ushering and hospitality), Protocol.
-Giving: M-Pesa Paybill 247247 Account 403263 (Tithes and Offerings); M-Pesa Till 9900619 (Give to a Project); Equity Bank, Account Name Deliverance Church Kabete Technical, Account Number 1370274104398, SWIFT EQBLKENA, Branch Kangemi.
-Watch Live: services stream on the Watch Live page on Sundays.";
+		$phone  = function_exists( 'dck_phone_display' ) ? dck_phone_display() : '+254 110 304521';
+		$depts  = array();
+		if ( function_exists( 'dck_all_departments' ) ) {
+			foreach ( dck_all_departments() as $d ) {
+				$depts[] = $d['name'];
+			}
+		}
+		$facts  = 'Church: Deliverance Church Kabete N Market (Cistern of Hope Center), ' . get_theme_mod( 'dck_seo_locality', 'Uthiru' ) . ', ' . get_theme_mod( 'dck_seo_region', 'Nairobi' ) . ', Kenya. Founded with a first prayer meeting on 9 June 2017, first Sunday service on 11 June 2017 and official launch on 18 June 2017.' . PHP_EOL;
+		$facts .= 'Location: ' . ( function_exists( 'dck_church_address' ) ? dck_church_address() : 'Behind N Market, Uthiru' ) . '. Phone: ' . $phone . '. Email: ' . ( function_exists( 'dck_church_email' ) ? dck_church_email() : 'info@dckabeten.org' ) . '.' . PHP_EOL;
+		$facts .= 'Leadership: ' . ( function_exists( 'dck_home_val' ) ? dck_home_val( 'dck_welcome_pastors', 'Lead Pastors: Pastor Justus Kubai and Mrs. Clare Kubai. Assistant Pastors: Mr. and Mrs. Henry Onzere.' ) : '' ) . PHP_EOL;
+		$facts .= 'Weekly gatherings: ' . ( function_exists( 'dck_service_times_sentence' ) ? dck_service_times_sentence() : '' ) . '.' . PHP_EOL;
+		if ( $depts ) {
+			$facts .= 'Ministries: ' . implode( ', ', $depts ) . '.' . PHP_EOL;
+		}
+		if ( function_exists( 'dck_giving_summary' ) && dck_giving_summary() ) {
+			$facts .= 'Giving: ' . dck_giving_summary() . '.' . PHP_EOL;
+		}
+		$facts .= 'Watch Live: services stream on the Watch Live page on Sundays.';
 
-		$facts .= PHP_EOL . 'Talk to or pray with a pastor: WhatsApp https://wa.me/' . dck_prayer_whatsapp() . ' or call +254 110 304 521. Prayer requests submitted on the Prayer Request page reach the prayer team and pastors.';
+		$facts .= PHP_EOL . 'Talk to or pray with a pastor: WhatsApp https://wa.me/' . dck_prayer_whatsapp() . ' or call ' . dck_phone_display() . '. Prayer requests submitted on the Prayer Request page reach the prayer team and pastors.';
 
 		$extra = '';
 		$q     = new WP_Query(
@@ -221,11 +232,11 @@ Care guidelines:
 - If someone shares distress (depression, grief, anxiety, loss, or thoughts of self-harm), respond with compassion, remind them they are deeply loved by God and not alone, offer one encouraging scripture, and gently offer to submit a confidential prayer request or connect them with a pastor. If there is any risk to life, urge them to reach local emergency services or a trusted person right away.
 - If someone wants to know Jesus or give their life to Christ, gently affirm them, share John 3:16 and Romans 10:9, lead a short prayer of salvation, and offer to connect them with the church for a new believers class and follow-up.
 - For prayer requests, invite them to share and assure them the prayer team will pray. Mention the confidential option.
-- Only state facts about the church that appear in the KNOWLEDGE below. If you do not know something, say so kindly and share the phone number +254 110 304 521 or the Contact page. Never invent service times, events, names, or giving details.
+- Only state facts about the church that appear in the KNOWLEDGE below. If you do not know something, say so kindly and share the phone number " . dck_phone_display() . " or the Contact page. Never invent service times, events, names, or giving details.
 - Keep replies short (2 to 5 sentences) unless more is requested. When helpful, offer a next step: Plan Your Visit, Watch Live, Give, or a Prayer Request.
 - Write in plain, warm text. Do NOT use Markdown, asterisks, bullet symbols, or headings; use short sentences or simple line breaks, because the chat shows plain text.
 - NEVER output placeholder text or square brackets such as [Insert Service Times] or [Insert Church Location]. Always give the ACTUAL service times and location from KNOWLEDGE. If a detail is not in KNOWLEDGE, leave it out or share the phone number - never a blank template.
-- If someone wants to pray with a pastor, talk to a pastor, book a visit, or asks how their request reaches the pastor, give them the direct WhatsApp link https://wa.me/" . dck_prayer_whatsapp() . " and the phone +254 110 304 521, and mention the Prayer Request page. Reassure them a real person will receive it.
+- If someone wants to pray with a pastor, talk to a pastor, book a visit, or asks how their request reaches the pastor, give them the direct WhatsApp link https://wa.me/" . dck_prayer_whatsapp() . " and the phone " . dck_phone_display() . ", and mention the Prayer Request page. Reassure them a real person will receive it.
 
 KNOWLEDGE:
 " . $know;
@@ -234,7 +245,8 @@ KNOWLEDGE:
 
 if ( ! function_exists( 'dck_ai_fallback_reply' ) ) {
 	function dck_ai_fallback_reply() {
-		return "Karibu, and thank you for reaching out. Our AI assistant is being set up. In the meantime: we gather every Sunday for Intensive Prayers at 8:00 AM, Bible Study at 9:30 AM, and the Glorious Service at 10:40 AM, behind N Market in Uthiru. You can call us on +254 110 304 521, or use the Plan Your Visit page. We would love to welcome you.";
+		$times = function_exists( 'dck_service_times_sentence' ) ? dck_service_times_sentence() : '';
+		return 'Karibu, and thank you for reaching out. Our AI assistant is being set up. In the meantime, here is when we gather: ' . $times . '. We are at ' . ( function_exists( 'dck_church_address' ) ? dck_church_address() : 'Behind N Market, Uthiru' ) . '. You can call us on ' . dck_phone_display() . ', or use the Plan Your Visit page. We would love to welcome you.';
 	}
 }
 
@@ -328,7 +340,7 @@ if ( ! function_exists( 'dck_ai_rest_assistant' ) ) {
 			if ( current_user_can( 'manage_options' ) ) {
 				return new WP_REST_Response( array( 'reply' => '[admin diagnostic] ' . $reply->get_error_message() ), 200 );
 			}
-			return new WP_REST_Response( array( 'reply' => 'I had trouble responding just now. Please try again, or call us on +254 110 304 521.' ), 200 );
+			return new WP_REST_Response( array( 'reply' => 'I had trouble responding just now. Please try again, or call us on ' . dck_phone_display() . '.' ), 200 );
 		}
 		return new WP_REST_Response( array( 'reply' => $reply ), 200 );
 	}
@@ -415,6 +427,7 @@ if ( ! function_exists( 'dck_ai_enqueue' ) ) {
 			'welcome' => $welcome,
 			'welcome_sw' => $welcome_sw,
 			'lang'    => get_theme_mod( 'dck_ai_lang', 'sw' ),
+			'phone'   => function_exists( 'dck_phone_display' ) ? dck_phone_display() : '',
 		) );
 	}
 }
