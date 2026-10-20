@@ -42,14 +42,17 @@
   var counters = document.querySelectorAll('[data-dck-count]');
   counters.forEach(function (el) {
     var target = parseInt(el.getAttribute('data-dck-count'), 10) || 0;
-    if (reduceMotion) { el.textContent = target.toLocaleString(); return; }
+    var suffix = el.getAttribute('data-dck-suffix') || '';
+    var finalText = target.toLocaleString() + suffix;
+    // The real number is already in the HTML; only animate when motion is allowed.
+    if (reduceMotion || !target) { el.textContent = finalText; return; }
     var started = false;
     var run = function () {
       if (started) { return; } started = true;
       var dur = 1600, t0 = performance.now();
       var step = function (now) {
         var p = Math.min((now - t0) / dur, 1);
-        el.textContent = Math.floor(target * p).toLocaleString();
+        el.textContent = p < 1 ? Math.floor(target * p).toLocaleString() : finalText;
         if (p < 1) { requestAnimationFrame(step); }
       };
       requestAnimationFrame(step);

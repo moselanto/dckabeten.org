@@ -24,7 +24,7 @@ $dck_tel = function_exists( 'dck_home_tel' ) ? dck_home_tel() : '+254110304521';
 		</a>
 		<a class="dck-footer2__item" href="<?php echo esc_url( function_exists( 'dck_home_directions' ) ? dck_home_directions() : 'https://share.google/LJmcXS6D5Nq1aF2R5' ); ?>" target="_blank" rel="noopener">
 			<span class="dck-footer2__ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg></span>
-			<span class="dck-footer2__txt"><span class="dck-footer2__k"><?php esc_html_e( 'Location', 'dck-elite' ); ?></span><strong><?php echo esc_html( dck_home_val( 'dck_top_address', 'Kabete Behind N Market' ) ); ?></strong></span>
+			<span class="dck-footer2__txt"><span class="dck-footer2__k"><?php esc_html_e( 'Location', 'dck-elite' ); ?></span><strong><?php echo esc_html( dck_home_val( 'dck_top_address', 'Behind N Market, Uthiru, Kabete' ) ); ?></strong></span>
 		</a>
 	</div>
 	<?php if ( function_exists( 'dck_social_icons' ) ) : ?>

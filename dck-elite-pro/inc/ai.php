@@ -22,7 +22,7 @@ if ( ! function_exists( 'dck_ai_customize' ) ) {
 			array(
 				'title'       => __( 'DCK AI Assistant', 'dck-elite' ),
 				'priority'    => 31,
-				'description' => __( 'Connect OpenAI to power the AI Church Assistant. Your key is stored on your server and never shown to visitors.', 'dck-elite' ),
+				'description' => __( 'Connect an AI provider (Google Gemini by default, or OpenAI, Groq, OpenRouter) to power the AI Church Assistant. Most secure: add define( \'DCK_AI_KEY\', \'your-key\' ); to wp-config.php so the key is never stored in the database.', 'dck-elite' ),
 			)
 		);
 
@@ -30,7 +30,7 @@ if ( ! function_exists( 'dck_ai_customize' ) ) {
 		$wp_customize->add_control( 'dck_ai_enabled', array( 'label' => __( 'Enable AI Assistant', 'dck-elite' ), 'section' => 'dck_ai', 'type' => 'checkbox' ) );
 
 		$wp_customize->add_setting( 'dck_ai_key', array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field' ) );
-		$wp_customize->add_control( 'dck_ai_key', array( 'label' => __( 'OpenAI API Key', 'dck-elite' ), 'description' => __( 'Paste your key (starts with sk-). For extra security you may instead define DCK_AI_KEY in wp-config.php.', 'dck-elite' ), 'section' => 'dck_ai', 'type' => 'password' ) );
+		$wp_customize->add_control( 'dck_ai_key', array( 'label' => __( 'AI Provider API Key', 'dck-elite' ), 'description' => ( defined( 'DCK_AI_KEY' ) && DCK_AI_KEY ) ? __( 'A key is set in wp-config.php (DCK_AI_KEY) and takes priority. You can leave this field empty.', 'dck-elite' ) : __( 'Key from your provider (Gemini: aistudio.google.com, OpenAI: starts with sk-). Recommended: define DCK_AI_KEY in wp-config.php instead of saving it here.', 'dck-elite' ), 'section' => 'dck_ai', 'type' => 'password' ) );
 
 		$wp_customize->add_setting( 'dck_ai_model', array( 'default' => 'gemini-flash-latest', 'sanitize_callback' => 'sanitize_text_field' ) );
 		$wp_customize->add_control( 'dck_ai_model', array( 'label' => __( 'Model', 'dck-elite' ), 'description' => __( 'Recommended: gemini-flash-latest (Google free tier, always the current Gemini Flash, so it never gets retired). For OpenAI set gpt-4o-mini; on Groq use llama-3.3-70b-versatile. Match the API Base URL below to your provider.', 'dck-elite' ), 'section' => 'dck_ai', 'type' => 'text' ) );
@@ -42,7 +42,7 @@ if ( ! function_exists( 'dck_ai_customize' ) ) {
 		$wp_customize->add_control( 'dck_ai_stt_base', array( 'label' => __( 'Transcription API Base URL', 'dck-elite' ), 'description' => __( 'For sermon and voice transcription only (Whisper). Gemini has no speech-to-text, so this is kept separate from chat. Default is Groq (free, no card): https://api.groq.com/openai/v1', 'dck-elite' ), 'section' => 'dck_ai', 'type' => 'text' ) );
 
 		$wp_customize->add_setting( 'dck_ai_stt_key', array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field' ) );
-		$wp_customize->add_control( 'dck_ai_stt_key', array( 'label' => __( 'Transcription API Key', 'dck-elite' ), 'description' => __( 'Your Groq API key from console.groq.com (free). Leave blank to reuse the main API Key above.', 'dck-elite' ), 'section' => 'dck_ai', 'type' => 'text' ) );
+		$wp_customize->add_control( 'dck_ai_stt_key', array( 'label' => __( 'Transcription API Key', 'dck-elite' ), 'description' => __( 'Your Groq API key from console.groq.com (free). Leave blank to reuse the main API Key above.', 'dck-elite' ), 'section' => 'dck_ai', 'type' => 'password' ) );
 
 		$wp_customize->add_setting( 'dck_ai_stt_model', array( 'default' => 'whisper-large-v3', 'sanitize_callback' => 'sanitize_text_field' ) );
 		$wp_customize->add_control( 'dck_ai_stt_model', array( 'label' => __( 'Transcription Model', 'dck-elite' ), 'description' => __( 'On Groq use whisper-large-v3 (or whisper-large-v3-turbo). On OpenAI use whisper-1.', 'dck-elite' ), 'section' => 'dck_ai', 'type' => 'text' ) );

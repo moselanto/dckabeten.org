@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</a>
 			<span class="dck-topbar__item">
 				<svg class="dck-ic" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg>
-				<span><?php echo esc_html( dck_home_val( 'dck_top_address', 'Kabete Behind N Market' ) ); ?></span>
+				<span><?php echo esc_html( dck_home_val( 'dck_top_address', 'Behind N Market, Uthiru, Kabete' ) ); ?></span>
 			</span>
 			<a class="dck-topbar__item" href="tel:<?php echo esc_attr( function_exists( 'dck_home_tel' ) ? dck_home_tel() : '+254110304521' ); ?>">
 				<svg class="dck-ic" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true" focusable="false"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.5.56 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .56 3.5 1 1 0 0 1-.24 1Z"/></svg>

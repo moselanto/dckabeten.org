@@ -76,14 +76,13 @@ $dck_dir    = function_exists( 'dck_home_directions' ) ? dck_home_directions() :
 	</div>
 </section>
 
-<!-- STATS -->
+<!-- STATS (real numbers are server-rendered so search engines, AI tools and no-JS visitors see them; JS only animates) -->
 <section class="dck-section dck-stats">
 	<div class="dck-container">
 		<div class="dck-grid">
-			<div class="dck-reveal"><div class="dck-stat__num" data-dck-count="<?php echo esc_attr( dck_home_val( 'dck_stat1_num', '850' ) ); ?>">0</div><div class="dck-stat__label"><?php echo esc_html( dck_home_val( 'dck_stat1_label', 'Members and Growing' ) ); ?></div></div>
-			<div class="dck-reveal"><div class="dck-stat__num" data-dck-count="<?php echo esc_attr( dck_home_val( 'dck_stat2_num', '14' ) ); ?>">0</div><div class="dck-stat__label"><?php echo esc_html( dck_home_val( 'dck_stat2_label', 'Ministry Departments' ) ); ?></div></div>
-			<div class="dck-reveal"><div class="dck-stat__num" data-dck-count="<?php echo esc_attr( dck_home_val( 'dck_stat3_num', '8' ) ); ?>">0</div><div class="dck-stat__label"><?php echo esc_html( dck_home_val( 'dck_stat3_label', 'Years of Ministry' ) ); ?></div></div>
-			<div class="dck-reveal"><div class="dck-stat__num" data-dck-count="<?php echo esc_attr( dck_home_val( 'dck_stat4_num', '12' ) ); ?>">0</div><div class="dck-stat__label"><?php echo esc_html( dck_home_val( 'dck_stat4_label', 'Outreach Projects' ) ); ?></div></div>
+			<?php foreach ( ( function_exists( 'dck_home_stats' ) ? dck_home_stats() : array() ) as $st ) : ?>
+				<div class="dck-reveal"><div class="dck-stat__num" data-dck-count="<?php echo esc_attr( $st['num'] ); ?>" data-dck-suffix="<?php echo esc_attr( $st['suffix'] ); ?>"><?php echo esc_html( number_format_i18n( $st['num'] ) . $st['suffix'] ); ?></div><div class="dck-stat__label"><?php echo esc_html( $st['label'] ); ?></div></div>
+			<?php endforeach; ?>
 		</div>
 	</div>
 </section>

@@ -1,6 +1,8 @@
 <?php
 /**
- * DCK Elite theme functions (v1.2.0 - live streaming + sermons, hardened).
+ * DCK Elite Pro theme functions.
+ *
+ * Version is defined once in DCK_ELITE_VERSION below (keep style.css header in sync).
  *
  * @package DCK_Elite
  */
@@ -10,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.2.3' );
+	define( 'DCK_ELITE_VERSION', '4.2.4' );
 }
 
 /**
@@ -94,6 +96,15 @@ if ( ! function_exists( 'dck_elite_content_width' ) ) {
 }
 add_action( 'after_setup_theme', 'dck_elite_content_width', 0 );
 
+/**
+ * One-time site setup version. Only bump this when the page/menu setup itself changes,
+ * NOT on every theme release, so routine updates never rebuild the menu or overwrite
+ * manual changes made in wp-admin.
+ */
+if ( ! defined( 'DCK_ELITE_SETUP_VERSION' ) ) {
+	define( 'DCK_ELITE_SETUP_VERSION', '4.2.3' );
+}
+
 if ( ! function_exists( 'dck_elite_service_times' ) ) {
 	function dck_elite_service_times() {
 		return array(
@@ -106,18 +117,15 @@ if ( ! function_exists( 'dck_elite_service_times' ) ) {
 }
 
 if ( ! function_exists( 'dck_elite_ministries' ) ) {
+	/**
+	 * All ministry departments. Derived from the homepage department list
+	 * (inc/home.php) so every page shows the same, complete set.
+	 */
 	function dck_elite_ministries() {
-		return array(
-			array( 'tag' => 'Men',      'name' => 'Men of Faith (MOF)',       'desc' => 'Married men committed to leading spiritually and mentoring others in Christ.' ),
-			array( 'tag' => 'Women',    'name' => 'Daughters of Faith (DoF)', 'desc' => 'A vibrant women ministry focused on prayer, empowerment and fellowship.' ),
-			array( 'tag' => 'Youth',    'name' => 'Youth on the Move (YOTM)', 'desc' => 'Young people passionate about serving God and influencing their generation.' ),
-			array( 'tag' => 'Singles',  'name' => 'Golden Gift (Double G)',   'desc' => 'Unmarried men and women pursuing purpose and purity together.' ),
-			array( 'tag' => 'Worship',  'name' => 'Flames of Fire (FoF)',     'desc' => 'An anointed worship team leading powerful, deep encounters with God.' ),
-			array( 'tag' => 'Choir',    'name' => 'Cistern of Hope Voices',   'desc' => 'Inspiring worship through unity, faith and powerful, uplifting voices.' ),
-			array( 'tag' => 'Teens',    'name' => 'Dunamis (13-19 yrs)',      'desc' => 'Guiding teenagers spiritually through their crucial, formative years.' ),
-			array( 'tag' => 'Children', 'name' => 'Conquerors (7-12 yrs)',    'desc' => 'Building a godly foundation for the next generation.' ),
-			array( 'tag' => 'Missions', 'name' => 'Missions & Evangelism',    'desc' => 'A dedicated team focused on soul-winning and outreach.' ),
-		);
+		if ( function_exists( 'dck_all_departments' ) ) {
+			return dck_all_departments();
+		}
+		return array();
 	}
 }
 
@@ -623,7 +631,6 @@ if ( ! function_exists( 'dck_elite_page_defs' ) ) {
 			array( 'terms', 'Terms & Privacy', 'template-terms.php', dck_elite_terms_content() ),
 			array( 'live', 'Watch Live', 'template-live.php', '' ),
 			array( 'bible', 'Bible', 'template-bible.php', '<p>Study the Word with our AI Bible study assistant. Ask about any verse or topic and receive a clear, Scripture-grounded explanation.</p>' ),
-			array( 'blog', 'News & Blog', '', '' ),
 		);
 	}
 }
@@ -708,7 +715,7 @@ if ( ! function_exists( 'dck_elite_add_menu_item' ) ) {
 
 if ( ! function_exists( 'dck_elite_setup_site' ) ) {
 	function dck_elite_setup_site() {
-		if ( get_option( 'dck_elite_setup_ver' ) === DCK_ELITE_VERSION ) {
+		if ( get_option( 'dck_elite_setup_ver' ) === DCK_ELITE_SETUP_VERSION ) {
 			return;
 		}
 
@@ -759,7 +766,7 @@ if ( ! function_exists( 'dck_elite_setup_site' ) ) {
 
 		dck_elite_build_menu( $ids );
 		flush_rewrite_rules();
-		update_option( 'dck_elite_setup_ver', DCK_ELITE_VERSION );
+		update_option( 'dck_elite_setup_ver', DCK_ELITE_SETUP_VERSION );
 	}
 }
 add_action( 'admin_init', 'dck_elite_setup_site' );

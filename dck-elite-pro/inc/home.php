@@ -78,6 +78,64 @@ if ( ! function_exists( 'dck_home_ministries' ) ) {
 	}
 }
 
+/* ---------------- Full department list (single source of truth) ---------------- */
+
+if ( ! function_exists( 'dck_all_departments' ) ) {
+	/**
+	 * Every ministry department: the 14 ministry cards plus Care and Protocol.
+	 * Used by the Ministries page, page content, stats and AI context so the
+	 * lists never drift apart again.
+	 */
+	function dck_all_departments() {
+		$out   = dck_home_ministries();
+		$out[] = array(
+			'name' => dck_home_val( 'dck_care_title', 'Care Ministry' ),
+			'desc' => dck_home_val( 'dck_care_text', 'Handles ushering and hospitality, ensuring a welcoming experience for all.' ),
+			'img'  => dck_home_img( 'dck_care_img', 'careministry.webp' ),
+		);
+		$out[] = array(
+			'name' => dck_home_val( 'dck_protocol_title', 'Protocol Department' ),
+			'desc' => dck_home_val( 'dck_protocol_text', 'Oversees the welfare and honor of our pastors and visiting gospel ministers.' ),
+			'img'  => dck_home_img( 'dck_protocol_img', 'protocal.webp' ),
+		);
+		return $out;
+	}
+}
+
+/* ---------------- Homepage stats (server-rendered real numbers) ---------------- */
+
+if ( ! function_exists( 'dck_home_stats' ) ) {
+	/**
+	 * Stats with sensible live defaults: departments are counted from the real list
+	 * and years of ministry are calculated from the June 2017 launch, so they stay
+	 * correct without manual edits. Customizer values still override.
+	 */
+	function dck_home_stats() {
+		$years = (int) ( function_exists( 'wp_date' ) ? wp_date( 'Y' ) : gmdate( 'Y' ) ) - 2017;
+		if ( (int) ( function_exists( 'wp_date' ) ? wp_date( 'n' ) : gmdate( 'n' ) ) < 6 ) {
+			$years--;
+		}
+		$defs = array(
+			array( 'num' => '850',                                   'label' => 'Members and Growing' ),
+			array( 'num' => (string) count( dck_all_departments() ), 'label' => 'Ministry Departments' ),
+			array( 'num' => (string) max( 1, $years ),               'label' => 'Years of Ministry' ),
+			array( 'num' => '12',                                    'label' => 'Outreach Projects' ),
+		);
+		$out = array();
+		foreach ( $defs as $i => $d ) {
+			$n     = $i + 1;
+			$raw   = dck_home_val( 'dck_stat' . $n . '_num', $d['num'] );
+			$num   = (int) preg_replace( '/[^0-9]/', '', (string) $raw );
+			$out[] = array(
+				'num'    => $num,
+				'suffix' => ( false !== strpos( (string) $raw, '+' ) ) ? '+' : '',
+				'label'  => dck_home_val( 'dck_stat' . $n . '_label', $d['label'] ),
+			);
+		}
+		return $out;
+	}
+}
+
 /* ---------------- Hero slide data ---------------- */
 
 if ( ! function_exists( 'dck_home_slides' ) ) {
@@ -145,7 +203,7 @@ if ( ! function_exists( 'dck_home_customize' ) ) {
 
 		$wp_customize->add_section( 'dck_home_top', array( 'title' => __( 'Top Bar and Footer', 'dck-elite' ), 'panel' => $panel ) );
 		dck_home_ctl_text( $wp_customize, 'dck_top_email', 'dck_home_top', __( 'Email address', 'dck-elite' ), 'info@dckabeten.org' );
-		dck_home_ctl_text( $wp_customize, 'dck_top_address', 'dck_home_top', __( 'Location', 'dck-elite' ), 'Kabete Behind N Market' );
+		dck_home_ctl_text( $wp_customize, 'dck_top_address', 'dck_home_top', __( 'Location', 'dck-elite' ), 'Behind N Market, Uthiru, Kabete' );
 		dck_home_ctl_text( $wp_customize, 'dck_top_phone', 'dck_home_top', __( 'Phone', 'dck-elite' ), '+254 110 304521' );
 		dck_home_ctl_text( $wp_customize, 'dck_fb_url', 'dck_home_top', __( 'Facebook URL', 'dck-elite' ), 'https://www.facebook.com/' );
 		dck_home_ctl_text( $wp_customize, 'dck_yt_url', 'dck_home_top', __( 'YouTube URL', 'dck-elite' ), 'https://www.youtube.com/' );
@@ -274,9 +332,9 @@ if ( ! function_exists( 'dck_home_v37_customize' ) ) {
 		$wp->add_section( 'dck_home_stats', array( 'title' => __( 'Stats Counters', 'dck-elite' ), 'panel' => 'dck_home_panel' ) );
 		dck_home_ctl_text( $wp, 'dck_stat1_num',   'dck_home_stats', __( 'Stat 1 number', 'dck-elite' ), '850' );
 		dck_home_ctl_text( $wp, 'dck_stat1_label', 'dck_home_stats', __( 'Stat 1 label',  'dck-elite' ), 'Members and Growing' );
-		dck_home_ctl_text( $wp, 'dck_stat2_num',   'dck_home_stats', __( 'Stat 2 number', 'dck-elite' ), '14' );
+		dck_home_ctl_text( $wp, 'dck_stat2_num',   'dck_home_stats', __( 'Stat 2 number (leave blank to count departments automatically)', 'dck-elite' ), '' );
 		dck_home_ctl_text( $wp, 'dck_stat2_label', 'dck_home_stats', __( 'Stat 2 label',  'dck-elite' ), 'Ministry Departments' );
-		dck_home_ctl_text( $wp, 'dck_stat3_num',   'dck_home_stats', __( 'Stat 3 number', 'dck-elite' ), '8' );
+		dck_home_ctl_text( $wp, 'dck_stat3_num',   'dck_home_stats', __( 'Stat 3 number (leave blank to calculate years since 2017)', 'dck-elite' ), '' );
 		dck_home_ctl_text( $wp, 'dck_stat3_label', 'dck_home_stats', __( 'Stat 3 label',  'dck-elite' ), 'Years of Ministry' );
 		dck_home_ctl_text( $wp, 'dck_stat4_num',   'dck_home_stats', __( 'Stat 4 number', 'dck-elite' ), '12' );
 		dck_home_ctl_text( $wp, 'dck_stat4_label', 'dck_home_stats', __( 'Stat 4 label',  'dck-elite' ), 'Outreach Projects' );

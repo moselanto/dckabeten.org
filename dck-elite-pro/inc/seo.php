@@ -144,7 +144,7 @@ if ( ! function_exists( 'dck_seo_jsonld' ) ) {
 			'email'       => get_theme_mod( 'dck_top_email', 'info@dckabeten.org' ),
 			'address'     => array(
 				'@type'           => 'PostalAddress',
-				'streetAddress'   => get_theme_mod( 'dck_top_address', 'Kabete, Behind N Market' ),
+				'streetAddress'   => get_theme_mod( 'dck_top_address', 'Behind N Market, Uthiru, Kabete' ),
 				'addressLocality' => get_theme_mod( 'dck_seo_locality', 'Uthiru' ),
 				'addressRegion'   => get_theme_mod( 'dck_seo_region', 'Nairobi' ),
 				'addressCountry'  => 'KE',

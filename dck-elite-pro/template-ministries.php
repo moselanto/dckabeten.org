@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 get_header();
-$dck_all = function_exists( 'dck_home_ministries' ) ? dck_home_ministries() : array();
+$dck_all = function_exists( 'dck_all_departments' ) ? dck_all_departments() : ( function_exists( 'dck_home_ministries' ) ? dck_home_ministries() : array() );
 ?>
 
 <section class="dck-page-hero">
