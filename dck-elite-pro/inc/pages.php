@@ -154,3 +154,97 @@ add_action(
 		}
 	}
 );
+
+
+/* ---------------- Shared: photo hero + weekly calendar ---------------- */
+
+if ( ! function_exists( 'dck_photo_hero' ) ) {
+	/**
+	 * Full-bleed photo hero used by Services and Events.
+	 *
+	 * @param string $img     Background image URL.
+	 * @param string $eyebrow Small label.
+	 * @param string $title   H1.
+	 * @param string $lead    Intro.
+	 * @param string $aside   Optional HTML for the right-hand card (already escaped).
+	 */
+	function dck_photo_hero( $img, $eyebrow, $title, $lead, $aside = '' ) {
+		echo '<section class="dck-phero' . ( $aside ? ' dck-phero--split' : '' ) . '" style="--dck-phero-img:url(' . esc_url( $img ) . ')">';
+		echo '<div class="dck-phero__inner"><div class="dck-phero__copy">';
+		echo '<p class="dck-eyebrow dck-eyebrow--light">' . esc_html( $eyebrow ) . '</p>';
+		echo '<h1>' . esc_html( $title ) . '</h1>';
+		echo '<p class="dck-phero__lead">' . esc_html( $lead ) . '</p>';
+		echo '</div>';
+		if ( $aside ) {
+			echo '<div class="dck-phero__aside">' . $aside . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- built from escaped parts by caller.
+		}
+		echo '</div></section>';
+	}
+}
+
+if ( ! function_exists( 'dck_label_days' ) ) {
+	/**
+	 * Weekday indexes (0 = Sunday) mentioned in a label such as "Friday & Saturday" or "Fridays, 1st & 3rd week".
+	 */
+	function dck_label_days( $label ) {
+		$map = array( 'sun' => 0, 'mon' => 1, 'tue' => 2, 'wed' => 3, 'thu' => 4, 'fri' => 5, 'sat' => 6, 'jumapili' => 0, 'jumatatu' => 1, 'jumanne' => 2, 'jumatano' => 3, 'alhamisi' => 4, 'ijumaa' => 5, 'jumamosi' => 6 );
+		$l   = strtolower( (string) $label );
+		$out = array();
+		if ( false !== strpos( $l, 'daily' ) || false !== strpos( $l, 'every day' ) ) {
+			return array( 0, 1, 2, 3, 4, 5, 6 );
+		}
+		foreach ( $map as $k => $d ) {
+			if ( preg_match( '/\b' . $k . '/', $l ) ) {
+				$out[] = $d;
+			}
+		}
+		return array_values( array_unique( $out ) );
+	}
+}
+
+if ( ! function_exists( 'dck_week_calendar' ) ) {
+	/**
+	 * Render a Monday-first 7-day calendar.
+	 *
+	 * @param array $items Each: array( 'days' => int[], 'title' => '', 'time' => '', 'note' => '' ).
+	 */
+	function dck_week_calendar( $items ) {
+		$names = array( 1 => __( 'Monday', 'dck-elite' ), 2 => __( 'Tuesday', 'dck-elite' ), 3 => __( 'Wednesday', 'dck-elite' ), 4 => __( 'Thursday', 'dck-elite' ), 5 => __( 'Friday', 'dck-elite' ), 6 => __( 'Saturday', 'dck-elite' ), 0 => __( 'Sunday', 'dck-elite' ) );
+		echo '<div class="dck-week3" role="list">';
+		foreach ( $names as $d => $name ) {
+			$list = array();
+			foreach ( $items as $it ) {
+				if ( in_array( $d, $it['days'], true ) ) {
+					$list[] = $it;
+				}
+			}
+			echo '<div class="dck-week3__day' . ( $list ? '' : ' is-empty' ) . '" role="listitem" data-dow="' . esc_attr( $d ) . '">';
+			echo '<p class="dck-week3__name"><span class="dck-week3__full">' . esc_html( $name ) . '</span><span class="dck-week3__short">' . esc_html( function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 3 ) : substr( $name, 0, 3 ) ) . '</span><em class="dck-week3__today">' . esc_html__( 'Today', 'dck-elite' ) . '</em></p>';
+			if ( $list ) {
+				foreach ( $list as $it ) {
+					echo '<div class="dck-week3__ev"><strong>' . esc_html( $it['title'] ) . '</strong>';
+					if ( $it['time'] ) {
+						echo '<span>' . esc_html( $it['time'] ) . '</span>';
+					}
+					if ( ! empty( $it['note'] ) ) {
+						echo '<em>' . esc_html( $it['note'] ) . '</em>';
+					}
+					echo '</div>';
+				}
+			} else {
+				echo '<p class="dck-week3__rest">' . esc_html__( 'Rest & personal devotion', 'dck-elite' ) . '</p>';
+			}
+			echo '</div>';
+		}
+		echo '</div>';
+	}
+}
+
+add_action(
+	'wp_enqueue_scripts',
+	function () {
+		if ( is_page_template( array( 'template-services.php', 'template-events.php' ) ) ) {
+			wp_enqueue_script( 'dck-week', get_template_directory_uri() . '/assets/js/week.js', array(), DCK_ELITE_VERSION, true );
+		}
+	}
+);
