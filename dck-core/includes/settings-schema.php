@@ -447,39 +447,74 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 		);
 
 		/* ---------- Church tools ---------- */
+		$dck_pu = function ( $slug ) {
+			$p = get_page_by_path( $slug );
+			return $p ? get_permalink( $p ) : home_url( '/' . $slug . '/' );
+		};
 		$tabs['tools'] = array(
 			'title'    => __( 'Church Tools', 'dck-core' ),
 			'icon'     => 'dashicons-admin-tools',
-			'intro'    => __( 'Giving records, new visitor follow-up, event registration and the installable app. In messages you can use {name}, {amount}, {purpose}, {event}, {date}, {time} and {place}.', 'dck-core' ),
+			'prefill'  => true,
+			'intro'    => __( 'Everything below is already filled in with recommended wording - change anything you like and press Save. In messages you can use {name}, {amount}, {purpose}, {event}, {date}, {time} and {place}; they are replaced automatically for each person.', 'dck-core' ),
+			'links'    => array(
+				array( __( 'Giving Records', 'dck-core' ), admin_url( 'edit.php?post_type=dck_gift' ), 1 ),
+				array( __( 'New Visitors', 'dck-core' ), admin_url( 'edit.php?post_type=dck_visitor' ), 1 ),
+				array( __( 'Event Registrations', 'dck-core' ), admin_url( 'edit.php?post_type=dck_rsvp' ), 1 ),
+				array( __( 'Pastoral Requests', 'dck-core' ), admin_url( 'edit.php?post_type=dck_care' ), 1 ),
+				array( __( 'Fellowship Groups', 'dck-core' ), admin_url( 'edit.php?post_type=dck_fellowship' ), 1 ),
+				array( __( 'Volunteers', 'dck-core' ), admin_url( 'edit.php?post_type=dck_volunteer' ), 1 ),
+				array( __( 'Visitor QR code', 'dck-core' ), admin_url( 'edit.php?post_type=dck_visitor&page=dck-visitor-qr' ) ),
+				array( __( "View I'm New page", 'dck-core' ), $dck_pu( 'new-here' ) ),
+				array( __( 'View Give page', 'dck-core' ), $dck_pu( 'give' ) ),
+			),
 			'sections' => array(
 				array(
 					'title'  => __( 'Giving records', 'dck-core' ),
+					'desc'   => __( 'Members confirm M-Pesa or bank gifts on the Give page. The finance team verifies each one against the Equity statement in Giving Records.', 'dck-core' ),
 					'fields' => array(
-						$f( 'dck_give_finance_email', __( 'Finance team email', 'dck-core' ), 'email', '', __( 'Gets an email for every gift recorded on the Give page.', 'dck-core' ) ),
+						$f( 'dck_give_finance_email', __( 'Finance team email', 'dck-core' ), 'email', 'info@dckabeten.org', __( 'Gets an email for every gift recorded. Use the treasurer\'s email if different.', 'dck-core' ) ),
 						$f( 'dck_give_confirm_title', __( 'Form heading', 'dck-core' ), 'text', 'Let us know so we can thank you' ),
-						$f( 'dck_give_confirm_text', __( 'Form intro', 'dck-core' ), 'textarea' ),
-						$f( 'dck_give_thanks_wa', __( 'Thank-you message (WhatsApp and email)', 'dck-core' ), 'textarea', 'Dear {name}, thank you for your gift of KES {amount} towards {purpose}. We have received it with gratitude. God bless you abundantly! - Deliverance Church Kabete N' ),
+						$f( 'dck_give_confirm_text', __( 'Form intro', 'dck-core' ), 'textarea', 'Paid through M-Pesa or the bank? Share the details below. Our finance team confirms every gift against the church statement and sends you a thank-you receipt.' ),
+						$f( 'dck_give_thanks_wa', __( 'Thank-you message (WhatsApp and email)', 'dck-core' ), 'textarea', 'Dear {name}, thank you for your gift of KES {amount} towards {purpose}. We have received it with gratitude. "Each of you should give what you have decided in your heart to give... for God loves a cheerful giver" (2 Corinthians 9:7). God bless you abundantly! - Deliverance Church Kabete N, Cistern of Hope Center' ),
 					),
 				),
 				array(
 					'title'  => __( "New visitors (I'm New)", 'dck-core' ),
+					'desc'   => __( 'First-time visitors fill a short card on the I\'m New page or by scanning the QR code on the seats. The welcome team follows up from New Visitors.', 'dck-core' ),
 					'fields' => array(
-						$f( 'dck_welcome_email', __( 'Welcome team email', 'dck-core' ), 'email', '', __( 'Gets an email for every new visitor card.', 'dck-core' ) ),
-						$f( 'dck_welcome_img', __( 'Page photo', 'dck-core' ), 'image' ),
+						$f( 'dck_welcome_email', __( 'Welcome team email', 'dck-core' ), 'email', 'info@dckabeten.org', __( 'Gets an email for every new visitor card, with a one-tap WhatsApp welcome link.', 'dck-core' ) ),
+						$f( 'dck_welcome_img', __( 'Page photo', 'dck-core' ), 'image', '', __( 'Optional. If empty, the church worship photo is used.', 'dck-core' ) ),
 						$f( 'dck_welcome_title', __( 'Page headline', 'dck-core' ), 'text', "We're so glad you came" ),
-						$f( 'dck_welcome_lead', __( 'Page intro', 'dck-core' ), 'textarea' ),
-						$f( 'dck_welcome_wa_text', __( 'WhatsApp welcome message', 'dck-core' ), 'textarea', 'Hello {name}, thank you for worshipping with us at Deliverance Church Kabete N Market. We are so glad you came! Is there anything we can pray with you about this week? - Welcome Team' ),
-						$f( 'dck_welcome_email_text', __( 'Welcome email to the visitor', 'dck-core' ), 'textarea' ),
+						$f( 'dck_welcome_lead', __( 'Page intro', 'dck-core' ), 'textarea', 'Whether this was your first Sunday or you watched online, we would love to know you. It takes one minute, and someone from our welcome team will reach out to you this week.' ),
+						$f( 'dck_welcome_wa_text', __( 'WhatsApp welcome message', 'dck-core' ), 'textarea', 'Hello {name}, thank you for worshipping with us at Deliverance Church Kabete N Market, Cistern of Hope Center. We are so glad you came! Is there anything we can pray with you about this week? We would love to see you again on Sunday. - Welcome Team' ),
+						$f( 'dck_welcome_email_text', __( 'Welcome email to the visitor', 'dck-core' ), 'textarea', "Dear {name},\n\nThank you for worshipping with us at Deliverance Church Kabete N Market. It was a joy to have you!\n\nA member of our welcome team will reach out to you this week. If you have any questions, simply reply to this email or call us on +254 110 304521.\n\nWe gather every Sunday behind N Market, Uthiru. You are always welcome home.\n\nWith love,\nThe Welcome Team\nDeliverance Church Kabete N - Cistern of Hope Center" ),
 					),
 				),
 				array(
 					'title'  => __( 'Event registration', 'dck-core' ),
+					'desc'   => __( 'Tick "Open registration" on any event. Email reminders go out automatically the day before; WhatsApp reminders are one tap each from Event Registrations.', 'dck-core' ),
 					'fields' => array(
-						$f( 'dck_rsvp_wa_text', __( 'Reminder message (WhatsApp and email)', 'dck-core' ), 'textarea', 'Hello {name}, a reminder that you registered for {event} on {date} at {time}, {place}. We look forward to seeing you! - Deliverance Church Kabete N' ),
+						$f( 'dck_rsvp_wa_text', __( 'Reminder message (WhatsApp and email)', 'dck-core' ), 'textarea', 'Hello {name}, a friendly reminder that you registered for {event} on {date} at {time}, {place}. We look forward to seeing you - come expecting! - Deliverance Church Kabete N' ),
+					),
+				),
+				array(
+					'title'  => __( 'Pastoral care requests', 'dck-core' ),
+					'desc'   => __( 'Book time with a pastor and requests for baptism, baby dedication, weddings, membership class, home visits and funeral support.', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_care_email', __( 'Pastoral team email', 'dck-core' ), 'email', 'info@dckabeten.org', __( 'Gets an email for every request. Confidential details stay in wp-admin.', 'dck-core' ) ),
+						$f( 'dck_care_wa_text', __( 'WhatsApp reply to the requester', 'dck-core' ), 'textarea', 'Hello {name}, thank you for reaching out to Deliverance Church Kabete N about {purpose}. A member of our pastoral team will confirm a time with you shortly. God bless you.' ),
+					),
+				),
+				array(
+					'title'  => __( 'Fellowships & volunteers', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_volunteer_email', __( 'Volunteer coordinator email', 'dck-core' ), 'email', 'info@dckabeten.org', __( 'Gets an email when someone signs up to serve or join a fellowship.', 'dck-core' ) ),
+						$f( 'dck_volunteer_ministries', __( 'Ministries people can serve in (one per line)', 'dck-core' ), 'textarea', "Praise and Worship\nUshering and Protocol\nMedia and Sound\nChildren's Ministry (Sunday School)\nYouth Ministry\nIntercessory Prayer\nCare and Welfare\nHospitality\nEvangelism and Outreach\nCleaning and Maintenance" ),
 					),
 				),
 				array(
 					'title'  => __( 'Church app', 'dck-core' ),
+					'desc'   => __( 'How the app looks when someone installs it on their phone from the website.', 'dck-core' ),
 					'fields' => array(
 						$f( 'dck_app_name', __( 'App name', 'dck-core' ), 'text', 'Deliverance Church Kabete N' ),
 						$f( 'dck_app_short_name', __( 'Name under the icon (max 12 letters)', 'dck-core' ), 'text', 'DCK Kabete' ),

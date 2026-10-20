@@ -21,6 +21,7 @@ if ( ! function_exists( 'dck_mnav_icon' ) ) {
 			'pray'    => '<path d="M12 3v7"/><path d="M8.5 21 7 14l5-4 5 4-1.5 7"/><path d="M9 21h6"/>',
 			'phone'   => '<path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.5.56 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .56 3.5 1 1 0 0 1-.24 1Z"/>',
 			'map'     => '<path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+			'chat'    => '<path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.1-5.2A8.5 8.5 0 1 1 21 11.5z"/>',
 			'clock'   => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
 		);
 		return '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' . ( isset( $p[ $name ] ) ? $p[ $name ] : '' ) . '</svg>';
@@ -36,8 +37,19 @@ if ( ! function_exists( 'dck_mobile_menu_extras' ) ) {
 			array( dck_elite_page_url( 'prayer-requests' ), 'pray', __( 'Prayer Request', 'dck-elite' ) ),
 			array( dck_elite_page_url( 'give' ), 'give', __( 'Give', 'dck-elite' ) ),
 			array( dck_elite_page_url( 'services' ), 'clock', __( 'Service Times', 'dck-elite' ) ),
+			array( dck_elite_page_url( 'pastoral-care' ), 'pray', __( 'See a Pastor', 'dck-elite' ) ),
+			array( dck_elite_page_url( 'fellowships' ), 'home', __( 'Fellowships', 'dck-elite' ) ),
 		);
 		echo '<div class="dck-nav__extras">';
+		$wa_n = function_exists( 'dck_prayer_whatsapp' ) ? dck_prayer_whatsapp() : '';
+		echo '<div class="dck-nav__talk">';
+		if ( $tel ) {
+			echo '<a class="dck-nav__talk-call" href="tel:' . esc_attr( $tel ) . '">' . dck_mnav_icon( 'phone' ) . '<span><strong>' . esc_html__( 'Call us', 'dck-elite' ) . '</strong><small>' . esc_html( dck_home_val( 'dck_top_phone', '+254 110 304521' ) ) . '</small></span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput
+		}
+		if ( $wa_n ) {
+			echo '<a class="dck-nav__talk-wa" href="https://wa.me/' . esc_attr( $wa_n ) . '?text=' . rawurlencode( __( 'Hello DCK, I would like to talk to someone.', 'dck-elite' ) ) . '" target="_blank" rel="noopener">' . dck_mnav_icon( 'chat' ) . '<span><strong>' . esc_html__( 'WhatsApp', 'dck-elite' ) . '</strong><small>' . esc_html__( 'Chat with us', 'dck-elite' ) . '</small></span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput
+		}
+		echo '</div>';
 		if ( function_exists( 'dck_pwa_install_button' ) ) {
 			dck_pwa_install_button();
 		}
@@ -47,9 +59,6 @@ if ( ! function_exists( 'dck_mobile_menu_extras' ) ) {
 			echo '<a href="' . esc_url( $it[0] ) . '">' . dck_mnav_icon( $it[1] ) . '<span>' . esc_html( $it[2] ) . '</span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput -- static SVG.
 		}
 		echo '</div><div class="dck-nav__contact">';
-		if ( $tel ) {
-			echo '<a class="dck-nav__call" href="tel:' . esc_attr( $tel ) . '">' . dck_mnav_icon( 'phone' ) . '<span>' . esc_html( dck_home_val( 'dck_top_phone', '+254 110 304521' ) ) . '</span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput
-		}
 		if ( function_exists( 'dck_home_directions' ) ) {
 			echo '<a href="' . esc_url( dck_home_directions() ) . '" target="_blank" rel="noopener">' . dck_mnav_icon( 'map' ) . '<span>' . esc_html__( 'Get directions', 'dck-elite' ) . '</span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput
 		}

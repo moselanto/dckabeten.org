@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.21.0
+Version: 4.22.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -2416,3 +2416,52 @@ html.dck-focus .dck-tabbar{display:none!important}
 .dck-nav__new strong{color:var(--dck-blue)}
 @media (max-width:900px){.dck-gift__grid{grid-template-columns:1fr}}
 @media (max-width:520px){.dck-checks{grid-template-columns:1fr}}
+
+/* ============ v4.22 Mobile call/WhatsApp in header + menu; fellowships ============ */
+.dck-hcall,.dck-hwa{display:none}
+@media (max-width:1024px){
+  .dck-header__cta{gap:8px!important}
+  .dck-hcall{display:inline-flex;align-items:center;gap:7px;height:46px;padding:0 16px;border-radius:999px;background:#1f8f4e;color:#fff!important;font-weight:700;font-size:.95rem;text-decoration:none;box-shadow:0 8px 18px -10px rgba(31,143,78,.8)}
+  .dck-hcall:active{transform:scale(.97)}
+  .dck-hwa{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#e8f8ee;color:#1f8f4e!important}
+  .dck-brand{min-width:0;flex:1 1 auto}
+  .dck-brand img,.dck-brand .custom-logo{max-width:100%;height:auto}
+  .dck-nav__talk{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}
+  .dck-nav__talk a{display:flex;align-items:center;gap:10px;padding:14px;border-radius:16px;text-decoration:none;color:#fff}
+  .dck-nav__talk a span{display:flex;flex-direction:column;line-height:1.25}
+  .dck-nav__talk small{font-size:.78rem;opacity:.9}
+  .dck-nav__talk-call{background:#1f8f4e}
+  .dck-nav__talk-wa{background:#25D366}
+  .dck-nav__quick{grid-template-columns:1fr 1fr}
+}
+@media (max-width:430px){
+  .dck-hcall{width:46px;padding:0;justify-content:center}
+  .dck-hcall span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .dck-burger{width:46px!important;height:46px!important}
+}
+@media (max-width:359px){.dck-hwa{display:none}}
+.dck-fs-filter{margin:0 0 22px}
+.dck-fs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.dck-fs-card{background:#fff;border:1px solid var(--dck-line);border-radius:var(--dck-radius,18px);padding:22px;box-shadow:var(--dck-shadow);display:flex;flex-direction:column;gap:8px}
+.dck-fs-card[hidden]{display:none}
+.dck-fs-card h3{margin:4px 0 0}
+.dck-fs-card p{color:var(--dck-gray);margin:0}
+.dck-fs-card .dck-btn{align-self:flex-start;margin-top:auto}
+
+/* v4.22 gift purpose cards + quick amounts */
+.dck-purpose{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dck-purpose__opt{cursor:pointer;display:block}
+.dck-purpose__opt input{position:absolute;opacity:0;pointer-events:none}
+.dck-purpose__card{display:flex;flex-direction:column;gap:3px;height:100%;padding:13px 14px 13px 40px;border:1.5px solid var(--dck-line);border-radius:14px;background:#fff;position:relative;transition:border-color .2s,background .2s}
+.dck-purpose__card::before{content:"";position:absolute;left:14px;top:15px;width:16px;height:16px;border-radius:50%;border:2px solid #b8c0d6;background:#fff}
+.dck-purpose__card strong{color:var(--dck-blue-900);font-size:.98rem}
+.dck-purpose__card small{color:var(--dck-gray);font-size:.82rem;line-height:1.4}
+.dck-purpose__opt input:checked+.dck-purpose__card{border-color:var(--dck-blue);background:var(--dck-blue-100)}
+.dck-purpose__opt input:checked+.dck-purpose__card::before{border-color:var(--dck-blue);box-shadow:inset 0 0 0 3px #fff;background:var(--dck-blue)}
+.dck-purpose__opt input:focus-visible+.dck-purpose__card{outline:3px solid var(--dck-gold);outline-offset:2px}
+.dck-purpose__other{margin-top:10px}
+.dck-purpose__other[hidden]{display:none}
+.dck-amounts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.dck-amounts .dck-chip{cursor:pointer}
+.dck-amounts .dck-chip.is-active{background:var(--dck-blue);color:#fff;border-color:var(--dck-blue)}
+@media (max-width:420px){.dck-purpose{grid-template-columns:1fr}}

@@ -156,7 +156,11 @@ if ( ! function_exists( 'dck_core_render_field' ) ) {
 			switch ( $type ) {
 				case 'textarea':
 				case 'html':
-					echo '<textarea id="dck-' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" rows="3" placeholder="' . esc_attr( is_string( $field['default'] ) ? $field['default'] : '' ) . '">' . esc_textarea( get_theme_mod( $id, '' ) ) . '</textarea>';
+					$tv = (string) get_theme_mod( $id, '' );
+					if ( '' === $tv && ! empty( $field['prefill'] ) && is_string( $field['default'] ) ) {
+						$tv = $field['default'];
+					}
+					echo '<textarea id="dck-' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" rows="' . ( ! empty( $field['prefill'] ) ? 5 : 3 ) . '" placeholder="' . esc_attr( is_string( $field['default'] ) ? $field['default'] : '' ) . '">' . esc_textarea( $tv ) . '</textarea>';
 					break;
 				case 'image':
 					$url = (string) get_theme_mod( $id, '' );
@@ -172,7 +176,11 @@ if ( ! function_exists( 'dck_core_render_field' ) ) {
 					break;
 				default:
 					$t = in_array( $type, array( 'url', 'email', 'date' ), true ) ? $type : 'text';
-					echo '<input type="' . esc_attr( $t ) . '" class="regular-text" id="dck-' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( get_theme_mod( $id, '' ) ) . '" placeholder="' . esc_attr( is_string( $field['default'] ) ? $field['default'] : '' ) . '">';
+					$iv = (string) get_theme_mod( $id, '' );
+					if ( '' === $iv && ! empty( $field['prefill'] ) && is_string( $field['default'] ) ) {
+						$iv = $field['default'];
+					}
+					echo '<input type="' . esc_attr( $t ) . '" class="regular-text" id="dck-' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( $iv ) . '" placeholder="' . esc_attr( is_string( $field['default'] ) ? $field['default'] : '' ) . '">';
 			}
 		}
 		if ( $field['help'] ) {
@@ -225,12 +233,24 @@ if ( ! function_exists( 'dck_core_render_page' ) ) {
 				<?php if ( ! empty( $t['intro'] ) ) : ?>
 					<p class="dck-intro"><?php echo esc_html( $t['intro'] ); ?></p>
 				<?php endif; ?>
+				<?php if ( ! empty( $t['links'] ) ) : ?>
+					<section class="dck-card dck-quicklinks">
+						<h2><?php esc_html_e( 'Open the tools', 'dck-core' ); ?></h2>
+						<p>
+							<?php foreach ( $t['links'] as $ln ) : ?>
+								<a class="button<?php echo empty( $ln[2] ) ? '' : ' button-primary'; ?>" href="<?php echo esc_url( $ln[1] ); ?>"<?php echo 0 === strpos( $ln[1], admin_url() ) ? '' : ' target="_blank" rel="noopener"'; ?> style="margin:0 6px 6px 0"><?php echo esc_html( $ln[0] ); ?></a>
+							<?php endforeach; ?>
+						</p>
+					</section>
+				<?php endif; ?>
 				<?php foreach ( $t['sections'] as $sec ) : ?>
 					<section class="dck-card">
 						<h2><?php echo esc_html( $sec['title'] ); ?></h2>
+						<?php if ( ! empty( $sec['desc'] ) ) : ?><p class="description" style="margin:-4px 0 14px"><?php echo esc_html( $sec['desc'] ); ?></p><?php endif; ?>
 						<div class="dck-grid">
 							<?php
 							foreach ( $sec['fields'] as $field ) {
+								$field['prefill'] = ! empty( $t['prefill'] );
 								dck_core_render_field( $field );
 							}
 							?>

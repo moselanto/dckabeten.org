@@ -49,6 +49,20 @@ if ( ! function_exists( 'dck_gift_statuses' ) ) {
 	}
 }
 
+if ( ! function_exists( 'dck_gift_purpose_list' ) ) {
+	/* Title => description, from DCK Church > Giving > "Where your gift goes". */
+	function dck_gift_purpose_list() {
+		$out = array();
+		foreach ( explode( "\n", (string) dck_home_val( 'dck_give_purposes', "Tithes|Honour God with the first tenth of your increase.\nOfferings|Freewill gifts of thanksgiving and worship.\nChurch Building|Help us keep building our sanctuary in Uthiru.\nMissions and Evangelism|Carry the Gospel to new places.\nWelfare and Care|Support members and neighbours in need." ) ) as $line ) {
+			$parts = array_map( 'trim', explode( '|', $line, 2 ) );
+			if ( '' !== $parts[0] ) {
+				$out[ $parts[0] ] = isset( $parts[1] ) ? $parts[1] : '';
+			}
+		}
+		return $out;
+	}
+}
+
 if ( ! function_exists( 'dck_gift_purposes' ) ) {
 	function dck_gift_purposes() {
 		$out = array();
@@ -125,7 +139,10 @@ if ( ! function_exists( 'dck_gift_rest' ) ) {
 		if ( $email && ! is_email( $email ) ) {
 			$email = '';
 		}
-		if ( ! in_array( $purpose, dck_gift_purposes(), true ) ) {
+		if ( 'other' === $purpose ) {
+			$other   = dck_sec_cap( sanitize_text_field( isset( $p['purpose_other'] ) ? $p['purpose_other'] : '' ), 80 );
+			$purpose = $other ? 'Other: ' . $other : __( 'General', 'dck-elite' );
+		} elseif ( ! in_array( $purpose, dck_gift_purposes(), true ) ) {
 			$purpose = __( 'General', 'dck-elite' );
 		}
 		if ( $code ) {
@@ -372,16 +389,20 @@ if ( ! function_exists( 'dck_gift_form' ) ) {
 							<label><input type="radio" name="channel" value="bank"><span><?php esc_html_e( 'Bank', 'dck-elite' ); ?></span></label>
 						</div>
 					</div>
-					<div class="dck-cform__row">
-						<label class="dck-cform__field"><span><?php esc_html_e( 'Purpose', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
-							<select name="purpose" required>
-								<?php foreach ( dck_gift_purposes() as $pp ) : ?>
-									<option value="<?php echo esc_attr( $pp ); ?>"><?php echo esc_html( $pp ); ?></option>
-								<?php endforeach; ?>
-							</select>
-						</label>
-						<label class="dck-cform__field"><span><?php esc_html_e( 'Amount (KES)', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="number" name="amount" min="1" step="1" inputmode="numeric" required></label>
+					<div class="dck-cform__field">
+						<span><?php esc_html_e( 'What is your gift for?', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
+						<div class="dck-purpose" role="radiogroup">
+							<?php $dck_first_p = true; foreach ( dck_gift_purpose_list() as $pt => $pd ) : ?>
+								<label class="dck-purpose__opt"><input type="radio" name="purpose" value="<?php echo esc_attr( $pt ); ?>"<?php checked( $dck_first_p ); ?>><span class="dck-purpose__card"><strong><?php echo esc_html( $pt ); ?></strong><?php if ( $pd ) : ?><small><?php echo esc_html( wp_trim_words( $pd, 12 ) ); ?></small><?php endif; ?></span></label>
+							<?php $dck_first_p = false; endforeach; ?>
+							<label class="dck-purpose__opt"><input type="radio" name="purpose" value="other"><span class="dck-purpose__card"><strong><?php esc_html_e( 'Something else', 'dck-elite' ); ?></strong><small><?php esc_html_e( 'A pledge, project or special appeal', 'dck-elite' ); ?></small></span></label>
+						</div>
+						<input type="text" name="purpose_other" class="dck-purpose__other" maxlength="80" hidden placeholder="<?php esc_attr_e( 'e.g. Building pledge, Youth camp, Thanksgiving', 'dck-elite' ); ?>">
 					</div>
+					<label class="dck-cform__field"><span><?php esc_html_e( 'Amount (KES)', 'dck-elite' ); ?> <em class="dck-req">*</em></span>
+						<input type="number" name="amount" min="1" step="1" inputmode="numeric" required>
+						<span class="dck-amounts"><?php foreach ( array( 500, 1000, 2000, 5000, 10000 ) as $amt ) : ?><button type="button" class="dck-chip" data-amt="<?php echo esc_attr( $amt ); ?>"><?php echo esc_html( number_format_i18n( $amt ) ); ?></button><?php endforeach; ?></span>
+					</label>
 					<label class="dck-cform__field dck-gift__code"><span><?php esc_html_e( 'M-Pesa code', 'dck-elite' ); ?></span><input type="text" name="code" maxlength="12" autocapitalize="characters" placeholder="<?php esc_attr_e( 'From your M-Pesa SMS, e.g. SJK4ABC12D', 'dck-elite' ); ?>"></label>
 					<div class="dck-cform__row">
 						<label class="dck-cform__field"><span><?php esc_html_e( 'Your name', 'dck-elite' ); ?> <em class="dck-req">*</em></span><input type="text" name="name" autocomplete="name" required></label>
@@ -394,7 +415,13 @@ if ( ! function_exists( 'dck_gift_form' ) ) {
 				</form>
 			</div>
 		</section>
-		<script>document.addEventListener('change',function(e){if(e.target&&e.target.name==='channel'){var c=document.querySelector('.dck-gift__code');if(c){c.hidden=e.target.value!=='mpesa';}}});</script>
+		<script>
+		document.addEventListener('change',function(e){var t=e.target;if(!t){return;}
+			if(t.name==='channel'){var c=document.querySelector('.dck-gift__code');if(c){c.hidden=t.value!=='mpesa';}}
+			if(t.name==='purpose'){var o=document.querySelector('.dck-purpose__other');if(o){o.hidden=t.value!=='other';if(!o.hidden){o.focus();}}}
+		});
+		document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-amt]');if(!b){return;}var i=document.querySelector('.dck-gift input[name="amount"]');if(i){i.value=b.getAttribute('data-amt');}var all=document.querySelectorAll('.dck-amounts .dck-chip');for(var k=0;k<all.length;k++){all[k].classList.toggle('is-active',all[k]===b);}});
+		</script>
 		<?php
 	}
 }

@@ -3,7 +3,7 @@
  * Plugin Name:       DCK Core
  * Plugin URI:        https://dckabeten.org/
  * Description:       Core features for Deliverance Church Kabete N Market. Adds one simple Church Settings screen where every piece of site content can be edited (contact details, service times, homepage, ministries, giving, live stream, SEO and legal pages), and keeps Sermons safe even if the theme changes.
- * Version:           1.3.0
+ * Version:           1.4.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            DCK Elite Team
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DCK_CORE_VERSION', '1.3.0' );
+define( 'DCK_CORE_VERSION', '1.4.0' );
 define( 'DCK_CORE_FILE', __FILE__ );
 define( 'DCK_CORE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'DCK_CORE_URL', plugin_dir_url( __FILE__ ) );
