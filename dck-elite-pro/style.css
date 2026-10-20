@@ -4,7 +4,7 @@ Theme URI: https://dckabeten.org/
 Author: DCK Elite Team
 Author URI: https://dckabeten.org/
 Description: Premium church & ministry theme for Deliverance Church Kabete N Market (Cistern of Hope Center). Classic, hardened build: token-driven design system, cinematic homepage, fast and accessible. Runs on PHP 7.4+ and WordPress 6.0+.
-Version: 4.31.0
+Version: 4.32.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -2629,3 +2629,22 @@ html.dck-focus .dck-tabbar{display:none!important}
 .dck-heard__detail{margin-top:10px}
 .dck-heard__detail[hidden]{display:none}
 @media (max-width:520px){.dck-heard__grid{grid-template-columns:1fr}}
+
+
+/* ============ v4.32.0 Mobile menu: no sideways overflow ============ */
+@media (max-width:1024px){
+  html,body{overflow-x:hidden;overflow-x:clip}
+  .dck-nav.is-open{overflow-x:hidden;max-width:100vw;box-sizing:border-box;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .dck-nav.is-open *{box-sizing:border-box}
+  .dck-nav__new,.dck-nav__talk a,.dck-nav__quick a,.dck-install{white-space:normal;min-width:0;max-width:100%;overflow-wrap:anywhere}
+  .dck-nav__talk,.dck-nav__quick{grid-template-columns:minmax(0,1fr) minmax(0,1fr);width:100%}
+  .dck-nav__talk a span,.dck-install__txt,.dck-nav__quick a span{min-width:0}
+  .dck-nav__talk small{overflow-wrap:normal;word-break:normal}
+  .dck-install{width:100%}
+  .dck-install__btn{flex:0 0 auto;white-space:nowrap}
+}
+@media (max-width:360px){
+  .dck-nav__talk a{padding:12px;gap:8px}
+  .dck-nav__talk strong{font-size:.95rem}
+  .dck-nav__talk small{font-size:.72rem}
+}
