@@ -217,7 +217,7 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 		$tabs['pages'] = array(
 			'title'    => __( 'Page Text', 'dck-core' ),
 			'icon'     => 'dashicons-media-text',
-			'intro'    => __( 'Headings and wording on the Contact and Bible pages. Leave blank to use the built-in wording.', 'dck-core' ),
+			'intro'    => __( 'Headings and wording on the Contact, Sermons and Bible pages. Leave blank to use the built-in wording.', 'dck-core' ),
 			'sections' => array(
 				array(
 					'title'  => __( 'Contact page', 'dck-core' ),
@@ -229,6 +229,14 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 						$f( 'dck_contact_reply_note', __( 'Reply-time note', 'dck-core' ), 'textarea', 'We usually reply within one working day. For urgent prayer or pastoral care, please call or WhatsApp us.' ),
 						$f( 'dck_contact_topics', __( 'Message topics (one per line)', 'dck-core' ), 'textarea', "General enquiry\nPlan a visit\nPrayer and pastoral care\nGiving\nMinistries and serving\nMedia and partnerships" ),
 						$f( 'dck_contact_map_query', __( 'Map location (name or address)', 'dck-core' ), 'text', 'Deliverance Church Kabete N Market, Uthiru, Nairobi, Kenya' ),
+					),
+				),
+				array(
+					'title'  => __( 'Sermons page', 'dck-core' ),
+					'fields' => array(
+						$f( 'dck_sermons_eyebrow', __( 'Small label', 'dck-core' ), 'text', 'Grow in the Word' ),
+						$f( 'dck_sermons_title', __( 'Page title', 'dck-core' ), 'text', 'Sermon Library' ),
+						$f( 'dck_sermons_lead', __( 'Intro text', 'dck-core' ), 'textarea' ),
 					),
 				),
 				array(

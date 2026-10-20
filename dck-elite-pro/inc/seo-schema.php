@@ -152,7 +152,7 @@ if ( ! function_exists( 'dck_seo_extra' ) ) {
 		if ( is_singular( 'dck_sermon' ) ) {
 			$id    = get_queried_object_id();
 			$video = get_post_meta( $id, '_dck_video_url', true );
-			$thumb = has_post_thumbnail( $id ) ? get_the_post_thumbnail_url( $id, 'large' ) : get_post_meta( $id, '_dck_sermon_image', true );
+			$thumb = function_exists( 'dck_sermon_image_url' ) ? dck_sermon_image_url( $id ) : get_post_meta( $id, '_dck_sermon_image', true );
 			if ( ! $thumb && function_exists( 'dck_seo_image_default' ) ) {
 				$thumb = dck_seo_image_default();
 			}

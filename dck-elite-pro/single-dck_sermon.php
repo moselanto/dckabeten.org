@@ -16,7 +16,7 @@ while ( have_posts() ) :
 	$audio     = get_post_meta( $sid, '_dck_audio_url', true );
 	$scripture = get_post_meta( $sid, '_dck_scripture', true );
 	$download  = get_post_meta( $sid, '_dck_download_url', true );
-	$thumb     = has_post_thumbnail() ? get_the_post_thumbnail_url( $sid, 'large' ) : get_post_meta( $sid, '_dck_sermon_image', true );
+	$thumb     = function_exists( 'dck_sermon_image_url' ) ? dck_sermon_image_url( $sid ) : get_post_meta( $sid, '_dck_sermon_image', true );
 	$speakers  = get_the_term_list( $sid, 'dck_sermon_speaker', '', ', ' );
 	$series    = get_the_term_list( $sid, 'dck_sermon_series', '', ', ' );
 	$permalink = get_permalink();

@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.3.0' );
+	define( 'DCK_ELITE_VERSION', '4.3.1' );
 }
 
 /**
@@ -786,6 +786,10 @@ add_action( 'after_switch_theme', 'dck_elite_setup_site' );
 /* Editable content layer (defaults + helpers). Loaded first. */
 if ( file_exists( get_template_directory() . '/inc/content.php' ) ) {
 	require_once get_template_directory() . '/inc/content.php';
+}
+
+if ( file_exists( get_template_directory() . '/inc/sermons.php' ) ) {
+	require_once get_template_directory() . '/inc/sermons.php';
 }
 
 /* Shared AI layer (Church Assistant). */
