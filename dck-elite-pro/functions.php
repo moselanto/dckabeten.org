@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'DCK_ELITE_VERSION' ) ) {
-	define( 'DCK_ELITE_VERSION', '4.33.0' );
+	define( 'DCK_ELITE_VERSION', '4.34.0' );
 }
 
 /**
@@ -870,6 +870,9 @@ if ( file_exists( get_template_directory() . '/inc/seo-schema.php' ) ) {
 }
 if ( file_exists( get_template_directory() . '/inc/seo-pages.php' ) ) {
 	require_once get_template_directory() . '/inc/seo-pages.php';
+}
+if ( file_exists( get_template_directory() . '/inc/seo-links.php' ) ) {
+	require_once get_template_directory() . '/inc/seo-links.php';
 }
 if ( file_exists( get_template_directory() . '/inc/blog.php' ) ) {
 	require_once get_template_directory() . '/inc/blog.php';

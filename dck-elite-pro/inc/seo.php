@@ -228,6 +228,91 @@ if ( ! function_exists( 'dck_seo_address' ) ) {
 	}
 }
 
+/* ---------------- 4.34.0: people, areas served, weekly services ---------------- */
+if ( ! function_exists( 'dck_seo_people' ) ) {
+	/* DCK Church > Church & Contact > Pastors for Google. One line each: Name|Title|founder (third part optional). */
+	function dck_seo_people() {
+		$def = "Justus Kubai|Lead Pastor and Founder|founder\nClare Kubai|Lead Pastor and Founder|founder\nHenry Onzere|Assistant Pastor";
+		$raw = function_exists( 'dck_home_val' ) ? (string) dck_home_val( 'dck_seo_people', $def ) : $def;
+		$out = array();
+		foreach ( preg_split( '/\r\n|\r|\n/', $raw ) as $line ) {
+			$p = array_map( 'trim', explode( '|', $line ) );
+			if ( empty( $p[0] ) ) {
+				continue;
+			}
+			$out[] = array(
+				'name'    => sanitize_text_field( $p[0] ),
+				'title'   => isset( $p[1] ) ? sanitize_text_field( $p[1] ) : '',
+				'founder' => isset( $p[2] ) && 'founder' === strtolower( $p[2] ),
+			);
+		}
+		return apply_filters( 'dck_seo_people', $out );
+	}
+}
+if ( ! function_exists( 'dck_seo_areas' ) ) {
+	/* DCK Church > Church & Contact > Areas served (comma separated). */
+	function dck_seo_areas() {
+		$def = 'Uthiru, Kabete, Upper Kabete, Kangemi, Mountain View, Kinoo, Waiyaki Way, Nairobi';
+		$raw = function_exists( 'dck_home_val' ) ? (string) dck_home_val( 'dck_seo_areas', $def ) : $def;
+		$out = array();
+		foreach ( array_filter( array_map( 'trim', explode( ',', $raw ) ) ) as $a ) {
+			$out[] = array( '@type' => 'Place', 'name' => sanitize_text_field( $a ) . ( 'Nairobi' === $a ? ', Kenya' : ', Nairobi, Kenya' ) );
+		}
+		return $out;
+	}
+}
+if ( ! function_exists( 'dck_seo_weekly_events' ) ) {
+	/* Sunday and weekly gatherings as recurring Event nodes (eventSchedule). Monthly Keshas are skipped. */
+	function dck_seo_weekly_events() {
+		if ( ! function_exists( 'dck_gatherings' ) || ! function_exists( 'dck_seo_parse_span' ) ) {
+			return array();
+		}
+		$days = array( 'sunday' => 'Sunday', 'monday' => 'Monday', 'tuesday' => 'Tuesday', 'wednesday' => 'Wednesday', 'thursday' => 'Thursday', 'friday' => 'Friday', 'saturday' => 'Saturday' );
+		$out  = array();
+		foreach ( (array) dck_gatherings() as $g ) {
+			$type = isset( $g['type'] ) ? $g['type'] : '';
+			if ( 'monthly' === $type || empty( $g['name'] ) ) {
+				continue;
+			}
+			$se = dck_seo_parse_span( isset( $g['time'] ) ? $g['time'] : '' );
+			if ( ! $se ) {
+				continue;
+			}
+			$when  = strtolower( 'sunday' === $type ? 'sunday' : ( isset( $g['when'] ) ? (string) $g['when'] : '' ) );
+			$byday = array();
+			foreach ( $days as $k => $d ) {
+				if ( false !== strpos( $when, $k ) ) {
+					$byday[] = 'https://schema.org/' . $d;
+				}
+			}
+			if ( ! $byday ) {
+				continue;
+			}
+			$out[] = array_filter( array(
+				'@type'               => 'Event',
+				'@id'                 => dck_seo_id( 'service-' . sanitize_title( $g['name'] ) ),
+				'name'                => wp_strip_all_tags( $g['name'] ) . ' - Deliverance Church Kabete N Market',
+				'description'         => isset( $g['desc'] ) ? wp_strip_all_tags( $g['desc'] ) : '',
+				'eventAttendanceMode' => 'https://schema.org/MixedEventAttendanceMode',
+				'eventStatus'         => 'https://schema.org/EventScheduled',
+				'isAccessibleForFree' => true,
+				'image'               => ! empty( $g['img'] ) ? $g['img'] : '',
+				'location'            => array( '@id' => dck_seo_id( 'church' ) ),
+				'organizer'           => array( '@id' => dck_seo_id( 'church' ) ),
+				'eventSchedule'       => array(
+					'@type'            => 'Schedule',
+					'byDay'            => $byday,
+					'startTime'        => $se[0] . ':00',
+					'endTime'          => $se[1] . ':00',
+					'repeatFrequency'  => 'P1W',
+					'scheduleTimezone' => 'Africa/Nairobi',
+				),
+			) );
+		}
+		return $out;
+	}
+}
+
 if ( ! function_exists( 'dck_seo_jsonld' ) ) {
 	function dck_seo_jsonld( $meta ) {
 		$name   = get_bloginfo( 'name' );
@@ -252,11 +337,41 @@ if ( ! function_exists( 'dck_seo_jsonld' ) ) {
 				'openingHoursSpecification' => dck_seo_hours(),
 			)
 		);
+		/* Map pin: DCK Church > Church & Contact (default = Google Business Profile pin, 22 Oct 2026). */
 		$lat = get_theme_mod( 'dck_seo_lat', '' );
 		$lng = get_theme_mod( 'dck_seo_lng', '' );
+		if ( '' === trim( (string) $lat ) || '' === trim( (string) $lng ) ) {
+			$lat = '-1.2680913';
+			$lng = '36.7298952';
+		}
 		if ( is_numeric( $lat ) && is_numeric( $lng ) ) {
 			$church['geo'] = array( '@type' => 'GeoCoordinates', 'latitude' => (float) $lat, 'longitude' => (float) $lng );
+			if ( empty( $church['hasMap'] ) ) {
+				$church['hasMap'] = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( $lat . ',' . $lng );
+			}
 		}
+		$areas = dck_seo_areas();
+		if ( $areas ) {
+			$church['areaServed'] = $areas;
+		}
+		$church['knowsLanguage'] = array( 'en', 'sw' );
+		$people = dck_seo_people();
+		$person_nodes = array();
+		foreach ( $people as $i => $pp ) {
+			$pid = dck_seo_id( 'person-' . sanitize_title( $pp['name'] ) );
+			$person_nodes[] = array_filter( array(
+				'@type'    => 'Person',
+				'@id'      => $pid,
+				'name'     => $pp['name'],
+				'jobTitle' => $pp['title'],
+				'worksFor' => array( '@id' => dck_seo_id( 'church' ) ),
+			) );
+			$church['employee'][] = array( '@id' => $pid );
+			if ( $pp['founder'] ) {
+				$church['founder'][] = array( '@id' => $pid );
+			}
+		}
+		$church['foundingDate'] = '2017-06-11';
 		$website = array(
 			'@type'      => 'WebSite',
 			'@id'        => dck_seo_id( 'website' ),
@@ -278,7 +393,10 @@ if ( ! function_exists( 'dck_seo_jsonld' ) ) {
 		if ( 'FAQPage' === $page['@type'] ) {
 			$page['@type'] = 'WebPage'; // The FAQ entity itself is emitted by inc/faq.php from the visible Q&As.
 		}
-		$graph = array( $church, $website );
+		$graph = array_merge( array( $church, $website ), $person_nodes );
+		if ( is_front_page() || is_page_template( 'template-services.php' ) || is_page( array( 'services', 'plan-your-visit' ) ) ) {
+			$graph = array_merge( $graph, dck_seo_weekly_events() );
+		}
 		$nodes = function_exists( 'dck_seo_extra_nodes' ) ? dck_seo_extra_nodes( $url ) : array();
 		foreach ( $nodes as $n ) {
 			if ( 'BreadcrumbList' === $n['@type'] ) {
