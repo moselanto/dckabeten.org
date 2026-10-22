@@ -28,6 +28,14 @@ Last updated: 2026-10-22 (Thu), by Ray (Town assistant). Update this file at the
 
 ## 3. Live-site work done outside the repo (wp-admin, Cloudflare, Google)
 ### 2026-10-22
+- **5 new SEO blog posts published** (by the assistant via wp-admin; content source `DCK SEO Growth Plan and Ready Posts.docx` in the Town library). Verified live: 1 title, 1 description, 1 canonical, 1 JSON-LD graph with BlogPosting, 1 H1, featured image, in `post-sitemap.xml`:
+  - /sunday-service-in-uthiru-what-to-expect/ (focus "Sunday service in Uthiru")
+  - /church-near-upper-kabete-campus-students/ (focus "church near Upper Kabete campus")
+  - /what-is-a-kesha-overnight-prayer/ (focus "Kesha overnight prayer")
+  - /directions-to-deliverance-church-kabete-n-market/ (matatu stops and parking left generic until the church confirms details)
+  - /ibada-ya-jumapili-uthiru-kabete/ (Kiswahili, focus "kanisa Uthiru"; a fluent speaker should proofread)
+  - Posts 1 and 5 use the website's Sunday times; update them if leadership confirms different times. Next topics list is in the growth-plan doc.
+  - The church temporarily disabled the wp-login CAPTCHA for this; it must be re-enabled.
 - **Opening hours** set to the GBP hours in the theme schema (code default) and in `llms.txt` (new "Opening hours" section, service times kept separate).
 - Theme 4.33.0 + DCK Core 1.10.0 uploaded by the church; old folders kept as `dck-elite-pro-old` / `dck-core-old` in cPanel (can be deleted once stable).
 - Church guide for remaining content tasks: `DCK Remaining Tasks Guide.docx` (Town library, DCK Website), also in `docs/handover/`.
