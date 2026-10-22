@@ -1,5 +1,7 @@
 # SEO / GEO / AEO audit - Deliverance Church Kabete N Market (20 Oct 2026)
 
+> **Status update 2026-10-22:** most manual actions in section 4 are done (robots.txt live, GSC + Bing verified, GBP managed, Rank Math aligned, GA4 key events). AI training crawlers are now ALLOWED (church decision 2026-10-21), and schema opening hours now come from the GBP hours, not Gatherings. Current state and the pending list live in `docs/PROJECT-STATUS.md`.
+
 Branch `seo-geo-aeo-audit-2026`. No production deployment. Evidence: live fetches of https://dckabeten.org on 20 Oct 2026, plus a local WordPress (SQLite) running this branch.
 
 ## 1. Findings (live site, verified)

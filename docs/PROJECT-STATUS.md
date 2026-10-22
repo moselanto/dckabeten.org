@@ -1,46 +1,64 @@
 # Project status and handoff (read after AGENTS.md)
 
-Last updated: 2026-10-20 (Tue), by Ray (Town assistant). Update this file at the end of every task.
+Last updated: 2026-10-22 (Thu), by Ray (Town assistant). Update this file at the end of every task.
 
 ## 1. Where things stand
 
 | Item | Version / state |
 |---|---|
-| Theme `dck-elite-pro/` on `main` | **4.31.0** (4.30.0 = PR #1 merged, d20f9df; 4.31.0 = FAQ editable in admin) |
-| Plugin `dck-core/` on `main` | **1.9.0** (FAQ field in DCK Church > Page Text) |
-| Theme installed on the live site | **older than 4.29.0** (live I'm New page still shows the old "How did you hear about us?" dropdown). 4.29.0 and 4.30.0 are NOT live yet |
-| Live SEO plugin | Rank Math (free), fully configured 2026-10-20 (see section 3) |
-| Live robots.txt | Replaced by Agnes with `docs/seo/robots.txt`; **not yet re-verified** from outside |
-| Hosting | cPanel, behind Cloudflare. WordPress zip uploader fails on this server |
+| Theme `dck-elite-pro/` on `main` | **4.33.0** (PR #2 merged 2026-10-22: Plan Your Visit link + Google opening hours in schema) |
+| Plugin `dck-core/` on `main` | **1.10.0** (adds `dck_seo_opening_hours` field) |
+| Theme / plugin installed on the live site | **4.33.0 / 1.10.0**, installed by the church via cPanel on 2026-10-22 and verified live |
+| Live SEO plugin | Rank Math (free), configured 2026-10-20 (see section 3) |
+| Live robots.txt | `docs/seo/robots.txt` (identical to live, verified 2026-10-22). Allows search AND AI training crawlers (church decision 2026-10-21) |
+| Live llms.txt | `docs/seo/llms.txt` (identical to live, verified 2026-10-22) |
+| Hosting | cPanel, behind Cloudflare (free plan). WordPress zip uploader fails on this server: install themes/plugins via cPanel File Manager |
+| Google Business Profile | "Deliverance church Kabete N Market at Waiyaki way, Nairobi", managed by deliverancechurchn24@gmail.com. Hours and pin updated by the church 2026-10-22; **GBP is the source of truth for opening hours and location** |
+| Analytics | GA4 `G-MMV7163YMC` (property 559955222). Loaded once per page |
 
-## 2. Code work done (summary, newest first; details in AGENTS.md changelog)
-- **4.31.0 / Core 1.9.0** editability audit: all church facts (phone, WhatsApp, email, address, gatherings, pastors, ministries, page text, giving, legal) were confirmed editable in DCK Church; the remaining gap, the FAQ page, is now editable (`dck_faq_items`, one line per question `Group|Question|Answer`, tokens %PHONE% %EMAIL% %SERVICES% %HOME%; blank = built-in FAQ). Remaining literal text in code is only fallback defaults, one-time seed content (sermons/posts already stored in the database) and SEO fallbacks unused while Rank Math is active. Handover manual for church staff: `DCK Kabete - Website Editing and Handover Manual.docx` in the Town library (DCK Website).
-- **4.30.0** SEO single source of truth: with Rank Math/Yoast active the plugin owns title, description, canonical, robots, OG and sitemap; the theme outputs ONE JSON-LD `@graph` (#church, #website, {url}#webpage, breadcrumb, video/article/event, blog posts) and strips the plugin graph via `rank_math/json_ld` and `wpseo_json_ld_output`. Hours from Gatherings, no placeholder sameAs, YouTube VideoObject embedUrl, Event only for dated events, SearchAction and meta keywords removed, AI search crawlers allowed in robots. Report: `docs/seo/SEO-AUDIT-2026.md`.
-- **4.29.0** full local verification (24 pages, 10 REST forms, 17 admin screens, 2 Excel exports); translations-too-early notice fixed; I'm New "How did you hear" = 12 radio cards + follow-up detail.
-- **4.17-4.28 / Core 1.1-1.8**: speed pass, mobile app navigation, PWA, church tools (giving, visitors, RSVP, pastoral care, fellowships, volunteers), Paystack M-Pesa STK, Member Register with Excel round trip, security audit.
+## 2. Code work done (newest first; details in AGENTS.md changelog)
+- **4.33.0 / Core 1.10.0 (2026-10-22)**
+  - `template-parts/join-us.php`: "Plan Your Visit" button now uses `dck_elite_page_url( 'plan-your-visit' )`, same tab (it used to open the map). Used on About, Ministries, Events, Contact, Terms. Verified live.
+  - `inc/seo.php` `dck_seo_hours()`: `openingHoursSpecification` now comes from DCK Church > Church & Contact > **Opening hours (Google)** (`dck_seo_opening_hours`, one line per day `Day|HH:MM|HH:MM`, 24-hour). Default = GBP hours. Blank or invalid falls back to the old Gatherings-based hours. Verified live on the homepage graph.
+  - Opening hours (must match GBP): Mon-Wed 09:00-18:00, Thu 09:00-19:00, Fri-Sat 09:00-18:00, Sun 07:00-18:00. **Service times are separate** and stay on Services/FAQ/Gatherings.
+  - `php -l` was NOT run (no PHP in the assistant sandbox); the live site renders without errors.
+- **4.31.0 / Core 1.9.0** FAQ editable in admin (`dck_faq_items`, `Group|Question|Answer`, tokens %PHONE% %EMAIL% %SERVICES% %HOME%).
+- **4.30.0** SEO single source of truth: Rank Math owns title/description/canonical/robots/OG/sitemap; theme outputs ONE JSON-LD `@graph` and strips Rank Math's graph. Report: `docs/seo/SEO-AUDIT-2026.md`.
+- **4.29.0 and earlier**: see AGENTS.md.
 
-## 3. Live-site work done in WordPress admin (not in the repo)
-Done through the live wp-admin (user `moses`) with Rank Math, 2026-10-20:
-- **Rank Math SEO title + meta description** set on all 63 public URLs: 19 core pages, `/blog/`, 22 posts, `/sermons/` archive, 6 sermons, 8 events, 6 categories. Posts, sermons, events and categories also have a focus keyword (the sermon archive has no focus-keyword field). Source of truth for the wording: `docs/seo/seo-meta.json` (path, title, description). Rules used: titles <= 60 chars, descriptions 110-160 chars, every core page names Uthiru / Kabete / N Market.
-- **Local SEO / Knowledge Graph**: Organization (free Rank Math has no Church type), name "Deliverance Church Kabete N Market", alternate "Cistern of Hope Center", logo `cropped-finallogo.png`, URL, info@dckabeten.org, +254110304521, address Behind N Market, Uthiru, Kabete, Nairobi 00605 KE, hours Sun 08:00-13:00, Tue 18:00-19:00, Thu 18:00-19:00. Local SEO, Image SEO and Instant Indexing modules on.
-- Pages default schema = None (theme provides the graph). OG fallback image = church logo. Sitemap includes featured images (`/sitemap_index.xml` is the only sitemap; core `wp-sitemap.xml` is 403).
-- Tag archives noindex,follow; author archives and date archives disabled; search results noindex.
-- Auto ALT/TITLE for images: format `%title% - Deliverance Church Kabete`.
-- **Post tags** (8 curated, each on 3-6 posts): Prayer Life, Bible Study, Marriage & Family, Christian Living, Hope & Encouragement, Youth, New Believers, Church in Nairobi. Do not create one-off tags.
-- "Sample Page" moved to Trash.
-- Earlier: a dedicated Editor account `ray-assistant` was created for the assistant (never store its password in the repo or chat).
+## 3. Live-site work done outside the repo (wp-admin, Cloudflare, Google)
+### 2026-10-22
+- **Opening hours** set to the GBP hours in the theme schema (code default) and in `llms.txt` (new "Opening hours" section, service times kept separate).
+- Theme 4.33.0 + DCK Core 1.10.0 uploaded by the church; old folders kept as `dck-elite-pro-old` / `dck-core-old` in cPanel (can be deleted once stable).
+- Church guide for remaining content tasks: `DCK Remaining Tasks Guide.docx` (Town library, DCK Website), also in `docs/handover/`.
+
+### 2026-10-21
+- **Full live audit of the 63 sitemap URLs**: titles, descriptions, one H1, canonical, OG/Twitter, one JSON-LD graph per page, GA tag once, GSC + Bing verification tags on home, no noindex, no images without alt, redirects and 404s OK.
+- **Search engines**: site verified in Google Search Console and Bing Webmaster Tools; Rank Math account connected (Sign in with Google).
+- **GA4 click tracking**: WPCode snippet ID **653** "GA4 click tracking" (Site Wide Footer). Events: `phone_call`, `whatsapp_click`, `directions_click` (regex includes maps links and `share.google`), `plan_visit_click`, `live_click`, `give_click`. Key events: phone_call, whatsapp_click, directions_click, plan_visit_click (verified in Realtime).
+- **robots.txt / llms.txt** uploaded to `public_html`. Cloudflare: AI "Training" set to Allow and Bot Preference Sync turned off, so Cloudflare no longer injects disallow lines (verified).
+- **Cloudflare redirect rule**: Hostname equals `www.dckabeten.org` -> 301 to `https://dckabeten.org` preserving path and query (verified single hop).
+- **Contact page**: added "To speak with Pastor Justus Kubai, call or WhatsApp +254 110 304521. He has access to this number."
+- **FAQ** (DCK Church FAQ field): 23 questions incl. "How do I talk to Pastor Justus Kubai?"; FAQPage schema has 23 items (verified). Note: the assistant's browser tool refuses to paste text containing Paybill/Till/bank numbers; the church pasted it manually.
+- **Google Business Profile**: management request accepted; deliverancechurchn24@gmail.com is a manager.
+
+### 2026-10-20
+- Rank Math titles + descriptions on all 63 URLs (source: `docs/seo/seo-meta.json`), Local SEO / Knowledge Graph (Organization, alternate name "Cistern of Hope Center"), sitemap `/sitemap_index.xml`, tag archives noindex, author/date archives off, 8 curated post tags, Auto ALT format `%title% - Deliverance Church Kabete`. Editor account `ray-assistant` exists (never store passwords in the repo).
+- Note: Rank Math Local SEO hours still show the old service-style hours (Sun 08:00-13:00, Tue/Thu 18:00-19:00). They are not output (the theme strips Rank Math schema), so this is cosmetic; update to the GBP hours if anyone touches that screen.
 
 ## 4. Pending - next agent picks up here (in priority order)
-1. **Test 4.30.0 with Rank Math installed** on the local test WordPress (`wp plugin install seo-by-rank-math --activate`), configure it like section 3, and confirm each page outputs exactly 1 canonical, 1 description, 1 JSON-LD graph, and no Rank Math `@graph`. This path was never exercised. Fix and bump to 4.30.1 if needed.
-2. **Build and hand over the theme zip** (4.31.x; zips of 4.31.0 and dck-core 1.9.0 were produced 2026-10-20 but the Rank Math coexistence is still untested) to `content://collections/DCK Website/`. Install steps for the church: cPanel File Manager, rename `wp-content/themes/dck-elite-pro` to `dck-elite-pro-old`, upload + extract zip, purge WordPress cache and Cloudflare cache. Also upload `dck-core` 1.9.0 the same way if the live plugin is older.
-3. **After install, verify live** (view-source or curl): one canonical/description/JSON-LD per page on Home, Services, Contact, a sermon, an event, a post; Rich Results Test on Home, a sermon and an event; `https://dckabeten.org/robots.txt` contains `Sitemap: https://dckabeten.org/sitemap_index.xml` and no `/test/`.
-4. **Search engines**: verify the site in Google Search Console and Bing Webmaster Tools (Bing sign-up was started and stalled), submit `sitemap_index.xml`, request indexing for Home, Services, Contact, Plan Your Visit.
-5. **Google Business Profile**: claim/verify "Deliverance Church Kabete N Market", category Church, same name/address/phone/hours as section 3, add photos, start collecting reviews. Biggest lever for "church near me / church in Uthiru" searches.
-6. **Content gaps (need church input, do not invent)**: real social URLs in DCK Church settings (enables sameAs); YouTube link + 2-3 sentence summary + scripture reference on every sermon; leadership confirmation of service times and of 2020 history dates (2017 dates are confirmed, see AGENTS.md rule 8).
-7. **Content growth for ranking**: one new sermon page and one helpful blog post per week; add internal links from posts to Services, Plan Your Visit and Prayer Requests; Kiswahili versions of key pages later.
-8. Smaller open items: Terms wording update (awaiting church confirmation); Gatherings must be saved once in DCK Church settings so hours in schema match.
+1. **Confirm Sunday service times with leadership.** Website/FAQ: Prayers 08:00-09:00, Bible Study 09:30-10:30, Glorious Service 10:40-13:00. The old GBP description says 10:00 and 11:00. Do not change either until the church confirms; then make Gatherings, Services page, FAQ, llms.txt and GBP all match.
+2. **Rewrite the GBP description** (still mentions Wednesday prayers, typos "vistation", "Aunthentic", no name/location). A 618-character suggested text is in the Remaining Tasks Guide; the church edits it themselves (needs their approval).
+3. **Social profile URLs** (Facebook, YouTube, Instagram, optional TikTok/X) into DCK Church > Social Media, YouTube channel ID (UC...) in the Live tab. These feed `sameAs`. Also add the same profiles to GBP. Waiting on the church.
+4. **Sermons**: YouTube link, scripture reference and 150-300 word summary on each sermon (Sermons > Add New > Sermon Details). Waiting on the church for links/content. Do not invent sermon content.
+5. **Content confirmations**: 2020 church-history dates, exact leaders' titles (Lead: Justus & Clare Kubai; Assistant: Mr. & Mrs. Henry Onzere), Terms page wording. Waiting on the church.
+6. **GBP pin / geo**: GBP pin is now about -1.2680913, 36.7298952 (address on GBP still shows "Waiyaki Wy, Nairobi" while the edit is reviewed). Optional: expose `dck_seo_lat` / `dck_seo_lng` in DCK Core settings and set them from the GBP pin (currently not output).
+7. **Verification**: Google Rich Results Test on Home, FAQ, a sermon and an event; fix any errors.
+8. **Not started**: Kenya keyword/competitor research (church in Uthiru / Kabete / Kangemi / Waiyaki Way), 30/60/90-day SEO plan and reporting (GSC clusters + GA4 key events), weekly GBP posts and review collection.
+9. Housekeeping: delete `dck-elite-pro-old` / `dck-core-old` from cPanel after a week without issues; branch `fix/plan-your-visit-link` can be deleted.
 
-## 5. Working method that has been used
-- Local test site: WordPress + SQLite, `php -S localhost:8099`, WP-CLI, debug.log checked after every page run. Admin login on the local test site only.
-- Lint every changed PHP file (`php -l`) and JS (`node --check`); bump `style.css` + `functions.php` versions on every theme change; add an AGENTS.md changelog line.
-- Never put secrets or passwords in the repo. Live wp-admin changes are recorded in section 3 of this file.
+## 5. Working method
+- Theme changes: bump `style.css` + `functions.php` version, add an AGENTS.md changelog line, lint PHP (`php -l`) and JS (`node --check`) where PHP is available.
+- Ship: build zips of `dck-elite-pro/` and `dck-core/`, save to the Town library (DCK Website), church installs via cPanel File Manager (rename old folder to `-old`, upload, extract), then purge WordPress cache (Performance > Purge All Caches) and Cloudflare cache. Verify live with curl / view-source.
+- wp-admin sessions log out often and need a human CAPTCHA.
+- Never put secrets or passwords in the repo. Record live wp-admin / Cloudflare / Google changes in section 3 of this file.
