@@ -26,7 +26,7 @@ $dck_times = function_exists( 'dck_elite_service_times' ) ? dck_elite_service_ti
 			<?php endforeach; ?>
 		</div>
 		<div class="dck-sunday2__cta">
-			<a class="dck-btn dck-btn--gold" href="<?php echo esc_url( $dck_dir ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Plan Your Visit', 'dck-elite' ); ?></a>
+			<a class="dck-btn dck-btn--gold" href="<?php echo esc_url( dck_elite_page_url( 'plan-your-visit' ) ); ?>"><?php esc_html_e( 'Plan Your Visit', 'dck-elite' ); ?></a>
 		</div>
 	</div>
 </section>
