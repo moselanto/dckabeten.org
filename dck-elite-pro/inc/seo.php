@@ -162,9 +162,27 @@ if ( ! function_exists( 'dck_seo_parse_span' ) ) {
 	}
 }
 
-/* Opening hours built from the editable Gatherings list (weekly/Sunday only; monthly Keshas skipped). */
+/* Opening hours: Google Business Profile hours from settings; fallback built from the Gatherings list (weekly/Sunday only; monthly Keshas skipped). */
 if ( ! function_exists( 'dck_seo_hours' ) ) {
 	function dck_seo_hours() {
+		/* Opening hours must match the Google Business Profile: DCK Church > Church & Contact > Opening hours (Google). */
+		$dck_oh_default = "Monday|09:00|18:00\nTuesday|09:00|18:00\nWednesday|09:00|18:00\nThursday|09:00|19:00\nFriday|09:00|18:00\nSaturday|09:00|18:00\nSunday|07:00|18:00";
+		$dck_oh_raw     = function_exists( 'dck_home_val' ) ? (string) dck_home_val( 'dck_seo_opening_hours', $dck_oh_default ) : $dck_oh_default;
+		$dck_oh_days    = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
+		$dck_oh_out     = array();
+		foreach ( preg_split( '/\r\n|\r|\n/', $dck_oh_raw ) as $dck_oh_line ) {
+			$dck_oh_p = array_map( 'trim', explode( '|', $dck_oh_line ) );
+			if ( 3 !== count( $dck_oh_p ) || ! in_array( strtolower( $dck_oh_p[0] ), $dck_oh_days, true ) ) {
+				continue;
+			}
+			if ( ! preg_match( '/^([01]\d|2[0-3]):[0-5]\d$/', $dck_oh_p[1] ) || ! preg_match( '/^([01]\d|2[0-3]):[0-5]\d$/', $dck_oh_p[2] ) ) {
+				continue;
+			}
+			$dck_oh_out[] = array( '@type' => 'OpeningHoursSpecification', 'dayOfWeek' => 'https://schema.org/' . ucfirst( strtolower( $dck_oh_p[0] ) ), 'opens' => $dck_oh_p[1], 'closes' => $dck_oh_p[2] );
+		}
+		if ( $dck_oh_out ) {
+			return $dck_oh_out;
+		}
 		if ( ! function_exists( 'dck_gatherings' ) ) {
 			return array();
 		}

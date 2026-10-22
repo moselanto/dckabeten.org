@@ -51,6 +51,7 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 						$f( 'dck_seo_locality', __( 'Area / locality', 'dck-core' ), 'text', 'Uthiru' ),
 						$f( 'dck_seo_region', __( 'City / region', 'dck-core' ), 'text', 'Nairobi' ),
 						$f( 'dck_directions_url', __( 'Google Maps / directions link', 'dck-core' ), 'url', 'https://share.google/LJmcXS6D5Nq1aF2R5' ),
+						$f( 'dck_seo_opening_hours', __( 'Opening hours (Google)', 'dck-core' ), 'textarea', "Monday|09:00|18:00\nTuesday|09:00|18:00\nWednesday|09:00|18:00\nThursday|09:00|19:00\nFriday|09:00|18:00\nSaturday|09:00|18:00\nSunday|07:00|18:00", __( 'Keep exactly the same as the Google Business Profile hours. One line per day: Day|opens|closes (24-hour). Leave a day out if closed. Blank = built from Gatherings.', 'dck-core' ) ),
 					),
 				),
 				array(
