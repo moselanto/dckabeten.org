@@ -27,6 +27,13 @@ Last updated: 2026-10-22 (Thu), by Ray (Town assistant). Update this file at the
 - **4.29.0 and earlier**: see AGENTS.md.
 
 ## 3. Live-site work done outside the repo (wp-admin, Cloudflare, Google)
+### 2026-10-22 (afternoon)
+- **Theme 4.34.0 / DCK Core 1.11.0 built, NOT yet installed** (PR #3, branch `feat/schema-links-speed-4.34.0`; zips in Town library DCK Website). Adds pastors/areas/languages/GBP pin/weekly service Events to schema, "Planning a visit?" internal-links box on every post, deferred theme scripts, 3 recompressed images. After install verify the homepage graph and one post, then merge PR #3.
+- **Speed check**: PageSpeed API was rate-limited (429); manual check: HTML TTFB 1.2-2 s (Cloudflare does not cache HTML), gtag ~527 KB uncompressed, style.min.css 190 KB, largest images joy.webp 161 KB and church-slide-3.webp 131 KB (already efficient at q70). Next: consider a Cloudflare cache rule for HTML (bypass for logged-in/wp-admin) and re-run PageSpeed with an API key.
+- **Google profile posts**: `DCK Google Profile Posts 8 Weeks.docx` (Town library) - one per week, weeks of 26 Oct to 18 Dec; week 8 Christmas details need church confirmation.
+- **Bing Places / Apple Business Connect**: started via browser; waiting on Google sign-in approval on the owner's phone. Not submitted yet.
+- **Monthly health check**: Town routine "DCK Website Monthly Health Check" runs 1st of each month 09:00 EAT and emails the owner (uptime, all sitemap URLs' tags/schema/GA, robots/llms, new content, search visibility).
+
 ### 2026-10-22
 - **5 new SEO blog posts published** (by the assistant via wp-admin; content source `DCK SEO Growth Plan and Ready Posts.docx` in the Town library). Verified live: 1 title, 1 description, 1 canonical, 1 JSON-LD graph with BlogPosting, 1 H1, featured image, in `post-sitemap.xml`:
   - /sunday-service-in-uthiru-what-to-expect/ (focus "Sunday service in Uthiru")
