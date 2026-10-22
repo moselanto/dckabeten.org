@@ -52,6 +52,10 @@ if ( ! function_exists( 'dck_core_settings_schema' ) ) {
 						$f( 'dck_seo_region', __( 'City / region', 'dck-core' ), 'text', 'Nairobi' ),
 						$f( 'dck_directions_url', __( 'Google Maps / directions link', 'dck-core' ), 'url', 'https://share.google/LJmcXS6D5Nq1aF2R5' ),
 						$f( 'dck_seo_opening_hours', __( 'Opening hours (Google)', 'dck-core' ), 'textarea', "Monday|09:00|18:00\nTuesday|09:00|18:00\nWednesday|09:00|18:00\nThursday|09:00|19:00\nFriday|09:00|18:00\nSaturday|09:00|18:00\nSunday|07:00|18:00", __( 'Keep exactly the same as the Google Business Profile hours. One line per day: Day|opens|closes (24-hour). Leave a day out if closed. Blank = built from Gatherings.', 'dck-core' ) ),
+						$f( 'dck_seo_lat', __( 'Map pin latitude (Google)', 'dck-core' ), 'text', '-1.2680913', __( 'From the Google Business Profile pin. Used in Google/AI listing data.', 'dck-core' ) ),
+						$f( 'dck_seo_lng', __( 'Map pin longitude (Google)', 'dck-core' ), 'text', '36.7298952', __( 'From the Google Business Profile pin.', 'dck-core' ) ),
+						$f( 'dck_seo_areas', __( 'Areas served', 'dck-core' ), 'text', 'Uthiru, Kabete, Upper Kabete, Kangemi, Mountain View, Kinoo, Waiyaki Way, Nairobi', __( 'Comma separated. Tells Google and AI tools which neighbourhoods the church serves.', 'dck-core' ) ),
+						$f( 'dck_seo_people', __( 'Pastors for Google', 'dck-core' ), 'textarea', "Justus Kubai|Lead Pastor and Founder|founder\nClare Kubai|Lead Pastor and Founder|founder\nHenry Onzere|Assistant Pastor", __( 'One line per person: Name|Title|founder (add founder only for founders). Used in Google/AI listing data.', 'dck-core' ) ),
 					),
 				),
 				array(
